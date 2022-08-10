@@ -31,7 +31,7 @@ function App() {
       <nav>
         <ul>
           <li><Link to="/">Home</Link></li>
-          <li><Link to="/register">About</Link></li>
+          <li><Link to="/register">Register</Link></li>
         </ul>
       </nav>
       <Routes>

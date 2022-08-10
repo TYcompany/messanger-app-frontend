@@ -1,37 +1,108 @@
-import React from 'react'
+import React, { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import styled from 'styled-components'
+import toast, { Toaster } from 'react-hot-toast';
+import axios from 'axios'
+
+import { RegisterRoute } from '../lib/api/APIRoutes'
+
+
+// toast.promise(
+//   saveSettings(settings),
+//    {
+//      loading: 'Saving...',
+//      success: <b>Settings saved!</b>,
+//      error: <b>Could not save.</b>,
+//    }
+//  );
+
+// {
+//   icon: '👏',
+//   style: {
+//     borderRadius: '10px',
+//     background: '#333',
+//     color: '#fff',
+//   },
+// }
+
 
 function RegisterPage() {
+  const [values, setValues] = useState({
+    userName: '',
+    email: '',
+    password: "",
+    passwordConfirm: ''
+  })
 
-  const onSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+  // useEffect(()=>{
+
+  // console.log(values)
+
+  // },[values])
+
+
+  const onSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    alert('form')
+
+    if (!validateInputValue()) {
+      return;
+    }
+    const { password, passwordConfirm, userName, email } = values
+    const { data } = await axios.post(RegisterRoute, {
+      userName,
+      email,
+      password,
+      passwordConfirm
+    })
   }
 
   const onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setValues({ ...values, [e.target.name]: e.target.value })
+  }
 
+  const validateInputValue = () => {
+    const { password, passwordConfirm, userName, email } = values
+    if (password !== passwordConfirm) {
+      toast.error('password and passwordConfirm is not the same!')
+      return false
+    }
+
+    if (userName.length < 5) {
+      toast.error('userName should longer than 5 characters!')
+      return false
+    }
+    if (password.length < 8) {
+      toast.error('password should longer than 8 cahracters!')
+      return false
+    }
+
+    return true
   }
 
   return (
-    <FormContainer>
-      <form onSubmit={(e) => onSubmit(e)}>
-        <div className='title'>
-          <img src="" alt="" />
-          <h1>Title</h1>
-        </div>
+    <>
+      <FormContainer>
+        <form onSubmit={(e) => onSubmit(e)}>
+          <div className='title'>
+            <img src="" alt="" />
+            <h1>Title</h1>
+          </div>
 
-        <input type="text" placeholder='Username' name="username" onChange={(e) => onChange(e)} />
-        <input type="text" placeholder='Email' name="email" onChange={(e) => onChange(e)} />
-        <input type="text" placeholder='Password' name="password" onChange={(e) => onChange(e)} />
-        <input type="text" placeholder='Password confirm' name="password-confirm" onChange={(e) => onChange(e)} />
-        <button type="submit">Sign up</button>
-        <span>Already have an account? <Link to="/login">Login</Link> </span>
-      </form>
-    </FormContainer>
+          <input type="text" placeholder='Username' name="userName" onChange={(e) => onChange(e)} />
+          <input type="text" placeholder='Email' name="email" onChange={(e) => onChange(e)} />
+          <input type="password" placeholder='Password' name="password" onChange={(e) => onChange(e)} />
+          <input type="password" placeholder='Password confirm' name="passwordConfirm" onChange={(e) => onChange(e)} />
+          <button type="submit">Sign up</button>
+          <span>Already have an account? <Link to="/login">Login</Link> </span>
+        </form>
+      </FormContainer>
+      <Toaster
+        position="bottom-left"
+        reverseOrder={true}
+      />
+    </>
   )
 }
-
 
 const FormContainer = styled.div`
   height:100vh;
@@ -92,9 +163,6 @@ const FormContainer = styled.div`
     }
 
   }
-
-
 `
-
 
 export default RegisterPage
