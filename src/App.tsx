@@ -2,10 +2,10 @@ import { lazy, Suspense } from 'react';
 import './App.css';
 
 import {  Link, Route, Routes } from 'react-router-dom';
-
-import MainPage from './pages/MainPage';
-import LoginPage from './pages/LoginPage';
-import RegisterPage from './pages/RegisterPage';
+import CubeLoader from './components/CubeLoader';
+// import MainPage from './pages/MainPage';
+// import LoginPage from './pages/LoginPage';
+// import RegisterPage from './pages/RegisterPage';
 
 const routes = [
   {
@@ -23,6 +23,11 @@ const routes = [
     exact: true,
     element: lazy(() => import('./pages/RegisterPage')),
   },
+  {
+    path: '/setProfile',
+    exact: true,
+    element: lazy(() => import('./pages/SetProfilePage')),
+  },
 ];
 
 function App() {
@@ -32,6 +37,9 @@ function App() {
         <ul>
           <li><Link to="/">Home</Link></li>
           <li><Link to="/register">Register</Link></li>
+          <li><Link to="/login">Login</Link></li>
+          <li><Link to="/setProfile">setProfile</Link></li>
+          
         </ul>
       </nav>
       <Routes>
@@ -41,7 +49,7 @@ function App() {
               key={i.toString() + route.path}
               path={route.path}
               element={
-                <Suspense fallback={<>Loading...</>}>
+                <Suspense fallback={<CubeLoader/>}>
                   <route.element />
                 </Suspense>
               }
