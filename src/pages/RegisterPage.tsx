@@ -1,11 +1,10 @@
 import React, { useState, useEffect } from 'react'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import styled from 'styled-components'
 import toast, { Toaster } from 'react-hot-toast';
 import axios from 'axios'
 
 import { RegisterRoute } from '../lib/api/APIRoutes'
-
 
 // toast.promise(
 //   saveSettings(settings),
@@ -25,8 +24,9 @@ import { RegisterRoute } from '../lib/api/APIRoutes'
 //   },
 // }
 
-
 function RegisterPage() {
+  const navigate = useNavigate()
+
   const [values, setValues] = useState({
     userName: '',
     email: '',
@@ -34,12 +34,11 @@ function RegisterPage() {
     passwordConfirm: ''
   })
 
-  // useEffect(()=>{
-
-  // console.log(values)
-
-  // },[values])
-
+  useEffect(()=>{
+    if(localStorage.getItem('chat-app-user')){
+      navigate('/')
+    }
+  },[])
 
   const onSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -48,12 +47,22 @@ function RegisterPage() {
       return;
     }
     const { password, passwordConfirm, userName, email } = values
-    const { data } = await axios.post(RegisterRoute, {
+    const res = await axios.post(RegisterRoute, {
       userName,
       email,
       password,
       passwordConfirm
     })
+
+    if(res.status!==200){
+      toast.error('register failed'+ res.data.message)
+      return
+    }
+    
+    localStorage.setItem('chat-app-user',JSON.stringify(res.data.user))
+    navigate('/')
+    
+    console.log(res)
   }
 
   const onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -85,7 +94,7 @@ function RegisterPage() {
         <form onSubmit={(e) => onSubmit(e)}>
           <div className='title'>
             <img src="" alt="" />
-            <h1>Title</h1>
+            <h1>Register</h1>
           </div>
 
           <input type="text" placeholder='Username' name="userName" onChange={(e) => onChange(e)} />
