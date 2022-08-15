@@ -38,7 +38,7 @@ function RegisterPage() {
     if(localStorage.getItem('chat-app-user')){
       navigate('/')
     }
-  },[])
+  },[navigate])
 
   const onSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -54,15 +54,15 @@ function RegisterPage() {
       passwordConfirm
     })
 
-    if(res.status!==200){
+    if(res.status!==201){
       toast.error('register failed'+ res.data.message)
       return
     }
     
     localStorage.setItem('chat-app-user',JSON.stringify(res.data.user))
+    toast(res.data.message)
     navigate('/')
     
-    console.log(res)
   }
 
   const onChange = (e: React.ChangeEvent<HTMLInputElement>) => {

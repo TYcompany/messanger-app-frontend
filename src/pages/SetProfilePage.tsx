@@ -15,6 +15,12 @@ function SetProfilePage() {
     const [profileBuffers, setProfileBuffers] = useState<string[]>([]);
 
     useEffect(() => {
+        if (!localStorage.getItem('chat-app-user')) {
+            navigate('/login')
+        }
+    }, [navigate])
+
+    useEffect(() => {
         const fetchProfileImages = async () => {
             setIsLoading(true)
             const res = await axios.get(FetchProfileImagesRoute + '/4')
@@ -36,13 +42,10 @@ function SetProfilePage() {
             toast.error('fail to get userData please logout and login again!')
             return
         }
-
+        
         const res = await axios.post(`${SetProfileImageRoute}/${user._id}`, {
             image: profileBuffers[selectedProfileBuffer]
         })
-
-        console.log(res);
-
         const data = res.data;
 
         user.profileImage = data.image
