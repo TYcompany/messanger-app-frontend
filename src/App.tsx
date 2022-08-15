@@ -3,9 +3,6 @@ import './App.css';
 
 import {  Link, Route, Routes } from 'react-router-dom';
 import CubeLoader from './components/CubeLoader';
-// import MainPage from './pages/MainPage';
-// import LoginPage from './pages/LoginPage';
-// import RegisterPage from './pages/RegisterPage';
 
 const routes = [
   {
@@ -28,6 +25,11 @@ const routes = [
     exact: true,
     element: lazy(() => import('./pages/SetProfilePage')),
   },
+  {
+    path:'/chat',
+    exact:true,
+    element:lazy(()=>import('./pages/ChatPage'))
+  }
 ];
 
 function App() {
@@ -39,7 +41,7 @@ function App() {
           <li><Link to="/register">Register</Link></li>
           <li><Link to="/login">Login</Link></li>
           <li><Link to="/setProfile">setProfile</Link></li>
-          
+          <li><Link to="/chat">Chat</Link></li>
         </ul>
       </nav>
       <Routes>
