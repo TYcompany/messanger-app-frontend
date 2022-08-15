@@ -1,23 +1,34 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom';
 import styled from 'styled-components'
-import toast, { Toaster } from 'react-hot-toast';
-import CubeLoader from '../components/CubeLoader';
 import axios from 'axios';
 
+import toast, { Toaster } from 'react-hot-toast';
+import CubeLoader from '../components/CubeLoader';
+import { FetchProfileImagesRoute } from '../lib/api/APIRoutes'
+import {Buffer} from 'buffer'
 
-const apiKey='bngqa9h6z2le0s'
 function SetProfilePage() {
-
-    const getProfileImageAPI = `https://api.multiavatar.com/`;
     const navigate = useNavigate();
     const [isLoading, setIsLoading] = useState(true);
+    const [selectedProfileImage, setSelectedProfileImage] = useState(0)
+    const [profileBuffers, setProfileBuffers] = useState<string[]>([]);
 
-    const getProfileImage=async()=>{
-        const randomNumber=(Math.random()*10e9)|0
-        const profileImageUrl=`${getProfileImageAPI}${randomNumber}?apikey=${apiKey}`
-        const res= await axios.get(profileImageUrl)
-    }
+    useEffect(() => {
+        const fetchProfileImages = async () => {
+            setIsLoading(true)
+            const res = await axios.get(FetchProfileImagesRoute + '/4')
+            const results = [];
+            for (const image of res.data) {
+                const buffer = Buffer.from(image);
+                results.push(buffer.toString('base64'))
+            }
+
+            setProfileBuffers(results)
+            setIsLoading(false)
+        }
+        fetchProfileImages()
+    }, [])
 
     return (<>
         <div>SetProfilePage</div>
@@ -25,8 +36,15 @@ function SetProfilePage() {
             <div className="title-container">
                 <h1>Pick your profile image</h1>
             </div>
-            <div className="profile-images">
 
+            <div className="profile-images">
+                {profileBuffers.map((profileBuffer, index) => <div key={'profile-image' + index} className={`profile-image ${selectedProfileImage === index && 'selected'}`}>
+                    <img
+                        src={`data:image/svg+xml;base64,${profileBuffer}`}
+                        alt={"profile"+index}
+                        onClick={() => setSelectedProfileImage(index)}
+                    />
+                </div>)}
             </div>
         </Container>}
 
@@ -36,6 +54,33 @@ function SetProfilePage() {
     )
 }
 
-const Container = styled.div``
+const Container = styled.div`
+    display:flex ;
+    justify-content:center ;
+    align-items: center ;
+    flex-direction:column ;
+    gap:3rem;
+    background-color:#131324 ;
+    height:100vh;
+    width:100vw;
+    .title-container{
+        h1{
+            color:white;
+        }
+    }
+    .profile-images{
+        display:flex ;
+        gap:2rem;
+        .profile-image{
+            border:0.4rem solid transparent;
+            img{
+                height:6rem;
+            }
+        }
+    }
+
+
+
+`
 
 export default SetProfilePage
