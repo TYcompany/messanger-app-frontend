@@ -2,10 +2,15 @@ import React, { useState, useEffect } from 'react'
 import styled from 'styled-components'
 import { UserType } from '../../lib/types/UserType';
 
-function ContactComponent({ contacts, currentUser }: { contacts: Array<UserType>, currentUser: {} }) {
-  const [currentUserName, setCurrentUserName] = useState("")
-  const [currentUserImage, setCurrentUserImage] = useState('')
-  const [selected, setSelected] = useState(0)
+function ContactComponent({ contacts, currentUser,
+  currentlyChattingUser, setCurrentlyChattingUser }:
+  {
+    contacts: Array<UserType>, currentUser: {},
+    currentlyChattingUser: UserType,
+    setCurrentlyChattingUser: Function
+  }) {
+
+  const [selectedUser, setSelectedUser] = useState(0)
   useEffect(() => {
     if (!currentUser) {
       return
@@ -13,8 +18,9 @@ function ContactComponent({ contacts, currentUser }: { contacts: Array<UserType>
 
   }, [currentUser])
 
-  const changeCurrentChat = (index, contact) => {
-
+  const onClickUserContact = (index: number, contact: Object) => {
+    setCurrentlyChattingUser(contact)
+    setSelectedUser(index)
   }
 
   return (
@@ -25,18 +31,30 @@ function ContactComponent({ contacts, currentUser }: { contacts: Array<UserType>
       </div>
       <div className='contacts'>
         {contacts.map((contact, index) => <div key={'contact' + index}
-          className={`contact ${selected === index && 'selected'}`}>
+          className={`contact ${selectedUser === index && 'selected'}`}>
           <div className='profile-image'>
             <img
               src={`data:image/svg+xml;base64,${contact?.profileImage}`}
               alt={"profile" + index}
-              onClick={() => setSelected(index)}
+              onClick={() => onClickUserContact(index, contact)}
             />
           </div>
           <div className="username">
             <h3>{contact.userName}</h3>
           </div>
         </div>)}
+        <div key={'currently-chatting-user'}
+          className={`currently-chatting-user`}>
+          <div className='profile-image'>
+            <img
+              src={`data:image/svg+xml;base64,${currentlyChattingUser.profileImage}`}
+              alt={"profile"}
+            />
+          </div>
+          <div className="username">
+            <h2>{currentlyChattingUser.userName}</h2>
+          </div>
+        </div>
       </div>
     </Container>
   )
@@ -68,6 +86,11 @@ const Container = styled.div`
     overflow:auto ;
     gap:0.8rem;
     .contact{
+      &::-webkit-scrollbar{
+        background-color:#ffffff39 ;
+        width:1rem;
+        border-radius:1rem ;
+      }
       background-color:#ffffff39 ;
       min-height:5rem ;
       width:90%;
@@ -91,6 +114,34 @@ const Container = styled.div`
         background-color:#9186f3 ;
       }
     }
+    .currently-chatting-user{
+        background-color:#0d0d30 ;
+        display:flex ;
+        justify-content:center ;
+        align-items:center ;
+        gap:2rem;
+        .profile-image{
+          img{
+            height:4rem;
+            max-inline-size:100% ;
+          }
+        }
+        .username{
+          h2{
+            color:white
+          }
+        }
+
+        @media screen and (min-width:720px) and (max-width:1080px){
+            gap:0.5rem;
+            .username{
+              h2{
+                font-size:1rem;
+              }
+            }
+        }
+
+      }
   }
 `;
 

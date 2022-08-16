@@ -10,6 +10,13 @@ function ChatPage() {
   const navigate = useNavigate();
   const [contacts, setContacts] = useState<UserType[]>([])
   const [currentUser, setCurrentUser] = useState({ _id: '' });
+  const [currentlyChattingUser, setCurrentlyChattingUser] = useState<UserType>({
+    userName: "",
+    email: "",
+    profileImage: "",
+    _id: ""
+  });
+
 
   useEffect(() => {
     if (!localStorage.getItem('chat-app-user')) {
@@ -35,7 +42,9 @@ function ChatPage() {
 
   return (<Container>
     <div className='container'>
-      <ContactComponent contacts={contacts} currentUser={currentUser} />
+      <ContactComponent contacts={contacts} currentUser={currentUser}
+        currentlyChattingUser={currentlyChattingUser}
+        setCurrentlyChattingUser={setCurrentlyChattingUser} />
     </div>
   </Container>
 
@@ -63,7 +72,5 @@ const Container = styled.div`
     }
 
 `;
-
-
 
 export default ChatPage
