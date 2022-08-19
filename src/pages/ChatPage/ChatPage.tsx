@@ -34,6 +34,7 @@ function ChatPage() {
     }
     const fetchUserContacts = async (id: string) => {
       const { data } = await axios.get(`${FetchUserContactsRoute}/${id}`)
+      console.log(data)
 
       setContacts(data)
     }

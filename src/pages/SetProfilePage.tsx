@@ -6,13 +6,12 @@ import axios from 'axios';
 import toast, { Toaster } from 'react-hot-toast';
 import CubeLoader from '../components/CubeLoader';
 import { FetchProfileImagesRoute, SetProfileImageRoute } from '../lib/api/APIRoutes'
-import { Buffer } from 'buffer'
-
+import { Buffer } from 'buffer';
 function SetProfilePage() {
     const navigate = useNavigate();
     const [isLoading, setIsLoading] = useState(true);
-    const [selectedProfileBuffer, setSelectedProfileBuffer] = useState(0)
-    const [profileBuffers, setProfileBuffers] = useState<string[]>([]);
+    const [selectedProfileImage, setSelectedProfileImage] = useState(0)
+    const [profileImages, setProfileImages] = useState<string[]>([]);
 
     useEffect(() => {
         if (!localStorage.getItem('chat-app-user')) {
@@ -24,13 +23,9 @@ function SetProfilePage() {
         const fetchProfileImages = async () => {
             setIsLoading(true)
             const res = await axios.get(FetchProfileImagesRoute + '/4')
-            const results = [];
-            for (const image of res.data) {
-                const buffer = Buffer.from(image);
-                results.push(buffer.toString('base64'))
-            }
+            const results = res.data;
 
-            setProfileBuffers(results)
+            setProfileImages(results)
             setIsLoading(false)
         }
         fetchProfileImages()
@@ -42,10 +37,11 @@ function SetProfilePage() {
             toast.error('fail to get userData please logout and login again!')
             return
         }
-        
+
         const res = await axios.post(`${SetProfileImageRoute}/${user._id}`, {
-            image: profileBuffers[selectedProfileBuffer]
+            profileImage: profileImages[selectedProfileImage]
         })
+
         const data = res.data;
 
         user.profileImage = data.image
@@ -63,11 +59,12 @@ function SetProfilePage() {
             </div>
 
             <div className="profile-images">
-                {profileBuffers.map((profileBuffer, index) => <div key={'profile-image' + index} className={`profile-image ${selectedProfileBuffer === index && 'selected'}`}>
+                {profileImages.map((profileImage, index) => <div key={'profile-image' + index}
+                    className={`profile-image ${selectedProfileImage === index && 'selected'}`}>
                     <img
-                        src={`data:image/svg+xml;base64,${profileBuffer}`}
+                        src={`data:image/svg+xml;base64,${Buffer.from(profileImage).toString('base64')}`}
                         alt={"profile" + index}
-                        onClick={() => setSelectedProfileBuffer(index)}
+                        onClick={() => setSelectedProfileImage(index)}
                     />
                 </div>)}
             </div>

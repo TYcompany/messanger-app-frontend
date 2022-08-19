@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import styled from 'styled-components'
 import { UserType } from '../../lib/types/UserType';
+import { Buffer } from 'buffer';
 
 function ContactComponent({ contacts, currentUser,
   currentlyChattingUser, setCurrentlyChattingUser }:
@@ -34,7 +35,7 @@ function ContactComponent({ contacts, currentUser,
           className={`contact ${selectedUser === index && 'selected'}`}>
           <div className='profile-image'>
             <img
-              src={`data:image/svg+xml;base64,${contact?.profileImage}`}
+              src={`data:image/svg+xml;base64,${Buffer.from(contact.profileImage).toString('base64')}`}
               alt={"profile" + index}
               onClick={() => onClickUserContact(index, contact)}
             />
