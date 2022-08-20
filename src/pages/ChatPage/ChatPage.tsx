@@ -34,9 +34,15 @@ function ChatPage() {
     }
     const fetchUserContacts = async (id: string) => {
       const { data } = await axios.get(`${FetchUserContactsRoute}/${id}`)
-      console.log(data)
-
-      setContacts(data)
+      
+      const tempContacts=[]
+      for (const dt of data) {
+        const profileImage = await axios.get(dt.profileImageLink)
+        
+        tempContacts.push({...dt, profileImage});
+      }
+      console.log(tempContacts)
+      setContacts(tempContacts)
     }
     fetchUserContacts(currentUser._id);
   }, [currentUser])

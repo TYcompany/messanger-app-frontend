@@ -39,7 +39,6 @@ function LoginPage() {
     }
   },[])
 
-
   const onSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
@@ -47,13 +46,15 @@ function LoginPage() {
       return;
     }
     const { password, userName } = values
+    console.log(values);
+
     const res = await axios.post(LoginRoute, {
       userName,
       password
     })
-
-    if (res.status !== 200) {
-      toast.error('register failed' + res.data.message)
+    
+    if (res.status !== 201) {
+      toast.error('login failed' + res.data.message)
       return
     }
 
