@@ -17,16 +17,13 @@ describe('LoginPage',()=>{
     test('LoginButton test',async()=>{
       setup();
       const buttons =await screen.findAllByRole('button')
-      const loginButton = buttons.filter((button:any)=>button.innerHTML==='Login')[0]
+      const loginButton = buttons.filter((button:HTMLElement)=>button.innerHTML==='Login')[0]
       expect(loginButton).toBeTruthy();
 
-      //fireEvent.click(loginButton)
-      //await loginButton[0].click();
-      // await new Promise((r) => setTimeout(r, 1000));
+      fireEvent.click(loginButton)
      
-      //   const toastComponent=await screen.findByText(/userName should longer than 5 characters!/i)
-      //   expect(toastComponent).toBeTruthy();
-    
+      const toastComponent=await screen.findByText(/userName should longer than 5 characters!/i)
+      expect(toastComponent).toBeTruthy();
     })
 })
 
