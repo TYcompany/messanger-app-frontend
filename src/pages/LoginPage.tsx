@@ -89,7 +89,7 @@ function LoginPage() {
         <form onSubmit={(e) => onSubmit(e)}>
           <div className='title'>
             <img src="" alt="" />
-            <h1>Login</h1>
+            <h1>Login Page</h1>
           </div>
 
           <input type="text" placeholder='Username' name="userName" onChange={(e) => onChange(e)} />

@@ -1,7 +1,7 @@
 import { lazy, Suspense } from 'react';
 import './App.css';
 
-import {  Link, Route, Routes } from 'react-router-dom';
+import {  BrowserRouter,Link, Route, Routes } from 'react-router-dom';
 import CubeLoader from './components/CubeLoader';
 
 const routes = [
@@ -34,13 +34,14 @@ const routes = [
 
 function App() {
   return (
+    <BrowserRouter>
     <div className="App">
       <nav>
         <ul>
           <li><Link to="/">Home</Link></li>
           <li><Link to="/register">Register</Link></li>
           <li><Link to="/login">Login</Link></li>
-          <li><Link to="/setProfile">setProfile</Link></li>
+          <li><Link to="/setProfile">SetProfile</Link></li>
           <li><Link to="/chat">Chat</Link></li>
         </ul>
       </nav>
@@ -60,6 +61,7 @@ function App() {
         })}
       </Routes>
     </div>
+    </BrowserRouter>
   );
 }
 

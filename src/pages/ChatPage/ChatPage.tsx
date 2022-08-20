@@ -54,7 +54,6 @@ function ChatPage() {
         setCurrentlyChattingUser={setCurrentlyChattingUser} />
     </div>
   </Container>
-
   )
 }
 
