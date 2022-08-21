@@ -46,7 +46,6 @@ function LoginPage() {
       return;
     }
     const { password, userName } = values
-    console.log(values);
 
     const res = await axios.post(LoginRoute, {
       userName,
@@ -60,8 +59,6 @@ function LoginPage() {
 
     localStorage.setItem('chat-app-user', JSON.stringify(res.data.user))
     navigate('/')
-
-    console.log(res)
   }
 
   const onChange = (e: React.ChangeEvent<HTMLInputElement>) => {

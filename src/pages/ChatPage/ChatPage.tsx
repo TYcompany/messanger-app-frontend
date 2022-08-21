@@ -9,12 +9,13 @@ import { UserType } from '../../lib/types/UserType';
 function ChatPage() {
   const navigate = useNavigate();
   const [contacts, setContacts] = useState<UserType[]>([])
-  const [currentUser, setCurrentUser] = useState({ _id: '' });
+  const [currentUser, setCurrentUser] = useState<UserType>();
   const [currentlyChattingUser, setCurrentlyChattingUser] = useState<UserType>({
     userName: "",
     email: "",
     profileImage: "",
-    _id: ""
+    profileImageLink: "",
+    _id: "",
   });
 
 
@@ -29,19 +30,19 @@ function ChatPage() {
   }, [navigate])
 
   useEffect(() => {
-    if (!currentUser) {
+    if (!currentUser?._id) {
       return
     }
+    
     const fetchUserContacts = async (id: string) => {
-      const { data } = await axios.get(`${FetchUserContactsRoute}/${id}`)
-      
-      const tempContacts=[]
+      const res = await axios.get(`${FetchUserContactsRoute}/${id}`)
+      const data = res?.data;
+
+      const tempContacts = []
       for (const dt of data) {
         const profileImage = await axios.get(dt.profileImageLink)
-        
-        tempContacts.push({...dt, profileImage});
+        tempContacts.push({ ...dt, profileImage: profileImage.data });
       }
-      console.log(tempContacts)
       setContacts(tempContacts)
     }
     fetchUserContacts(currentUser._id);

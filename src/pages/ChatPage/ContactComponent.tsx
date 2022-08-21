@@ -6,7 +6,7 @@ import { Buffer } from 'buffer';
 function ContactComponent({ contacts, currentUser,
   currentlyChattingUser, setCurrentlyChattingUser }:
   {
-    contacts: Array<UserType>, currentUser: {},
+    contacts: Array<UserType>, currentUser:UserType|undefined,
     currentlyChattingUser: UserType,
     setCurrentlyChattingUser: Function
   }) {
@@ -32,12 +32,12 @@ function ContactComponent({ contacts, currentUser,
       </div>
       <div className='contacts'>
         {contacts.map((contact, index) => <div key={'contact' + index}
-          className={`contact ${selectedUser === index && 'selected'}`}>
+          className={`contact ${selectedUser === index && 'selected'}`} 
+          onClick={() => onClickUserContact(index, contact)}>
           <div className='profile-image'>
             <img
               src={`data:image/svg+xml;base64,${Buffer.from(contact.profileImage).toString('base64')}`}
               alt={"profile" + index}
-              onClick={() => onClickUserContact(index, contact)}
             />
           </div>
           <div className="username">
@@ -48,7 +48,7 @@ function ContactComponent({ contacts, currentUser,
           className={`currently-chatting-user`}>
           <div className='profile-image'>
             <img
-              src={`data:image/svg+xml;base64,${currentlyChattingUser.profileImage}`}
+              src={`data:image/svg+xml;base64,${Buffer.from(currentlyChattingUser.profileImage).toString("base64")}`}
               alt={"profile"}
             />
           </div>
