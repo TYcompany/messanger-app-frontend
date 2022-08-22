@@ -1,14 +1,15 @@
-import React from 'react'
+import React from "react";
 
 function MainPage() {
   const onLogout = () => {
-    localStorage.setItem('chat-app-user', '')
-  }
+    localStorage.setItem("chat-app-user", "");
+  };
   return (
-    <div>MainPage
+    <div>
+      MainPage
       <button onClick={() => onLogout()}>Logout</button>
-    </div >
-  )
+    </div>
+  );
 }
 
-export default MainPage
+export default MainPage;
