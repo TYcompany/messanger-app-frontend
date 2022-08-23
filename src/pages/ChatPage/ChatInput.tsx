@@ -11,6 +11,18 @@ function ChatInput() {
 
   useEffect(() => {}, []);
 
+  const onSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    if (message?.length <= 0) {
+      return;
+    }
+    sendMessage();
+  };
+  const sendMessage = async () => {
+    console.log(message);
+    setMessage("");
+  };
+
   return (
     <Container>
       <div className="button-container">
@@ -21,11 +33,12 @@ function ChatInput() {
           )}
         </div>
       </div>
-      <form className="input-container">
+      <form className="input-container" onSubmit={(e) => onSubmit(e)}>
         <input
           type="text"
           placeholder="type your message here!"
           value={message}
+          name="message"
           onChange={(e) => setMessage(e.target.value)}
         />
         <button className="submit">
@@ -54,6 +67,35 @@ const Container = styled.div`
         font-size: 1.5rem;
         color: #ffff00c8;
         cursor: pointer;
+      }
+      .emoji-picker-react {
+        position: absolute;
+        top: -350px;
+        background-color: #080420;
+        box-shadow: 0 5px 10px #9a86f3;
+        border-color: #9186f3;
+
+        .emoji-categories {
+          button {
+            filter: contrast(0);
+          }
+        }
+        .emoji-search {
+          color: #aaa;
+          background-color: transparent;
+          border-color: #9186f3;
+        }
+        .emoji-group::before {
+          background-color: #080420;
+        }
+        .emoji-scroll-wrapper::-webkit-scrollbar {
+          background-color: #080420;
+          width: 5px;
+          &-thumb {
+            background-color: #9186f3;
+            border-radius: 5px;
+          }
+        }
       }
     }
   }
