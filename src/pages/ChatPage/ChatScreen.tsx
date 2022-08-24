@@ -3,7 +3,13 @@ import { Buffer } from "buffer";
 import styled from "styled-components";
 
 import { UserType } from "../../lib/types/UserType";
+import { MessageType } from "../../lib/types/MessageType";
+
+import ChatMessagesContainer from "./ChatMessagesContainer";
 import ChatInput from "./ChatInput";
+
+import axios from "axios";
+import { GetAllmessagesRoute } from "../../lib/api/APIRoutes";
 
 function ChatScreen({
   currentUser,
@@ -13,10 +19,23 @@ function ChatScreen({
   currentlyChattingUser: UserType | undefined;
 }) {
   const [isLoading, setIsLoading] = useState(false);
+  const [messages, setMessages] = useState<MessageType[]>([]);
 
   useEffect(() => {
-    console.log(currentlyChattingUser);
-  }, [currentlyChattingUser]);
+    const from = currentUser?._id;
+    const to = currentlyChattingUser?._id;
+
+    if (!from || !to) {
+      return;
+    }
+
+    fetchAllMessages(from, to);
+  }, [currentUser, currentlyChattingUser]);
+
+  const fetchAllMessages = async (from: string, to: string) => {
+    const res = await axios.get(`${GetAllmessagesRoute}?from=${from}&to=${to}`);
+    setMessages(res.data);
+  };
 
   return (
     <Container>
@@ -39,7 +58,8 @@ function ChatScreen({
               </div>
             </div>
           </div>
-          <div className="chat-messages">this is chat messages</div>
+          <ChatMessagesContainer messages={messages} />
+
           <ChatInput currentUser={currentUser} currentlyChattingUser={currentlyChattingUser} />
         </>
       )}
