@@ -40,7 +40,7 @@ function ChatScreen({
             </div>
           </div>
           <div className="chat-messages">this is chat messages</div>
-          <ChatInput />
+          <ChatInput currentUser={currentUser} currentlyChattingUser={currentlyChattingUser} />
         </>
       )}
     </Container>

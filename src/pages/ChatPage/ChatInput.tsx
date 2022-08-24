@@ -4,8 +4,18 @@ import { IoMdSend } from "react-icons/io";
 import { BsEmojiSmileFill } from "react-icons/bs";
 
 import Picker from "emoji-picker-react";
+import { UserType } from "../../lib/types/UserType";
 
-function ChatInput() {
+import { SendMessageRoute } from "../../lib/api/APIRoutes";
+import axios from "axios";
+
+function ChatInput({
+  currentUser,
+  currentlyChattingUser,
+}: {
+  currentUser: UserType | undefined;
+  currentlyChattingUser: UserType | undefined;
+}) {
   const [isPickerActive, setIsPickerActive] = useState(false);
   const [message, setMessage] = useState("");
 
@@ -18,8 +28,13 @@ function ChatInput() {
     }
     sendMessage();
   };
+
   const sendMessage = async () => {
-    console.log(message);
+    await axios.post(SendMessageRoute, {
+      from: currentUser?._id,
+      to: currentlyChattingUser?._id,
+      text: message,
+    });
     setMessage("");
   };
 
