@@ -4,11 +4,13 @@ import styled from "styled-components";
 import { MessageType } from "../../lib/types/MessageType";
 
 function ChatMessagesContainer({ messages }: { messages: MessageType[] }) {
+  console.log(messages);
+
   return (
     <Container>
       {messages.map((message) => {
         return (
-          <div className={`message ${message.fromSelf ? "sent" : "recieved"}`}>
+          <div key={message._id} className={`message ${message.fromSelf ? "sent" : "recieved"}`}>
             <div className="content">
               <p>{message.text}</p>
             </div>
@@ -23,8 +25,9 @@ const Container = styled.div`
   display: flex;
   flex-direction: column;
   gap: 1rem;
-  overflow: auto;
+  
   .message {
+    overflow: scroll;
     display: flex;
     align-items: center;
     .content {
@@ -35,14 +38,14 @@ const Container = styled.div`
       border-radius: 1rem;
       color: #d1d1d1;
     }
-    .sent {
-      justify-content: flex-end;
-      background-color: #4f04ff21;
-    }
-    .recieved {
-      justify-content: flex-start;
-      background-color: #9900ff20;
-    }
+  }
+  .sent {
+    justify-content: flex-end;
+    background-color: #4f04ff21;
+  }
+  .recieved {
+    justify-content: flex-start;
+    background-color: #9900ff20;
   }
 `;
 export default ChatMessagesContainer;
