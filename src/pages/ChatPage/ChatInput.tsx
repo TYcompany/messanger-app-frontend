@@ -9,6 +9,10 @@ import { UserType } from "../../lib/types/UserType";
 import { SendMessageRoute } from "../../lib/api/APIRoutes";
 import axios from "axios";
 
+import Socket from "../../socket/socket";
+
+const socket = new Socket().getSocketInstance();
+
 function ChatInput({
   currentUser,
   currentlyChattingUser,
@@ -30,6 +34,12 @@ function ChatInput({
   };
 
   const sendMessage = async () => {
+    socket.emit('message', {
+      from: currentUser?._id,
+      to: currentlyChattingUser?._id,
+      text: message,
+    });
+    
     await axios.post(SendMessageRoute, {
       from: currentUser?._id,
       to: currentlyChattingUser?._id,

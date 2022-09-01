@@ -4,8 +4,7 @@ import styled from "styled-components";
 import { MessageType } from "../../lib/types/MessageType";
 
 function ChatMessagesContainer({ messages }: { messages: MessageType[] }) {
-  console.log(messages);
-
+ 
   return (
     <Container>
       {messages.map((message) => {

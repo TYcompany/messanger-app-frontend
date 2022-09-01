@@ -2,17 +2,21 @@ import React, { useEffect, useState } from "react";
 import styled from "styled-components";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
+import io from "socket.io-client";
+
 import { FetchUserContactsRoute } from "../../lib/api/APIRoutes";
 import ContactComponent from "./ContactComponent";
 import ChatScreen from "./ChatScreen";
 
 import { UserType } from "../../lib/types/UserType";
+const socket = io();
 
 function ChatPage() {
   const navigate = useNavigate();
   const [contacts, setContacts] = useState<UserType[]>([]);
   const [currentUser, setCurrentUser] = useState<UserType>();
   const [currentlyChattingUser, setCurrentlyChattingUser] = useState<UserType>();
+  const [isConnectedToSocket, setIsConnectedToSocket] = useState(false);
 
   useEffect(() => {
     if (!localStorage.getItem("chat-app-user")) {
@@ -40,8 +44,13 @@ function ChatPage() {
       }
       setContacts(tempContacts);
     };
+
     fetchUserContacts(currentUser._id);
   }, [currentUser]);
+
+  useEffect(() => {
+    
+  }, []);
 
   return (
     <Container>
