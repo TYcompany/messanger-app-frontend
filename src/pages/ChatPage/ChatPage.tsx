@@ -2,14 +2,15 @@ import React, { useEffect, useState } from "react";
 import styled from "styled-components";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
-import io from "socket.io-client";
 
 import { FetchUserContactsRoute } from "../../lib/api/APIRoutes";
 import ContactComponent from "./ContactComponent";
 import ChatScreen from "./ChatScreen";
 
 import { UserType } from "../../lib/types/UserType";
-const socket = io();
+
+import Socket from '../../socket/socket';
+const socket =new Socket().getSocketInstance()
 
 function ChatPage() {
   const navigate = useNavigate();
@@ -24,8 +25,11 @@ function ChatPage() {
       return;
     }
     const user = localStorage.getItem("chat-app-user") || "";
-
+    
     setCurrentUser(JSON.parse(user));
+
+    socket.emit('add-user',JSON.parse(user)._id)
+
   }, [navigate]);
 
   useEffect(() => {

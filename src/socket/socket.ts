@@ -20,7 +20,13 @@ export default class Socket {
     socket.on("connect", () => {
       console.log("connected");
     });
+    socket.on('exception',(msg)=>{
+      console.log(msg)
+    })
     socket.on("disconnect", () => {});
+    socket.on('message',(message)=>{
+      console.log(message)
+    })
   }
   getSocketInstance() {
     return this.socket;
