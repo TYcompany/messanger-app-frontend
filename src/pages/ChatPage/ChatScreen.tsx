@@ -11,6 +11,10 @@ import ChatInput from "./ChatInput";
 import axios from "axios";
 import { GetAllmessagesRoute } from "../../lib/api/APIRoutes";
 
+import Socket from "../../socket/socket";
+
+const socket = new Socket().getSocketInstance();
+
 function ChatScreen({
   currentUser,
   currentlyChattingUser,
@@ -20,21 +24,39 @@ function ChatScreen({
 }) {
   const [isLoading, setIsLoading] = useState(false);
   const [messages, setMessages] = useState<MessageType[]>([]);
+  const [text, setText] = useState("");
 
   useEffect(() => {
     const from = currentUser?._id;
     const to = currentlyChattingUser?._id;
 
-    if (!from || !to) {
-      return;
-    }
-
     fetchAllMessages(from, to);
   }, [currentUser, currentlyChattingUser]);
 
-  const fetchAllMessages = async (from: string, to: string) => {
+  const fetchAllMessages = async (from: string | undefined, to: string | undefined) => {
+    if (!from || !to) {
+      return;
+    }
+    console.log('message fetched',from,to)
     const res = await axios.get(`${GetAllmessagesRoute}?from=${from}&to=${to}`);
     setMessages(res.data);
+  };
+
+  const sendMessage = async () => {
+    const from = currentUser?._id;
+    const to = currentlyChattingUser?._id;
+
+    socket.emit("message", {
+      from: currentUser?._id,
+      to: currentlyChattingUser?._id,
+      text,
+    });
+    socket.on("message", (data) => {
+      console.log(data)
+      fetchAllMessages(data.from, data.to);
+    });
+    fetchAllMessages(from, to);
+    setText("");
   };
 
   return (
@@ -60,7 +82,13 @@ function ChatScreen({
           </div>
           <ChatMessagesContainer messages={messages} />
 
-          <ChatInput currentUser={currentUser} currentlyChattingUser={currentlyChattingUser} />
+          <ChatInput
+            currentUser={currentUser}
+            currentlyChattingUser={currentlyChattingUser}
+            setText={setText}
+            text={text}
+            sendMessage={sendMessage}
+          />
         </>
       )}
     </Container>
@@ -70,6 +98,8 @@ function ChatScreen({
 const Container = styled.div`
   color: white;
   padding-top: 1rem;
+  height: 80vh;
+
   .chat-header {
     display: flex;
     justify-content: space-between;

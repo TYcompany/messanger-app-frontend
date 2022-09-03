@@ -73,8 +73,10 @@ function ContactComponent({
 const Container = styled.div`
   display: grid;
   grid-template-rows: 10% 75% 15%;
-  overflow: hidden;
+  overflow: scroll;
   background-color: #080420;
+  height:90vh;
+
   .brand {
     display: flex;
     align-items: center;

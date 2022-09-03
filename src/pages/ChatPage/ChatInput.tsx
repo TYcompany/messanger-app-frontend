@@ -6,47 +6,31 @@ import { BsEmojiSmileFill } from "react-icons/bs";
 import Picker from "emoji-picker-react";
 import { UserType } from "../../lib/types/UserType";
 
-import { SendMessageRoute } from "../../lib/api/APIRoutes";
-import axios from "axios";
-
-import Socket from "../../socket/socket";
-
-const socket = new Socket().getSocketInstance();
-
 function ChatInput({
   currentUser,
   currentlyChattingUser,
+  sendMessage,
+  setText,
+  text
 }: {
   currentUser: UserType | undefined;
   currentlyChattingUser: UserType | undefined;
+  sendMessage:Function,
+  setText:Function,
+  text:string
 }) {
   const [isPickerActive, setIsPickerActive] = useState(false);
-  const [message, setMessage] = useState("");
-
+ 
   useEffect(() => {}, []);
 
   const onSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    if (message?.length <= 0) {
+    if (text?.length <= 0) {
       return;
     }
     sendMessage();
   };
 
-  const sendMessage = async () => {
-    socket.emit('message', {
-      from: currentUser?._id,
-      to: currentlyChattingUser?._id,
-      text: message,
-    });
-    
-    await axios.post(SendMessageRoute, {
-      from: currentUser?._id,
-      to: currentlyChattingUser?._id,
-      text: message,
-    });
-    setMessage("");
-  };
 
   return (
     <Container>
@@ -54,7 +38,7 @@ function ChatInput({
         <div className="emoji">
           <BsEmojiSmileFill onClick={() => setIsPickerActive(!isPickerActive)} />
           {isPickerActive && (
-            <Picker onEmojiClick={(e, emoji) => setMessage(message + emoji.emoji)} />
+            <Picker onEmojiClick={(e, emoji) => setText(text + emoji.emoji)} />
           )}
         </div>
       </div>
@@ -62,9 +46,9 @@ function ChatInput({
         <input
           type="text"
           placeholder="type your message here!"
-          value={message}
+          value={text}
           name="message"
-          onChange={(e) => setMessage(e.target.value)}
+          onChange={(e) => setText(e.target.value)}
         />
         <button className="submit">
           <IoMdSend />

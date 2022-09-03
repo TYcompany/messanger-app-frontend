@@ -9,8 +9,8 @@ import ChatScreen from "./ChatScreen";
 
 import { UserType } from "../../lib/types/UserType";
 
-import Socket from '../../socket/socket';
-const socket =new Socket().getSocketInstance()
+import Socket from "../../socket/socket";
+const socket = new Socket().getSocketInstance();
 
 function ChatPage() {
   const navigate = useNavigate();
@@ -24,12 +24,11 @@ function ChatPage() {
       navigate("/login");
       return;
     }
-    const user = localStorage.getItem("chat-app-user") || "";
-    
-    setCurrentUser(JSON.parse(user));
+    const user = JSON.parse(localStorage.getItem("chat-app-user") || "");
 
-    socket.emit('add-user',JSON.parse(user)._id)
+    setCurrentUser(user);
 
+    socket.emit("add-user", { userId: user._id, userName: user.userName });
   }, [navigate]);
 
   useEffect(() => {
@@ -52,9 +51,7 @@ function ChatPage() {
     fetchUserContacts(currentUser._id);
   }, [currentUser]);
 
-  useEffect(() => {
-    
-  }, []);
+  useEffect(() => {}, []);
 
   return (
     <Container>
