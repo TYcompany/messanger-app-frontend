@@ -4,7 +4,7 @@ const PORT = "ws://localhost:5000/";
 
 export default class Socket {
   static instance: Socket | undefined;
-  socket = io(PORT);
+  socket = io(PORT)
   constructor() {
     if (Socket.instance) {
       return Socket.instance;
@@ -27,6 +27,7 @@ export default class Socket {
     socket.on('message',(message)=>{
       console.log(message)
     })
+    
   }
   getSocketInstance() {
     return this.socket;
