@@ -4,6 +4,7 @@ import styled from "styled-components";
 
 import { UserType } from "../../lib/types/UserType";
 import { MessageType } from "../../lib/types/MessageType";
+import { RoomType } from "../../lib/types/RoomType";
 
 import ChatMessagesContainer from "./ChatMessagesContainer";
 import ChatInput from "./ChatInput";
@@ -18,44 +19,61 @@ const socket = new Socket().getSocketInstance();
 function ChatScreen({
   currentUser,
   currentlyChattingUser,
+  currentlyChattingRoom,
 }: {
   currentUser: UserType | undefined;
   currentlyChattingUser: UserType | undefined;
+  currentlyChattingRoom: RoomType | undefined;
 }) {
   const [isLoading, setIsLoading] = useState(false);
   const [messages, setMessages] = useState<MessageType[]>([]);
   const [text, setText] = useState("");
 
   useEffect(() => {
-    const from = currentUser?._id;
-    const to = currentlyChattingUser?._id;
-
-    fetchAllMessages(from, to);
-  }, [currentUser, currentlyChattingUser]);
-
-  const fetchAllMessages = async (from: string | undefined, to: string | undefined) => {
-    if (!from || !to) {
+    if (!currentlyChattingRoom) {
       return;
     }
-    console.log('message fetched',from,to)
-    const res = await axios.get(`${GetAllmessagesRoute}?from=${from}&to=${to}`);
+    console.log('currentChattingRoom',currentlyChattingRoom);
+    
+    fetchAllMessages(currentlyChattingRoom?._id);
+  }, [currentlyChattingRoom]);
+
+  const fetchAllMessages = async (roomId: string) => {
+    console.log('fetchAll',roomId);
+
+    if (!roomId) {
+      return;
+    }
+    const res = await axios.get(`${GetAllmessagesRoute}?roomId=${roomId}&senderId=${currentUser?._id}`);
+    console.log('messageFetched',res);
+
     setMessages(res.data);
   };
 
   const sendMessage = async () => {
-    const from = currentUser?._id;
-    const to = currentlyChattingUser?._id;
+    if (!currentlyChattingRoom) {
+      return;
+    }
 
-    socket.emit("message", {
-      from: currentUser?._id,
-      to: currentlyChattingUser?._id,
+    const roomId = currentlyChattingRoom._id;
+    console.log(currentlyChattingRoom);
+
+    const messageDto={
+      senderId: currentUser?._id,
+      roomId,
       text,
-    });
+      isPersonalChat: true,
+      messageSequenceNumber:(+ currentlyChattingRoom.totalMessageNumber++),
+    }
+    console.log(messageDto);
+
+    socket.emit("message",messageDto);
+
     socket.on("message", (data) => {
-      console.log(data)
-      fetchAllMessages(data.from, data.to);
+      console.log(data);
+      fetchAllMessages(data.roomId);
     });
-    fetchAllMessages(from, to);
+    fetchAllMessages(roomId);
     setText("");
   };
 

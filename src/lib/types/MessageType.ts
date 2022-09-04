@@ -1,5 +1,5 @@
 export interface MessageType {
-  _id:string;
+  _id: string;
   text: string;
   timestamps: string;
   fromSelf: boolean;

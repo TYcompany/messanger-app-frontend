@@ -8,3 +8,5 @@ export const SetProfileImageRoute = `${host}/profile/setProfileImage`;
 
 export const SendMessageRoute = `${host}/message/sendMessage`;
 export const GetAllmessagesRoute = `${host}/message/getAllMessages`;
+
+export const getRoomDataOfPersonalRoute = `${host}/room/getRoomDataOfPersonal`;

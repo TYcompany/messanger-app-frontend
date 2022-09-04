@@ -2,17 +2,21 @@ import React, { useState, useEffect } from "react";
 import styled from "styled-components";
 import { UserType } from "../../lib/types/UserType";
 import { Buffer } from "buffer";
+import axios from "axios";
+import { getRoomDataOfPersonalRoute } from "../../lib/api/APIRoutes";
 
 function ContactComponent({
   contacts,
   currentUser,
   currentlyChattingUser,
   setCurrentlyChattingUser,
+  setCurrentlyChattingRoom,
 }: {
   contacts: Array<UserType>;
   currentUser: UserType | undefined;
   currentlyChattingUser: UserType | undefined;
   setCurrentlyChattingUser: Function;
+  setCurrentlyChattingRoom: Function;
 }) {
   const [selectedUser, setSelectedUser] = useState(0);
   useEffect(() => {
@@ -20,6 +24,21 @@ function ContactComponent({
       return;
     }
   }, [currentUser]);
+
+  useEffect(() => {
+    if (!currentlyChattingUser || !currentUser) {
+      return;
+    }
+
+    const fetchRoomId = async () => {
+      const users = [currentlyChattingUser._id, currentUser?._id].sort();
+      const uri = `${getRoomDataOfPersonalRoute}?user1=${users[0]}&user2=${users[1]}`;
+      const res = await axios.get(uri);
+    
+      setCurrentlyChattingRoom(res.data);
+    };
+    fetchRoomId();
+  }, [currentlyChattingUser, currentUser]);
 
   const onClickUserContact = (index: number, contact: Object) => {
     setCurrentlyChattingUser(contact);
@@ -75,7 +94,7 @@ const Container = styled.div`
   grid-template-rows: 10% 75% 15%;
   overflow: scroll;
   background-color: #080420;
-  height:90vh;
+  height: 90vh;
 
   .brand {
     display: flex;

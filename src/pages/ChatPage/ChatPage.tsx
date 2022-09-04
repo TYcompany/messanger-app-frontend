@@ -8,7 +8,7 @@ import ContactComponent from "./ContactComponent";
 import ChatScreen from "./ChatScreen";
 
 import { UserType } from "../../lib/types/UserType";
-
+import { RoomType } from "../../lib/types/RoomType";
 import Socket from "../../socket/socket";
 const socket = new Socket().getSocketInstance();
 
@@ -18,6 +18,7 @@ function ChatPage() {
   const [currentUser, setCurrentUser] = useState<UserType>();
   const [currentlyChattingUser, setCurrentlyChattingUser] = useState<UserType>();
   const [isConnectedToSocket, setIsConnectedToSocket] = useState(false);
+  const [currentlyChattingRoom, setCurrentlyChattingRoom] = useState<RoomType>();
 
   useEffect(() => {
     if (!localStorage.getItem("chat-app-user")) {
@@ -61,8 +62,13 @@ function ChatPage() {
           currentUser={currentUser}
           currentlyChattingUser={currentlyChattingUser}
           setCurrentlyChattingUser={setCurrentlyChattingUser}
+          setCurrentlyChattingRoom={setCurrentlyChattingRoom}
         />
-        <ChatScreen currentUser={currentUser} currentlyChattingUser={currentlyChattingUser} />
+        <ChatScreen
+          currentUser={currentUser}
+          currentlyChattingUser={currentlyChattingUser}
+          currentlyChattingRoom={currentlyChattingRoom}
+        />
       </div>
     </Container>
   );
