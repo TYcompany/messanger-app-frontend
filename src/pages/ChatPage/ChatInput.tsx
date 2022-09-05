@@ -11,17 +11,21 @@ function ChatInput({
   currentlyChattingUser,
   sendMessage,
   setText,
-  text
+  text,
+  isPickerActive,
+  setIsPickerActive
 }: {
   currentUser: UserType | undefined;
   currentlyChattingUser: UserType | undefined;
   sendMessage:Function,
   setText:Function,
-  text:string
+  text:string,
+  isPickerActive:Boolean,
+  setIsPickerActive:Function
 }) {
-  const [isPickerActive, setIsPickerActive] = useState(false);
- 
-  useEffect(() => {}, []);
+  useEffect(() => {
+    
+  }, []);
 
   const onSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -31,14 +35,13 @@ function ChatInput({
     sendMessage();
   };
 
-
   return (
     <Container>
       <div className="button-container">
         <div className="emoji">
           <BsEmojiSmileFill onClick={() => setIsPickerActive(!isPickerActive)} />
           {isPickerActive && (
-            <Picker onEmojiClick={(e, emoji) => setText(text + emoji.emoji)} />
+            <Picker onEmojiClick={(e, emoji) => setText(text + emoji.emoji)}/>
           )}
         </div>
       </div>
@@ -83,7 +86,7 @@ const Container = styled.div`
         background-color: #080420;
         box-shadow: 0 5px 10px #9a86f3;
         border-color: #9186f3;
-
+        
         .emoji-categories {
           button {
             filter: contrast(0);

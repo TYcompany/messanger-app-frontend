@@ -20,6 +20,8 @@ function ChatPage() {
   const [isConnectedToSocket, setIsConnectedToSocket] = useState(false);
   const [currentlyChattingRoom, setCurrentlyChattingRoom] = useState<RoomType>();
 
+  const [isPickerActive, setIsPickerActive] = useState(false);
+
   useEffect(() => {
     if (!localStorage.getItem("chat-app-user")) {
       navigate("/login");
@@ -54,7 +56,15 @@ function ChatPage() {
   useEffect(() => {}, []);
 
   return (
-    <Container>
+    <Container
+      onClick={(e) => {
+        const isEmojiElement = !!(e.target as HTMLElement).closest(".emoji") || false;
+        if(isEmojiElement){
+          return;
+        }
+        setIsPickerActive(false);
+      }}
+    >
       <div className="container">
         <ContactComponent
           contacts={contacts}
@@ -67,6 +77,8 @@ function ChatPage() {
           currentUser={currentUser}
           currentlyChattingUser={currentlyChattingUser}
           currentlyChattingRoom={currentlyChattingRoom}
+          setIsPickerActive={setIsPickerActive}
+          isPickerActive={isPickerActive}
         />
       </div>
     </Container>

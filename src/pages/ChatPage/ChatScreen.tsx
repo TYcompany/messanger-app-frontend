@@ -20,10 +20,14 @@ function ChatScreen({
   currentUser,
   currentlyChattingUser,
   currentlyChattingRoom,
+  isPickerActive,
+  setIsPickerActive,
 }: {
   currentUser: UserType | undefined;
   currentlyChattingUser: UserType | undefined;
   currentlyChattingRoom: RoomType | undefined;
+  isPickerActive: Boolean;
+  setIsPickerActive: Function;
 }) {
   const [isLoading, setIsLoading] = useState(false);
   const [messages, setMessages] = useState<MessageType[]>([]);
@@ -36,18 +40,20 @@ function ChatScreen({
     console.log("currentChattingRoom", currentlyChattingRoom);
 
     fetchAllMessages(currentlyChattingRoom?._id);
+    socket.removeAllListeners('message');
+    socket.on('message',()=>{
+      fetchAllMessages(currentlyChattingRoom?._id)
+    })
   }, [currentlyChattingRoom]);
 
   const fetchAllMessages = async (roomId: string) => {
-    console.log("fetchAll", roomId);
-
     if (!roomId) {
       return;
     }
     const res = await axios.get(
       `${GetAllmessagesRoute}?roomId=${roomId}&senderId=${currentUser?._id}`
     );
-  
+
     setMessages(res.data);
   };
 
@@ -98,6 +104,8 @@ function ChatScreen({
             setText={setText}
             text={text}
             sendMessage={sendMessage}
+            isPickerActive={isPickerActive}
+            setIsPickerActive={setIsPickerActive}
           />
         </>
       )}

@@ -16,7 +16,7 @@ export default class Socket {
 
   init() {
     const socket = this.socket;
-
+    console.log('inititd')
     socket.on("connect", () => {
       console.log("connected");
     });
@@ -24,10 +24,7 @@ export default class Socket {
       console.log(msg);
     });
     socket.on("disconnect", () => {});
-
-    socket.on("message", (data) => {
-      console.log("message recieved", data);
-    });
+    
   }
   getSocketInstance() {
     return this.socket;
