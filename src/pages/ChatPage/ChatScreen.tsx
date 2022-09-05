@@ -47,8 +47,7 @@ function ChatScreen({
     const res = await axios.get(
       `${GetAllmessagesRoute}?roomId=${roomId}&senderId=${currentUser?._id}`
     );
-    console.log("messageFetched", res);
-
+  
     setMessages(res.data);
   };
 

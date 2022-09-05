@@ -55,8 +55,12 @@ function LoginPage() {
       toast.error("login failed" + res.data.message);
       return;
     }
+    const userData = res.data.user;
 
-    localStorage.setItem("chat-app-user", JSON.stringify(res.data.user));
+    const profileImage = await axios.get(userData.profileImageLink);
+    userData.profileImage = profileImage.data;
+    
+    localStorage.setItem("chat-app-user", JSON.stringify(userData));
     navigate("/");
   };
 

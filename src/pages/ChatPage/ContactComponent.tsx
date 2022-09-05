@@ -23,6 +23,7 @@ function ContactComponent({
     if (!currentUser) {
       return;
     }
+    console.log(currentUser);
   }, [currentUser]);
 
   useEffect(() => {
@@ -34,7 +35,7 @@ function ContactComponent({
       const users = [currentlyChattingUser._id, currentUser?._id].sort();
       const uri = `${getRoomDataOfPersonalRoute}?user1=${users[0]}&user2=${users[1]}`;
       const res = await axios.get(uri);
-    
+
       setCurrentlyChattingRoom(res.data);
     };
     fetchRoomId();
@@ -48,8 +49,18 @@ function ContactComponent({
   return (
     <Container>
       <div className="brand">
-        <img src={""} alt="logo" />
-        <h3>Chat</h3>
+        <div className="profile-image">
+          <img
+            src={`data:image/svg+xml;base64,${Buffer.from(currentUser?.profileImage || "").toString(
+              "base64"
+            )}`}
+            alt={"profile-currentUser"}
+          />
+        </div>
+        <div className="username">
+          <h3>{currentUser?.userName}</h3>
+        </div>
+
       </div>
       <div className="contacts">
         {contacts.map((contact, index) => (

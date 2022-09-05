@@ -26,7 +26,6 @@ function ChatPage() {
       return;
     }
     const user = JSON.parse(localStorage.getItem("chat-app-user") || "");
-
     setCurrentUser(user);
 
     socket.emit("add-user", { userId: user._id, userName: user.userName });
