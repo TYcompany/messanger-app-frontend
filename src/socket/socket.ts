@@ -4,7 +4,7 @@ const PORT = "ws://localhost:5000/";
 
 export default class Socket {
   static instance: Socket | undefined;
-  socket = io(PORT)
+  socket = io(PORT);
   constructor() {
     if (Socket.instance) {
       return Socket.instance;
@@ -16,18 +16,18 @@ export default class Socket {
 
   init() {
     const socket = this.socket;
-    
+
     socket.on("connect", () => {
       console.log("connected");
     });
-    socket.on('exception',(msg)=>{
-      console.log(msg)
-    })
+    socket.on("exception", (msg) => {
+      console.log(msg);
+    });
     socket.on("disconnect", () => {});
-    socket.on('message',(message)=>{
-      console.log(message)
-    })
-    
+
+    socket.on("message", (data) => {
+      console.log("message recieved", data);
+    });
   }
   getSocketInstance() {
     return this.socket;

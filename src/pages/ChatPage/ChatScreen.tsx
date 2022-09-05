@@ -33,19 +33,21 @@ function ChatScreen({
     if (!currentlyChattingRoom) {
       return;
     }
-    console.log('currentChattingRoom',currentlyChattingRoom);
-    
+    console.log("currentChattingRoom", currentlyChattingRoom);
+
     fetchAllMessages(currentlyChattingRoom?._id);
   }, [currentlyChattingRoom]);
 
   const fetchAllMessages = async (roomId: string) => {
-    console.log('fetchAll',roomId);
+    console.log("fetchAll", roomId);
 
     if (!roomId) {
       return;
     }
-    const res = await axios.get(`${GetAllmessagesRoute}?roomId=${roomId}&senderId=${currentUser?._id}`);
-    console.log('messageFetched',res);
+    const res = await axios.get(
+      `${GetAllmessagesRoute}?roomId=${roomId}&senderId=${currentUser?._id}`
+    );
+    console.log("messageFetched", res);
 
     setMessages(res.data);
   };
@@ -56,24 +58,15 @@ function ChatScreen({
     }
 
     const roomId = currentlyChattingRoom._id;
-    console.log(currentlyChattingRoom);
 
-    const messageDto={
+    const messageDto = {
       senderId: currentUser?._id,
       roomId,
       text,
       isPersonalChat: true,
-      messageSequenceNumber:(+ currentlyChattingRoom.totalMessageNumber++),
-    }
-    console.log(messageDto);
+    };
 
-    socket.emit("message",messageDto);
-
-    socket.on("message", (data) => {
-      console.log(data);
-      fetchAllMessages(data.roomId);
-    });
-    fetchAllMessages(roomId);
+    socket.emit("message", messageDto);
     setText("");
   };
 
