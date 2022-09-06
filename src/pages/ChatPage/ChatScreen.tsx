@@ -28,12 +28,70 @@ function ChatScreen({
   isPickerActive: Boolean;
   setIsPickerActive: Function;
 }) {
+  const MessageQueryPerReqeust = 20;
+
   const [isLoading, setIsLoading] = useState(false);
   const [messages, setMessages] = useState<MessageType[]>([]);
   const [receivedMessage, setRecievedMessage] = useState<MessageType | undefined>();
+  const [pastMessages, setPastMessages] = useState<MessageType[]>([]);
 
   const [text, setText] = useState("");
   const scrollRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {}, [messages]);
+
+  useEffect(() => {
+    if (!scrollRef?.current) {
+      return;
+    }
+
+    scrollRef.current.addEventListener("scroll", async (e: Event) => {
+      e.preventDefault();
+      if (!currentlyChattingRoom?.totalMessageNumber) {
+        return;
+      }
+
+      if (messages.length + 10 >= currentlyChattingRoom?.totalMessageNumber) {
+        return;
+      }
+      const currentScroll = scrollRef.current?.scrollTop;
+      if (!currentScroll) {
+        return;
+      }
+
+      if (currentScroll < 10) {
+        const data = await fetchPastMessages();
+        setPastMessages(data);
+      }
+    });
+  }, [scrollRef.current]);
+
+  const fetchPastMessages = async () => {
+    console.log("fetchPastMessages Invoked");
+    if (!currentlyChattingRoom) {
+      return;
+    }
+
+    if (currentlyChattingRoom?.totalMessageNumber <= messages.length) {
+      return;
+    }
+
+    const nextFirstMessageSequence = Math.max(
+      currentlyChattingRoom?.totalMessageNumber - (messages.length + MessageQueryPerReqeust),
+      0
+    );
+
+    const left = nextFirstMessageSequence;
+    const right = nextFirstMessageSequence + 20;
+
+    const data = await fetchMessagesInRange(
+      currentlyChattingRoom?._id,
+      currentUser?._id || "",
+      left,
+      right
+    );
+    return data;
+  };
 
   useEffect(() => {
     if (!currentlyChattingRoom) {
@@ -43,11 +101,7 @@ function ChatScreen({
     const initSocket = async () => {
       socket.removeAllListeners("message");
       socket.on("message", async (receivedMessage: MessageType) => {
-        const { messageSequence, text, updatedAt, _id, senderId } = receivedMessage;
-
-        const nextMessage = {};
         setRecievedMessage(receivedMessage);
-        console.log(receivedMessage);
         scrollRef.current?.scrollIntoView({ behavior: "smooth" });
       });
     };
@@ -56,7 +110,7 @@ function ChatScreen({
       const data = await fetchRecentMessages();
 
       setMessages(data || []);
-      console.log(data);
+
       scrollRef.current?.scrollIntoView({ behavior: "smooth" });
       initSocket();
     };
@@ -64,23 +118,39 @@ function ChatScreen({
     const fetchRecentMessages = async () => {
       const { totalMessageNumber } = currentlyChattingRoom;
       const left = Math.max(totalMessageNumber - 20, 0);
-      const right = totalMessageNumber + 1;
+      const right = left + 20;
 
-      const res = await fetchMessagesInRange(
+      const data = await fetchMessagesInRange(
         currentlyChattingRoom?._id,
         currentUser?._id || "",
         left,
         right
       );
-      return res;
+      return data;
     };
 
     init();
   }, [currentlyChattingRoom]);
+  const getUniqueMessages = (prevMessages: MessageType[]) => {
+    const exists = new Set();
+    const results = [];
+
+    for (const prevMessage of prevMessages) {
+      if (exists.has(prevMessage._id)) {
+        continue;
+      }
+      exists.add(prevMessage._id);
+      results.push(prevMessage);
+    }
+    return results;
+  };
 
   useEffect(() => {
-    receivedMessage && setMessages((prev) => [...prev, receivedMessage]);
+    receivedMessage && setMessages((prev) => getUniqueMessages(prev.concat(receivedMessage)));
   }, [receivedMessage]);
+  useEffect(() => {
+    pastMessages && setMessages((prev) => getUniqueMessages(prev.concat(pastMessages)));
+  }, [pastMessages]);
 
   const sendMessage = async () => {
     if (!currentlyChattingRoom) {

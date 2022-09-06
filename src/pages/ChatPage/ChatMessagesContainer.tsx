@@ -15,7 +15,7 @@ function ChatMessagesContainer({
 }) {
   return (
     <Container>
-      <div className="messages">
+      <div className="messages" ref={scrollRef}>
         {messages.map((message) => {
           return (
             <div
@@ -28,9 +28,7 @@ function ChatMessagesContainer({
             </div>
           );
         })}
-        <div className="end-of-message" ref={scrollRef}>
-          End Of Messages
-        </div>
+        <div className="end-of-message">End Of Messages</div>
       </div>
     </Container>
   );
