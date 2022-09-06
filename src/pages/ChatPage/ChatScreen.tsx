@@ -15,6 +15,19 @@ import Socket from "../../socket/socket";
 
 const socket = new Socket().getSocketInstance();
 
+let timer: NodeJS.Timeout | null = null;
+
+// const throttle = (fn: Function) => {
+//   const TimeLimit = 500;
+
+//   if (!timer) {
+//     timer = setTimeout(() => {
+//       timer = null;
+//       fn();
+//     }, TimeLimit);
+//   }
+// };
+
 function ChatScreen({
   currentUser,
   currentlyChattingUser,
@@ -28,61 +41,77 @@ function ChatScreen({
   isPickerActive: Boolean;
   setIsPickerActive: Function;
 }) {
-  const MessageQueryPerReqeust = 20;
+  const MessageQueryLimitPerReqeust = 20;
 
   const [isLoading, setIsLoading] = useState(false);
   const [messages, setMessages] = useState<MessageType[]>([]);
   const [receivedMessage, setRecievedMessage] = useState<MessageType | undefined>();
   const [pastMessages, setPastMessages] = useState<MessageType[]>([]);
 
+  const [messageSequenceRef, setMessageSequenceRef] = useState(0);
+
   const [text, setText] = useState("");
   const scrollRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {}, [messages]);
+  useEffect(() => {
+    console.log(messageSequenceRef);
+  }, [messageSequenceRef]);
 
   useEffect(() => {
     if (!scrollRef?.current) {
       return;
     }
+    if (!currentlyChattingRoom?.totalMessageNumber) {
+      return;
+    }
+    setMessageSequenceRef(currentlyChattingRoom?.totalMessageNumber - MessageQueryLimitPerReqeust);
 
-    scrollRef.current.addEventListener("scroll", async (e: Event) => {
-      e.preventDefault();
-      if (!currentlyChattingRoom?.totalMessageNumber) {
+    scrollRef.current.removeEventListener("scroll", () => {});
+
+    scrollRef.current.addEventListener("scroll", (e) => {
+      if (timer) {
         return;
       }
-
-      if (messages.length + 10 >= currentlyChattingRoom?.totalMessageNumber) {
-        return;
-      }
-      const currentScroll = scrollRef.current?.scrollTop;
-      if (!currentScroll) {
-        return;
-      }
-
-      if (currentScroll < 10) {
-        const data = await fetchPastMessages();
-        setPastMessages(data);
-      }
+      
+      const TimeLimit = 500;
+      timer = setTimeout(() => {
+        timer = null;
+        scrollEventFunction(e);
+      }, TimeLimit);
     });
   }, [scrollRef.current]);
 
+  const scrollEventFunction = async (e: Event) => {
+    e.preventDefault();
+    
+    if (messageSequenceRef <= 0) {
+      return;
+    }
+
+    const currentScroll = scrollRef.current?.scrollTop;
+    if (!currentScroll) {
+      return;
+    }
+
+    if (currentScroll < 10) {
+      const data = await fetchPastMessages();
+      setPastMessages(data);
+    }
+  };
+
   const fetchPastMessages = async () => {
-    console.log("fetchPastMessages Invoked");
     if (!currentlyChattingRoom) {
       return;
     }
 
-    if (currentlyChattingRoom?.totalMessageNumber <= messages.length) {
+    if (messageSequenceRef <= 0) {
       return;
     }
 
-    const nextFirstMessageSequence = Math.max(
-      currentlyChattingRoom?.totalMessageNumber - (messages.length + MessageQueryPerReqeust),
-      0
-    );
-
-    const left = nextFirstMessageSequence;
-    const right = nextFirstMessageSequence + 20;
+    const left = messageSequenceRef;
+    const right = messageSequenceRef + 20;
+    console.log(left,right);
 
     const data = await fetchMessagesInRange(
       currentlyChattingRoom?._id,
@@ -146,10 +175,16 @@ function ChatScreen({
   };
 
   useEffect(() => {
-    receivedMessage && setMessages((prev) => getUniqueMessages(prev.concat(receivedMessage)));
+    receivedMessage && setMessages((prev) => getUniqueMessages([...prev, receivedMessage]));
   }, [receivedMessage]);
   useEffect(() => {
-    pastMessages && setMessages((prev) => getUniqueMessages(prev.concat(pastMessages)));
+    if (!pastMessages) {
+      return;
+    }
+
+    setMessages((prev) => getUniqueMessages([...pastMessages, ...prev]));
+
+    setMessageSequenceRef(Math.max(0, messageSequenceRef - MessageQueryLimitPerReqeust));
   }, [pastMessages]);
 
   const sendMessage = async () => {
