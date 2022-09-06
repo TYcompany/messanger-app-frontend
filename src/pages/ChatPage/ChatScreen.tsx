@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import { Buffer } from "buffer";
 import styled from "styled-components";
 
@@ -32,6 +32,7 @@ function ChatScreen({
   const [isLoading, setIsLoading] = useState(false);
   const [messages, setMessages] = useState<MessageType[]>([]);
   const [text, setText] = useState("");
+  const scrollRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     if (!currentlyChattingRoom) {
@@ -40,10 +41,13 @@ function ChatScreen({
     console.log("currentChattingRoom", currentlyChattingRoom);
 
     fetchAllMessages(currentlyChattingRoom?._id);
-    socket.removeAllListeners('message');
-    socket.on('message',()=>{
-      fetchAllMessages(currentlyChattingRoom?._id)
-    })
+    socket.removeAllListeners("message");
+    socket.on("message", () => {
+      fetchAllMessages(currentlyChattingRoom?._id);
+      console.log(scrollRef.current?.scrollHeight);
+
+      scrollRef.current?.scrollIntoView({ behavior: "smooth" });
+    });
   }, [currentlyChattingRoom]);
 
   const fetchAllMessages = async (roomId: string) => {
@@ -96,7 +100,7 @@ function ChatScreen({
               </div>
             </div>
           </div>
-          <ChatMessagesContainer messages={messages} />
+          <ChatMessagesContainer messages={messages} scrollRef={scrollRef} />
 
           <ChatInput
             currentUser={currentUser}

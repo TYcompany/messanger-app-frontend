@@ -60,7 +60,6 @@ function ContactComponent({
         <div className="username">
           <h3>{currentUser?.userName}</h3>
         </div>
-
       </div>
       <div className="contacts">
         {contacts.map((contact, index) => (
@@ -82,19 +81,6 @@ function ContactComponent({
             </div>
           </div>
         ))}
-        <div key={"currently-chatting-user"} className={`currently-chatting-user`}>
-          <div className="profile-image">
-            <img
-              src={`data:image/svg+xml;base64,${Buffer.from(
-                currentlyChattingUser?.profileImage || ""
-              ).toString("base64")}`}
-              alt={"profile"}
-            />
-          </div>
-          <div className="username">
-            <h2>{currentlyChattingUser?.userName}</h2>
-          </div>
-        </div>
       </div>
     </Container>
   );

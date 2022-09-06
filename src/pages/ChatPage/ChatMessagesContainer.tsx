@@ -3,7 +3,13 @@ import styled from "styled-components";
 
 import { MessageType } from "../../lib/types/MessageType";
 
-function ChatMessagesContainer({ messages }: { messages: MessageType[] }) {
+function ChatMessagesContainer({
+  messages,
+  scrollRef,
+}: {
+  messages: MessageType[];
+  scrollRef: React.RefObject<HTMLDivElement>;
+}) {
   return (
     <Container>
       <div className="messages">
@@ -16,24 +22,29 @@ function ChatMessagesContainer({ messages }: { messages: MessageType[] }) {
             </div>
           );
         })}
+        <div className="end-of-message" ref={scrollRef}>
+          End Of Messages
+        </div>
       </div>
     </Container>
   );
 }
 const Container = styled.div`
-  
   display: flex;
   flex-direction: column;
-  height:80%;
-  
+  height: 80%;
+
   .messages {
     overflow: scroll;
-    height:100vh;
+    height: 100vh;
 
     .message {
       overflow: scroll;
       display: flex;
       align-items: center;
+      padding-left:1rem;
+      padding-right:1rem;
+      
       .content {
         max-width: 40%;
         overflow: break-word;
@@ -50,6 +61,12 @@ const Container = styled.div`
     .recieved {
       justify-content: flex-start;
       background-color: #9900ff20;
+    }
+
+    .end-of-message {
+      overflow: break-word;
+      padding: 1rem;
+      font-size: 1.1rem;
     }
   }
 `;
