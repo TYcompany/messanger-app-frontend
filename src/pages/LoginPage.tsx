@@ -5,6 +5,7 @@ import toast, { Toaster } from "react-hot-toast";
 import axios from "axios";
 
 import { LoginRoute } from "../lib/api/APIRoutes";
+import { loginRequest } from "../lib/api/APIFunctions";
 
 // toast.promise(
 //   saveSettings(settings),
@@ -46,10 +47,7 @@ function LoginPage() {
     }
     const { password, userName } = values;
 
-    const res = await axios.post(LoginRoute, {
-      userName,
-      password,
-    });
+    const res = await loginRequest(userName, password);
 
     if (res.status !== 201) {
       toast.error("login failed" + res.data.message);
@@ -59,7 +57,7 @@ function LoginPage() {
 
     const profileImage = await axios.get(userData.profileImageLink);
     userData.profileImage = profileImage.data;
-    
+
     localStorage.setItem("chat-app-user", JSON.stringify(userData));
     navigate("/");
   };

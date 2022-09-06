@@ -1,14 +1,15 @@
 import React, { useEffect, useState } from "react";
 import styled from "styled-components";
 import { useNavigate } from "react-router-dom";
-import axios from "axios";
 
-import { FetchUserContactsRoute } from "../../lib/api/APIRoutes";
 import ContactComponent from "./ContactComponent";
 import ChatScreen from "./ChatScreen";
 
 import { UserType } from "../../lib/types/UserType";
 import { RoomType } from "../../lib/types/RoomType";
+
+import { fetchUserContacts } from "../../lib/api/APIFunctions";
+
 import Socket from "../../socket/socket";
 const socket = new Socket().getSocketInstance();
 
@@ -37,29 +38,19 @@ function ChatPage() {
     if (!currentUser?._id) {
       return;
     }
-
-    const fetchUserContacts = async (id: string) => {
-      const res = await axios.get(`${FetchUserContactsRoute}/${id}`);
-      const data = res?.data;
-
-      const tempContacts = [];
-      for (const dt of data) {
-        const profileImage = await axios.get(dt.profileImageLink);
-        tempContacts.push({ ...dt, profileImage: profileImage.data });
-      }
+    const init = async () => {
+      const tempContacts = await fetchUserContacts(currentUser._id);
       setContacts(tempContacts);
     };
 
-    fetchUserContacts(currentUser._id);
+    init();
   }, [currentUser]);
-
-  useEffect(() => {}, []);
 
   return (
     <Container
       onClick={(e) => {
         const isEmojiElement = !!(e.target as HTMLElement).closest(".emoji") || false;
-        if(isEmojiElement){
+        if (isEmojiElement) {
           return;
         }
         setIsPickerActive(false);

@@ -3,7 +3,8 @@ import styled from "styled-components";
 import { UserType } from "../../lib/types/UserType";
 import { Buffer } from "buffer";
 import axios from "axios";
-import { getRoomDataOfPersonalRoute } from "../../lib/api/APIRoutes";
+
+import { fetchRoomData } from "../../lib/api/APIFunctions";
 
 function ContactComponent({
   contacts,
@@ -23,7 +24,6 @@ function ContactComponent({
     if (!currentUser) {
       return;
     }
-    console.log(currentUser);
   }, [currentUser]);
 
   useEffect(() => {
@@ -31,14 +31,11 @@ function ContactComponent({
       return;
     }
 
-    const fetchRoomId = async () => {
-      const users = [currentlyChattingUser._id, currentUser?._id].sort();
-      const uri = `${getRoomDataOfPersonalRoute}?user1=${users[0]}&user2=${users[1]}`;
-      const res = await axios.get(uri);
-
+    const init = async () => {
+      const res = await fetchRoomData(currentlyChattingUser._id, currentUser?._id);
       setCurrentlyChattingRoom(res.data);
     };
-    fetchRoomId();
+    init();
   }, [currentlyChattingUser, currentUser]);
 
   const onClickUserContact = (index: number, contact: Object) => {

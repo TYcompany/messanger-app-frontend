@@ -9,8 +9,7 @@ import { RoomType } from "../../lib/types/RoomType";
 import ChatMessagesContainer from "./ChatMessagesContainer";
 import ChatInput from "./ChatInput";
 
-import axios from "axios";
-import { GetAllmessagesRoute } from "../../lib/api/APIRoutes";
+import { fetchMessagesInRange } from "../../lib/api/APIFunctions";
 
 import Socket from "../../socket/socket";
 
@@ -38,28 +37,51 @@ function ChatScreen({
     if (!currentlyChattingRoom) {
       return;
     }
-    console.log("currentChattingRoom", currentlyChattingRoom);
 
-    fetchAllMessages(currentlyChattingRoom?._id);
-    socket.removeAllListeners("message");
-    socket.on("message", () => {
-      fetchAllMessages(currentlyChattingRoom?._id);
-      console.log(scrollRef.current?.scrollHeight);
+    const initSocket = async () => {
+      socket.removeAllListeners("message");
+      socket.on("message", async (message) => {
+        if (!message?.messageSequence) {
+          throw new Error("message has no sequence!");
+        }
+        const messageSequence: number = message.messageSequence;
 
+        const data = await fetchMessagesInRange(
+          currentlyChattingRoom?._id,
+          currentUser?._id || "",
+          messageSequence,
+          messageSequence
+        );
+        const recentMessage = data[0];
+        setMessages([...messages, recentMessage]);
+        scrollRef.current?.scrollIntoView({ behavior: "smooth" });
+      });
+    };
+    
+    const init = async () => {
+      const data = await fetchRecentMessages();
+
+      setMessages(data || []);
       scrollRef.current?.scrollIntoView({ behavior: "smooth" });
-    });
+      initSocket();
+    };
+
+    const fetchRecentMessages = async () => {
+      const { totalMessageNumber } = currentlyChattingRoom;
+      const left = Math.max(totalMessageNumber - 20, 0);
+      const right = totalMessageNumber + 1;
+
+      const res = await fetchMessagesInRange(
+        currentlyChattingRoom?._id,
+        currentUser?._id || "",
+        left,
+        right
+      );
+      return res;
+    };
+
+    init();
   }, [currentlyChattingRoom]);
-
-  const fetchAllMessages = async (roomId: string) => {
-    if (!roomId) {
-      return;
-    }
-    const res = await axios.get(
-      `${GetAllmessagesRoute}?roomId=${roomId}&senderId=${currentUser?._id}`
-    );
-
-    setMessages(res.data);
-  };
 
   const sendMessage = async () => {
     if (!currentlyChattingRoom) {

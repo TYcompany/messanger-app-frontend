@@ -7,6 +7,7 @@ export const FetchProfileImagesRoute = `${host}/profile/fetchProfileImages`;
 export const SetProfileImageRoute = `${host}/profile/setProfileImage`;
 
 export const SendMessageRoute = `${host}/message/sendMessage`;
-export const GetAllmessagesRoute = `${host}/message/getAllMessages`;
+export const GetAllMessagesRoute = `${host}/message/getAllMessages`;
+export const GetMessagesInRangeRoute = `${host}/message/getMessagesInRange`;
 
-export const getRoomDataOfPersonalRoute = `${host}/room/getRoomDataOfPersonal`;
+export const GetRoomDataOfPersonalRoute = `${host}/room/getRoomDataOfPersonal`;
