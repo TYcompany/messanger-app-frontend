@@ -53,7 +53,9 @@ function ChatScreen({
   const [text, setText] = useState("");
   const scrollRef = useRef<HTMLDivElement>(null);
 
-  useEffect(() => {}, [messages]);
+  useEffect(() => {
+    console.log(messages.map((msg) => msg.messageSequence));
+  }, [messages]);
   useEffect(() => {
     console.log(messageSequenceRef);
   }, [messageSequenceRef]);
@@ -70,10 +72,10 @@ function ChatScreen({
     scrollRef.current.removeEventListener("scroll", () => {});
 
     scrollRef.current.addEventListener("scroll", (e) => {
-      if (timer) {
+      if (timer !== null) {
         return;
       }
-      
+
       const TimeLimit = 500;
       timer = setTimeout(() => {
         timer = null;
@@ -84,17 +86,10 @@ function ChatScreen({
 
   const scrollEventFunction = async (e: Event) => {
     e.preventDefault();
-    
-    if (messageSequenceRef <= 0) {
-      return;
-    }
 
     const currentScroll = scrollRef.current?.scrollTop;
-    if (!currentScroll) {
-      return;
-    }
 
-    if (currentScroll < 10) {
+    if (currentScroll || 0 < 10) {
       const data = await fetchPastMessages();
       setPastMessages(data);
     }
@@ -105,13 +100,8 @@ function ChatScreen({
       return;
     }
 
-    if (messageSequenceRef <= 0) {
-      return;
-    }
-
     const left = messageSequenceRef;
     const right = messageSequenceRef + 20;
-    console.log(left,right);
 
     const data = await fetchMessagesInRange(
       currentlyChattingRoom?._id,
@@ -177,14 +167,18 @@ function ChatScreen({
   useEffect(() => {
     receivedMessage && setMessages((prev) => getUniqueMessages([...prev, receivedMessage]));
   }, [receivedMessage]);
+
   useEffect(() => {
     if (!pastMessages) {
       return;
     }
+    if (!currentlyChattingRoom?.totalMessageNumber) {
+      return;
+    }
 
     setMessages((prev) => getUniqueMessages([...pastMessages, ...prev]));
-
-    setMessageSequenceRef(Math.max(0, messageSequenceRef - MessageQueryLimitPerReqeust));
+    const currentRef = currentlyChattingRoom?.totalMessageNumber - messages.length;
+    setMessageSequenceRef(Math.max(0, currentRef));
   }, [pastMessages]);
 
   const sendMessage = async () => {
