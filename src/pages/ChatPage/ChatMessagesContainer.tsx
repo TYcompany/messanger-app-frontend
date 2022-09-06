@@ -2,20 +2,26 @@ import React from "react";
 import styled from "styled-components";
 
 import { MessageType } from "../../lib/types/MessageType";
+import { UserType } from "../../lib/types/UserType";
 
 function ChatMessagesContainer({
   messages,
   scrollRef,
+  currentUser,
 }: {
   messages: MessageType[];
   scrollRef: React.RefObject<HTMLDivElement>;
+  currentUser: UserType | undefined;
 }) {
   return (
     <Container>
       <div className="messages">
         {messages.map((message) => {
           return (
-            <div key={message._id} className={`message ${message.fromSelf ? "sent" : "recieved"}`}>
+            <div
+              key={message._id}
+              className={`message ${message.senderId === currentUser?._id ? "sent" : "recieved"}`}
+            >
               <div className="content">
                 <p>{message.text}</p>
               </div>
@@ -42,9 +48,9 @@ const Container = styled.div`
       overflow: scroll;
       display: flex;
       align-items: center;
-      padding-left:1rem;
-      padding-right:1rem;
-      
+      padding-left: 1rem;
+      padding-right: 1rem;
+
       .content {
         max-width: 40%;
         overflow: break-word;

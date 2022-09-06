@@ -1,6 +1,7 @@
 export interface MessageType {
   _id: string;
+  senderId:string;
   text: string;
-  timestamps: string;
-  fromSelf: boolean;
+  updatedAt: string;
+  messageSequence:number;
 }

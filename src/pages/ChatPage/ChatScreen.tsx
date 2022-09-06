@@ -30,6 +30,8 @@ function ChatScreen({
 }) {
   const [isLoading, setIsLoading] = useState(false);
   const [messages, setMessages] = useState<MessageType[]>([]);
+  const [receivedMessage, setRecievedMessage] = useState<MessageType | undefined>();
+
   const [text, setText] = useState("");
   const scrollRef = useRef<HTMLDivElement>(null);
 
@@ -40,28 +42,21 @@ function ChatScreen({
 
     const initSocket = async () => {
       socket.removeAllListeners("message");
-      socket.on("message", async (message) => {
-        if (!message?.messageSequence) {
-          throw new Error("message has no sequence!");
-        }
-        const messageSequence: number = message.messageSequence;
+      socket.on("message", async (receivedMessage: MessageType) => {
+        const { messageSequence, text, updatedAt, _id, senderId } = receivedMessage;
 
-        const data = await fetchMessagesInRange(
-          currentlyChattingRoom?._id,
-          currentUser?._id || "",
-          messageSequence,
-          messageSequence
-        );
-        const recentMessage = data[0];
-        setMessages([...messages, recentMessage]);
+        const nextMessage = {};
+        setRecievedMessage(receivedMessage);
+        console.log(receivedMessage);
         scrollRef.current?.scrollIntoView({ behavior: "smooth" });
       });
     };
-    
+
     const init = async () => {
       const data = await fetchRecentMessages();
 
       setMessages(data || []);
+      console.log(data);
       scrollRef.current?.scrollIntoView({ behavior: "smooth" });
       initSocket();
     };
@@ -82,6 +77,10 @@ function ChatScreen({
 
     init();
   }, [currentlyChattingRoom]);
+
+  useEffect(() => {
+    receivedMessage && setMessages((prev) => [...prev, receivedMessage]);
+  }, [receivedMessage]);
 
   const sendMessage = async () => {
     if (!currentlyChattingRoom) {
@@ -122,7 +121,11 @@ function ChatScreen({
               </div>
             </div>
           </div>
-          <ChatMessagesContainer messages={messages} scrollRef={scrollRef} />
+          <ChatMessagesContainer
+            messages={messages}
+            currentUser={currentUser}
+            scrollRef={scrollRef}
+          />
 
           <ChatInput
             currentUser={currentUser}
