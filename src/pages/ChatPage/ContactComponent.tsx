@@ -1,24 +1,24 @@
 import React, { useState, useEffect } from "react";
 import styled from "styled-components";
+import { useRecoilState, useRecoilValue } from "recoil";
+
 import { UserType } from "../../lib/types/UserType";
 import { Buffer } from "buffer";
-import axios from "axios";
-
 import { fetchRoomData } from "../../lib/api/APIFunctions";
+import {
+  currentlyChattingUserState,
+  currentlyChattingRoomState,
+  currentUserState,
+} from "../../store/store";
 
-function ContactComponent({
-  contacts,
-  currentUser,
-  currentlyChattingUser,
-  setCurrentlyChattingUser,
-  setCurrentlyChattingRoom,
-}: {
-  contacts: Array<UserType>;
-  currentUser: UserType | undefined;
-  currentlyChattingUser: UserType | undefined;
-  setCurrentlyChattingUser: Function;
-  setCurrentlyChattingRoom: Function;
-}) {
+function ContactComponent({ contacts }: { contacts: Array<UserType> }) {
+  const [currentlyChattingUser, setCurrentlyChattingUser] = useRecoilState(
+    currentlyChattingUserState
+  );
+  const currentUser = useRecoilValue(currentUserState);
+  const [currentlyChattingRoom, setCurrentlyChattingRoom] = useRecoilState(
+    currentlyChattingRoomState
+  );
   const [selectedUser, setSelectedUser] = useState(0);
   useEffect(() => {
     if (!currentUser) {
@@ -27,7 +27,7 @@ function ContactComponent({
   }, [currentUser]);
 
   useEffect(() => {
-    if (!currentlyChattingUser || !currentUser) {
+    if (!currentlyChattingUser?._id || !currentUser?._id) {
       return;
     }
 
@@ -38,7 +38,7 @@ function ContactComponent({
     init();
   }, [currentlyChattingUser, currentUser]);
 
-  const onClickUserContact = (index: number, contact: Object) => {
+  const onClickUserContact = (index: number, contact: UserType) => {
     setCurrentlyChattingUser(contact);
     setSelectedUser(index);
   };
@@ -48,14 +48,14 @@ function ContactComponent({
       <div className="brand">
         <div className="profile-image">
           <img
-            src={`data:image/svg+xml;base64,${Buffer.from(currentUser?.profileImage || "").toString(
+            src={`data:image/svg+xml;base64,${Buffer.from(currentUser.profileImage || "").toString(
               "base64"
             )}`}
             alt={"profile-currentUser"}
           />
         </div>
         <div className="username">
-          <h3>{currentUser?.userName}</h3>
+          <h3>{currentUser.userName}</h3>
         </div>
       </div>
       <div className="contacts">

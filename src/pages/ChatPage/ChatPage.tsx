@@ -6,20 +6,20 @@ import ContactComponent from "./ContactComponent";
 import ChatScreen from "./ChatScreen";
 
 import { UserType } from "../../lib/types/UserType";
-import { RoomType } from "../../lib/types/RoomType";
 
 import { fetchUserContacts } from "../../lib/api/APIFunctions";
 
 import Socket from "../../socket/socket";
+import { useRecoilState } from "recoil";
+import { currentUserState } from "../../store/store";
+
 const socket = new Socket().getSocketInstance();
 
 function ChatPage() {
   const navigate = useNavigate();
   const [contacts, setContacts] = useState<UserType[]>([]);
-  const [currentUser, setCurrentUser] = useState<UserType>();
-  const [currentlyChattingUser, setCurrentlyChattingUser] = useState<UserType>();
+  const [currentUser, setCurrentUser] = useRecoilState(currentUserState);
   const [isConnectedToSocket, setIsConnectedToSocket] = useState(false);
-  const [currentlyChattingRoom, setCurrentlyChattingRoom] = useState<RoomType>();
 
   const [isPickerActive, setIsPickerActive] = useState(false);
 
@@ -29,6 +29,7 @@ function ChatPage() {
       return;
     }
     const user = JSON.parse(localStorage.getItem("chat-app-user") || "");
+
     setCurrentUser(user);
 
     socket.emit("add-user", { userId: user._id, userName: user.userName });
@@ -57,20 +58,8 @@ function ChatPage() {
       }}
     >
       <div className="container">
-        <ContactComponent
-          contacts={contacts}
-          currentUser={currentUser}
-          currentlyChattingUser={currentlyChattingUser}
-          setCurrentlyChattingUser={setCurrentlyChattingUser}
-          setCurrentlyChattingRoom={setCurrentlyChattingRoom}
-        />
-        <ChatScreen
-          currentUser={currentUser}
-          currentlyChattingUser={currentlyChattingUser}
-          currentlyChattingRoom={currentlyChattingRoom}
-          setIsPickerActive={setIsPickerActive}
-          isPickerActive={isPickerActive}
-        />
+        <ContactComponent contacts={contacts} />
+        <ChatScreen setIsPickerActive={setIsPickerActive} isPickerActive={isPickerActive} />
       </div>
     </Container>
   );

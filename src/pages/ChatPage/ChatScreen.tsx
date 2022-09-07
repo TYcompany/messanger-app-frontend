@@ -1,6 +1,7 @@
 import React, { useEffect, useState, useRef } from "react";
 import { Buffer } from "buffer";
 import styled from "styled-components";
+import { useRecoilValue } from "recoil";
 
 import { UserType } from "../../lib/types/UserType";
 import { MessageType } from "../../lib/types/MessageType";
@@ -12,6 +13,12 @@ import ChatInput from "./ChatInput";
 import { fetchMessagesInRange } from "../../lib/api/APIFunctions";
 
 import Socket from "../../socket/socket";
+
+import {
+  currentlyChattingRoomState,
+  currentlyChattingUserState,
+  currentUserState,
+} from "../../store/store";
 
 const socket = new Socket().getSocketInstance();
 
@@ -29,20 +36,17 @@ let timer: NodeJS.Timeout | null = null;
 // };
 
 function ChatScreen({
-  currentUser,
-  currentlyChattingUser,
-  currentlyChattingRoom,
   isPickerActive,
   setIsPickerActive,
 }: {
-  currentUser: UserType | undefined;
-  currentlyChattingUser: UserType | undefined;
-  currentlyChattingRoom: RoomType | undefined;
   isPickerActive: Boolean;
   setIsPickerActive: Function;
 }) {
   const MessageQueryLimitPerReqeust = 20;
 
+  const currentUser = useRecoilValue(currentUserState);
+  const currentlyChattingUser = useRecoilValue(currentlyChattingUserState);
+  const currentlyChattingRoom = useRecoilValue(currentlyChattingRoomState);
   const [isLoading, setIsLoading] = useState(false);
   const [messages, setMessages] = useState<MessageType[]>([]);
   const [receivedMessage, setRecievedMessage] = useState<MessageType | undefined>();
@@ -76,7 +80,7 @@ function ChatScreen({
         return;
       }
 
-      const TimeLimit = 500;
+      const TimeLimit = 1000;
       timer = setTimeout(() => {
         timer = null;
         scrollEventFunction(e);
@@ -100,8 +104,8 @@ function ChatScreen({
       return;
     }
 
-    const left = messageSequenceRef;
-    const right = messageSequenceRef + 20;
+    const left = Math.max(messageSequenceRef - MessageQueryLimitPerReqeust, 0);
+    const right = messageSequenceRef;
 
     const data = await fetchMessagesInRange(
       currentlyChattingRoom?._id,
@@ -109,6 +113,8 @@ function ChatScreen({
       left,
       right
     );
+    console.log(left, right, data);
+
     return data;
   };
 
@@ -169,16 +175,13 @@ function ChatScreen({
   }, [receivedMessage]);
 
   useEffect(() => {
-    if (!pastMessages) {
-      return;
-    }
     if (!currentlyChattingRoom?.totalMessageNumber) {
       return;
     }
 
     setMessages((prev) => getUniqueMessages([...pastMessages, ...prev]));
     const currentRef = currentlyChattingRoom?.totalMessageNumber - messages.length;
-    setMessageSequenceRef(Math.max(0, currentRef));
+    setMessageSequenceRef((prev) => Math.max(0, currentRef));
   }, [pastMessages]);
 
   const sendMessage = async () => {
@@ -227,8 +230,6 @@ function ChatScreen({
           />
 
           <ChatInput
-            currentUser={currentUser}
-            currentlyChattingUser={currentlyChattingUser}
             setText={setText}
             text={text}
             sendMessage={sendMessage}

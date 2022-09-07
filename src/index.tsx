@@ -1,18 +1,20 @@
-import React from 'react';
-import ReactDOM from 'react-dom/client';
-import './index.css';
-import App from './App';
-import reportWebVitals from './reportWebVitals';
-import { indexedDB } from './lib/localDatabase/indexedDB';
+import React from "react";
+import ReactDOM from "react-dom/client";
+
+import "./index.css";
+import App from "./App";
+import reportWebVitals from "./reportWebVitals";
+import { indexedDB } from "./lib/localDatabase/indexedDB";
+import { RecoilRoot } from "recoil";
 
 indexedDB();
 
-const root = ReactDOM.createRoot(
-  document.getElementById('root') as HTMLElement
-);
+const root = ReactDOM.createRoot(document.getElementById("root") as HTMLElement);
 root.render(
   <React.StrictMode>
-    <App />
+    <RecoilRoot>
+      <App />
+    </RecoilRoot>
   </React.StrictMode>
 );
 

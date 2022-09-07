@@ -39,17 +39,27 @@ function App() {
     <BrowserRouter>
       <div className="App">
         <NavContainer>
-          <Link to="/" className='nav-link'>Home</Link>
-          <Link to="/register" className='nav-link'>Register</Link>
-          <Link to="/login" className='nav-link'>Login</Link>
-          <Link to="/setProfile" className='nav-link'>SetProfile</Link>
-          <Link to="/chat" className='nav-link'>Chat</Link>
+          <Link to="/" className="nav-link">
+            Home
+          </Link>
+          <Link to="/register" className="nav-link">
+            Register
+          </Link>
+          <Link to="/login" className="nav-link">
+            Login
+          </Link>
+          <Link to="/setProfile" className="nav-link">
+            SetProfile
+          </Link>
+          <Link to="/chat" className="nav-link">
+            Chat
+          </Link>
         </NavContainer>
         <Routes>
           {routes.map((route, i) => {
             return (
               <Route
-                key={i.toString() + route.path}
+                key={(i * 777).toString() + route.path}
                 path={route.path}
                 element={
                   <Suspense fallback={<CubeLoader />}>
@@ -68,10 +78,10 @@ function App() {
 const NavContainer = styled.div`
   display: flex;
   flex-direction: row;
-  justify-content:space-around ;
-  .nav-link{
-    font-size:2rem;
-    margin-right:1rem;
+  justify-content: space-around;
+  .nav-link {
+    font-size: 2rem;
+    margin-right: 1rem;
   }
 `;
 

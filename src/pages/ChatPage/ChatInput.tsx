@@ -7,16 +7,13 @@ import Picker from "emoji-picker-react";
 import { UserType } from "../../lib/types/UserType";
 
 function ChatInput({
-  currentUser,
-  currentlyChattingUser,
   sendMessage,
   setText,
   text,
   isPickerActive,
   setIsPickerActive
 }: {
-  currentUser: UserType | undefined;
-  currentlyChattingUser: UserType | undefined;
+
   sendMessage:Function,
   setText:Function,
   text:string,
