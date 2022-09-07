@@ -8,14 +8,16 @@ function ChatMessagesContainer({
   messages,
   scrollRef,
   currentUser,
+  onScrollChatMessages,
 }: {
   messages: MessageType[];
   scrollRef: React.RefObject<HTMLDivElement>;
   currentUser: UserType | undefined;
+  onScrollChatMessages: Function;
 }) {
   return (
     <Container>
-      <div className="messages" ref={scrollRef}>
+      <div className="messages" ref={scrollRef} onScroll={() => onScrollChatMessages()}>
         {messages.map((message) => {
           return (
             <div

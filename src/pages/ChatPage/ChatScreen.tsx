@@ -3,9 +3,7 @@ import { Buffer } from "buffer";
 import styled from "styled-components";
 import { useRecoilValue } from "recoil";
 
-import { UserType } from "../../lib/types/UserType";
 import { MessageType } from "../../lib/types/MessageType";
-import { RoomType } from "../../lib/types/RoomType";
 
 import ChatMessagesContainer from "./ChatMessagesContainer";
 import ChatInput from "./ChatInput";
@@ -22,18 +20,7 @@ import {
 
 const socket = new Socket().getSocketInstance();
 
-let timer: NodeJS.Timeout | null = null;
-
-// const throttle = (fn: Function) => {
-//   const TimeLimit = 500;
-
-//   if (!timer) {
-//     timer = setTimeout(() => {
-//       timer = null;
-//       fn();
-//     }, TimeLimit);
-//   }
-// };
+let isLoadingPastMessages = false;
 
 function ChatScreen({
   isPickerActive,
@@ -59,44 +46,23 @@ function ChatScreen({
 
   useEffect(() => {
     console.log(messages.map((msg) => msg.messageSequence));
+    setMessageSequenceRef(messages?.[0]?.messageSequence);
   }, [messages]);
-  useEffect(() => {
-    console.log(messageSequenceRef);
-  }, [messageSequenceRef]);
 
-  useEffect(() => {
-    if (!scrollRef?.current) {
+  const onScrollChatMessages = async () => {
+    if (isLoadingPastMessages) {
       return;
     }
-    if (!currentlyChattingRoom?.totalMessageNumber) {
+
+    const currentScroll = scrollRef.current?.scrollTop || 0;
+
+    if (currentScroll > 0) {
       return;
     }
-    setMessageSequenceRef(currentlyChattingRoom?.totalMessageNumber - MessageQueryLimitPerReqeust);
 
-    scrollRef.current.removeEventListener("scroll", () => {});
-
-    scrollRef.current.addEventListener("scroll", (e) => {
-      if (timer !== null) {
-        return;
-      }
-
-      const TimeLimit = 1000;
-      timer = setTimeout(() => {
-        timer = null;
-        scrollEventFunction(e);
-      }, TimeLimit);
-    });
-  }, [scrollRef.current]);
-
-  const scrollEventFunction = async (e: Event) => {
-    e.preventDefault();
-
-    const currentScroll = scrollRef.current?.scrollTop;
-
-    if (currentScroll || 0 < 10) {
-      const data = await fetchPastMessages();
-      setPastMessages(data);
-    }
+    isLoadingPastMessages = true;
+    const data = await fetchPastMessages();
+    setPastMessages(data);
   };
 
   const fetchPastMessages = async () => {
@@ -105,7 +71,7 @@ function ChatScreen({
     }
 
     const left = Math.max(messageSequenceRef - MessageQueryLimitPerReqeust, 0);
-    const right = messageSequenceRef;
+    const right = Math.max(messageSequenceRef, 20);
 
     const data = await fetchMessagesInRange(
       currentlyChattingRoom?._id,
@@ -113,7 +79,6 @@ function ChatScreen({
       left,
       right
     );
-    console.log(left, right, data);
 
     return data;
   };
@@ -156,6 +121,7 @@ function ChatScreen({
 
     init();
   }, [currentlyChattingRoom]);
+
   const getUniqueMessages = (prevMessages: MessageType[]) => {
     const exists = new Set();
     const results = [];
@@ -179,9 +145,12 @@ function ChatScreen({
       return;
     }
 
-    setMessages((prev) => getUniqueMessages([...pastMessages, ...prev]));
-    const currentRef = currentlyChattingRoom?.totalMessageNumber - messages.length;
-    setMessageSequenceRef((prev) => Math.max(0, currentRef));
+    setMessages((prev) =>
+      getUniqueMessages(
+        [...pastMessages, ...prev].sort((a, b) => a.messageSequence - b.messageSequence)
+      )
+    );
+    isLoadingPastMessages = false;
   }, [pastMessages]);
 
   const sendMessage = async () => {
@@ -227,6 +196,7 @@ function ChatScreen({
             messages={messages}
             currentUser={currentUser}
             scrollRef={scrollRef}
+            onScrollChatMessages={onScrollChatMessages}
           />
 
           <ChatInput
