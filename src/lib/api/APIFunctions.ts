@@ -8,6 +8,7 @@ import {
   SetProfileImageRoute,
   GetRoomDataOfPersonalRoute,
 } from "./APIRoutes";
+import { sleep } from "../etc/etcFunctions";
 
 export const loginRequest = async (userName: string, password: string) => {
   return await axios.post(LoginRoute, {
@@ -41,12 +42,17 @@ export const fetchRoomData = async (user1: string, user2: string) => {
   return await axios.get(uri);
 };
 
+
 export const fetchMessagesInRange = async (
   roomId: string,
   senderId: string,
   left: number,
   right: number
 ) => {
+  
+  //
+  await sleep(1000);
+
   const res = await axios.get(
     `${GetMessagesInRangeRoute}?roomId=${roomId}&senderId=${senderId}
       &left=${left}&right=${right}`

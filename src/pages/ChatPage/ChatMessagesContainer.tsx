@@ -9,15 +9,18 @@ function ChatMessagesContainer({
   scrollRef,
   currentUser,
   onScrollChatMessages,
+  isLoadingPastMessages,
 }: {
   messages: MessageType[];
   scrollRef: React.RefObject<HTMLDivElement>;
   currentUser: UserType | undefined;
   onScrollChatMessages: Function;
+  isLoadingPastMessages: boolean;
 }) {
   return (
     <Container>
       <div className="messages" ref={scrollRef} onScroll={() => onScrollChatMessages()}>
+        {isLoadingPastMessages && <div> loading past messages</div>}
         {messages.map((message) => {
           return (
             <div

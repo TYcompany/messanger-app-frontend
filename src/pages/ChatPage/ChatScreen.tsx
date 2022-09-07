@@ -20,8 +20,6 @@ import {
 
 const socket = new Socket().getSocketInstance();
 
-let isLoadingPastMessages = false;
-
 function ChatScreen({
   isPickerActive,
   setIsPickerActive,
@@ -40,6 +38,8 @@ function ChatScreen({
   const [pastMessages, setPastMessages] = useState<MessageType[]>([]);
 
   const [messageSequenceRef, setMessageSequenceRef] = useState(0);
+
+  const [isLoadingPastMessages, setIsLoadingPastMessages] = useState(false);
 
   const [text, setText] = useState("");
   const scrollRef = useRef<HTMLDivElement>(null);
@@ -60,7 +60,7 @@ function ChatScreen({
       return;
     }
 
-    isLoadingPastMessages = true;
+    setIsLoadingPastMessages(true);
     const data = await fetchPastMessages();
     setPastMessages(data);
   };
@@ -150,7 +150,7 @@ function ChatScreen({
         [...pastMessages, ...prev].sort((a, b) => a.messageSequence - b.messageSequence)
       )
     );
-    isLoadingPastMessages = false;
+    setIsLoadingPastMessages(false);
   }, [pastMessages]);
 
   const sendMessage = async () => {
@@ -197,6 +197,7 @@ function ChatScreen({
             currentUser={currentUser}
             scrollRef={scrollRef}
             onScrollChatMessages={onScrollChatMessages}
+            isLoadingPastMessages={isLoadingPastMessages}
           />
 
           <ChatInput
