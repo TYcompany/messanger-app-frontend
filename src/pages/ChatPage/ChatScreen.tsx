@@ -45,6 +45,7 @@ function ChatScreen({
   const scrollRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
+    
     console.log(messages.map((msg) => msg.messageSequence));
     setMessageSequenceRef(messages?.[0]?.messageSequence);
   }, [messages]);

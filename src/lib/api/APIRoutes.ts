@@ -11,3 +11,4 @@ export const GetAllMessagesRoute = `${host}/message/getAllMessages`;
 export const GetMessagesInRangeRoute = `${host}/message/getMessagesInRange`;
 
 export const GetRoomDataOfPersonalRoute = `${host}/room/getRoomDataOfPersonal`;
+export const GetRoomDatasOfUser = `${host}/room/getRoomDatasOfUser`;

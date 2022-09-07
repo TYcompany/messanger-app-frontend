@@ -7,17 +7,20 @@ import ChatScreen from "./ChatScreen";
 
 import { UserType } from "../../lib/types/UserType";
 
-import { fetchUserContacts } from "../../lib/api/APIFunctions";
+import { fetchUserContacts, fetchRoomDatasOfUser } from "../../lib/api/APIFunctions";
 
 import Socket from "../../socket/socket";
 import { useRecoilState } from "recoil";
 import { currentUserState } from "../../store/store";
+import { RoomType } from "../../lib/types/RoomType";
 
 const socket = new Socket().getSocketInstance();
 
 function ChatPage() {
   const navigate = useNavigate();
   const [contacts, setContacts] = useState<UserType[]>([]);
+  const [rooms, setRooms] = useState<RoomType[]>([]);
+
   const [currentUser, setCurrentUser] = useRecoilState(currentUserState);
   const [isConnectedToSocket, setIsConnectedToSocket] = useState(false);
 
@@ -50,6 +53,10 @@ function ChatPage() {
     const init = async () => {
       const tempContacts = await fetchUserContacts(currentUser._id);
       setContacts(tempContacts);
+      const tempRooms = await fetchRoomDatasOfUser(currentUser._id);
+      setRooms(tempRooms);
+      console.log(tempRooms);
+      
     };
 
     init();
@@ -72,14 +79,17 @@ function ChatPage() {
               Contacts
             </button>
             <button name="chatting-tab-button" onClick={(e) => onClickTab(e)}>
-              Chats
+              Rooms
             </button>
           </div>
 
           <ContactComponent contacts={contacts} selectedTab={selectedTab} />
 
-          <div className={selectedTab !== "rooms-component" ? "display-none" : ""}>
+          <div className={selectedTab !== "chatting-tab-button" ? "display-none" : ""}>
             roomsComponet
+            {rooms.map((room) => (
+              <div key={room._id} >{room._id}</div>
+            ))}
           </div>
         </div>
         <ChatScreen setIsPickerActive={setIsPickerActive} isPickerActive={isPickerActive} />

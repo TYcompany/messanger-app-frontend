@@ -7,8 +7,11 @@ import {
   FetchProfileImagesRoute,
   SetProfileImageRoute,
   GetRoomDataOfPersonalRoute,
+  GetRoomDatasOfUser,
 } from "./APIRoutes";
 import { sleep } from "../etc/etcFunctions";
+
+//if only querying data(if fails just they can return empty data), just return data ,else return response itself
 
 export const loginRequest = async (userName: string, password: string) => {
   return await axios.post(LoginRoute, {
@@ -42,6 +45,12 @@ export const fetchRoomData = async (user1: string, user2: string) => {
   return await axios.get(uri);
 };
 
+export const fetchRoomDatasOfUser = async (userId: string) => {
+  const uri = `${GetRoomDatasOfUser}?userId=${userId}`;
+  const res = await axios.get(uri);
+
+  return res.data;
+};
 
 export const fetchMessagesInRange = async (
   roomId: string,
@@ -49,7 +58,6 @@ export const fetchMessagesInRange = async (
   left: number,
   right: number
 ) => {
-  
   //
   await sleep(1000);
 
