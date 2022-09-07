@@ -23,6 +23,14 @@ function ChatPage() {
 
   const [isPickerActive, setIsPickerActive] = useState(false);
 
+  const [selectedTab, setSelectedTab] = useState("contacts-tab-button");
+
+  const onClickTab = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
+    e.preventDefault();
+
+    setSelectedTab(e.currentTarget.name);
+  };
+
   useEffect(() => {
     if (!localStorage.getItem("chat-app-user")) {
       navigate("/login");
@@ -58,7 +66,22 @@ function ChatPage() {
       }}
     >
       <div className="container">
-        <ContactComponent contacts={contacts} />
+        <div>
+          <div>
+            <button name="contacts-tab-button" onClick={(e) => onClickTab(e)}>
+              Contacts
+            </button>
+            <button name="chatting-tab-button" onClick={(e) => onClickTab(e)}>
+              Chats
+            </button>
+          </div>
+
+          <ContactComponent contacts={contacts} selectedTab={selectedTab} />
+
+          <div className={selectedTab !== "rooms-component" ? "display-none" : ""}>
+            roomsComponet
+          </div>
+        </div>
         <ChatScreen setIsPickerActive={setIsPickerActive} isPickerActive={isPickerActive} />
       </div>
     </Container>
@@ -84,6 +107,14 @@ const Container = styled.div`
 
     @media screen and (min-width: 720px) and (max-width: 1080px) {
       grid-template-columns: 35% 65%;
+    }
+    .contactComponent {
+    }
+    .rooms-component {
+      color: white;
+    }
+    .display-none {
+      display: none;
     }
   }
 `;
