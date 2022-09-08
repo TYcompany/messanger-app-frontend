@@ -22,7 +22,6 @@ function ContactComponent({ selectedTab }: { selectedTab: string }) {
   const [currentlyChattingRoom, setCurrentlyChattingRoom] = useRecoilState(
     currentlyChattingRoomState
   );
-  const [selectedUser, setSelectedUser] = useState("");
 
   useEffect(() => {
     if (!currentUser) {
@@ -42,9 +41,8 @@ function ContactComponent({ selectedTab }: { selectedTab: string }) {
     init();
   }, [currentlyChattingUser, currentUser]);
 
-  const onClickUserContact = (selectId: string, contact: UserType) => {
+  const onClickUserContact = (contact: UserType) => {
     setCurrentlyChattingUser(contact);
-    setSelectedUser(selectId);
   };
 
   return (
@@ -71,8 +69,8 @@ function ContactComponent({ selectedTab }: { selectedTab: string }) {
           {Object.values(contactsMap).map((contact) => (
             <div
               key={"contact" + contact._id}
-              className={`contact ${selectedUser === contact._id && "selected"}`}
-              onClick={() => onClickUserContact(contact._id, contact)}
+              className={`contact ${currentlyChattingUser._id === contact._id && "selected"}`}
+              onClick={() => onClickUserContact(contact)}
             >
               <div className="profile-image">
                 <img

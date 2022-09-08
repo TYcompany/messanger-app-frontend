@@ -13,19 +13,17 @@ import { fetchUserContacts, fetchRoomDatasOfUser } from "../../lib/api/APIFuncti
 import Socket from "../../socket/socket";
 import { useRecoilState } from "recoil";
 import { contactsMapState, currentUserState } from "../../store/store";
-import { RoomType, RoomWithUserNameType } from "../../lib/types/RoomType";
+import { RoomType, RoomWithUserDataType } from "../../lib/types/RoomType";
 
 const socket = new Socket().getSocketInstance();
 
 const getRoomsWithUserName = (userId: string, contactsMap: UserMapType, rooms: RoomType[]) => {
-  const results: RoomWithUserNameType[] = [];
+  const results: RoomWithUserDataType[] = [];
 
   for (const room of rooms) {
-    const userNames = room.users
-      .filter((user) => user !== userId)
-      .map((user) => contactsMap[user]?.userName);
+    const userData = room.users.filter((user) => user !== userId).map((user) => contactsMap[user]);
 
-    results.push({ ...room, userNames });
+    results.push({ ...room, userData });
   }
 
   return results;
@@ -35,7 +33,7 @@ function ChatPage() {
   const navigate = useNavigate();
   const [contactsMap, setContactsMap] = useRecoilState(contactsMapState);
   const [rooms, setRooms] = useState<RoomType[]>([]);
-  const [roomsWithUserName, setRoomsWithUserName] = useState<RoomWithUserNameType[]>([]);
+  const [roomsWithUserName, setRoomsWithUserName] = useState<RoomWithUserDataType[]>([]);
 
   const [currentUser, setCurrentUser] = useRecoilState(currentUserState);
   const [isConnectedToSocket, setIsConnectedToSocket] = useState(false);

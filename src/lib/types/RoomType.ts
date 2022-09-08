@@ -1,3 +1,5 @@
+import { UserType } from "./UserType";
+
 export interface RoomType {
   title?: string;
   createdAt: string;
@@ -8,6 +10,6 @@ export interface RoomType {
   _id: string;
 }
 
-export interface RoomWithUserNameType extends RoomType {
-  userNames: string[];
+export interface RoomWithUserDataType extends RoomType {
+  userData: UserType[];
 }
