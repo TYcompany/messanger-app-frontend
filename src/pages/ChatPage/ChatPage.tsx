@@ -14,6 +14,7 @@ import Socket from "../../socket/socket";
 import { useRecoilState } from "recoil";
 import { contactsMapState, currentUserState } from "../../store/store";
 import { RoomType, RoomWithUserDataType } from "../../lib/types/RoomType";
+import CreateRoomComponent from "./CreateRoomComponent";
 
 const socket = new Socket().getSocketInstance();
 
@@ -47,7 +48,9 @@ function ChatPage() {
 
     setSelectedTab(e.currentTarget.name);
   };
-
+  const onClickCreateRoom = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
+    e.preventDefault();
+  };
   useEffect(() => {
     if (!contactsMap || !rooms || !currentUser?._id) {
       return;
@@ -100,7 +103,7 @@ function ChatPage() {
       }}
     >
       <div className="container">
-        <div>
+        <div className="left-navs">
           <div>
             <button name="contacts-tab-button" onClick={(e) => onClickTab(e)}>
               Contacts
@@ -108,11 +111,16 @@ function ChatPage() {
             <button name="chatting-tab-button" onClick={(e) => onClickTab(e)}>
               Rooms
             </button>
+            <button name="create-room-tab-button" onClick={(e) => onClickTab(e)}>
+              Create New Room
+            </button>
           </div>
 
           <ContactComponent selectedTab={selectedTab} />
           <RoomComponent selectedTab={selectedTab} roomsWithUserName={roomsWithUserName} />
+          <CreateRoomComponent selectedTab={selectedTab} />
         </div>
+
         <ChatScreen setIsPickerActive={setIsPickerActive} isPickerActive={isPickerActive} />
       </div>
     </Container>
@@ -143,6 +151,11 @@ const Container = styled.div`
     .display-none {
       display: none;
     }
+  }
+  .create-room-button {
+    position: fixed;
+    bottom: 5rem;
+    right: 5rem;
   }
 `;
 

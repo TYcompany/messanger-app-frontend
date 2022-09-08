@@ -97,7 +97,7 @@ const Container = styled.div`
     grid-template-rows: 10% 75% 15%;
     overflow: scroll;
     background-color: #080420;
-    height: 90vh;
+    height: 80vh;
 
     .brand {
       display: flex;
