@@ -3,6 +3,7 @@ import styled from "styled-components";
 import { useNavigate } from "react-router-dom";
 
 import ContactComponent from "./ContactComponent";
+import RoomComponent from "./RoomComponent";
 import ChatScreen from "./ChatScreen";
 
 import { UserMapType } from "../../lib/types/UserType";
@@ -112,18 +113,7 @@ function ChatPage() {
           </div>
 
           <ContactComponent selectedTab={selectedTab} />
-
-          <div
-            className={`room-container ${
-              selectedTab !== "chatting-tab-button" ? "display-none" : ""
-            }`}
-          >
-            {roomsWithUserName.map((room) => (
-              <div className="room" key={room._id}>
-                {room?.title || room.userNames?.[0]}
-              </div>
-            ))}
-          </div>
+          <RoomComponent selectedTab={selectedTab} roomsWithUserName={roomsWithUserName} />
         </div>
         <ChatScreen setIsPickerActive={setIsPickerActive} isPickerActive={isPickerActive} />
       </div>
@@ -151,14 +141,7 @@ const Container = styled.div`
     @media screen and (min-width: 720px) and (max-width: 1080px) {
       grid-template-columns: 35% 65%;
     }
-    .contactComponent {
-    }
-    .room-container {
-      color: white;
-      .room {
-        color: white;
-      }
-    }
+
     .display-none {
       display: none;
     }

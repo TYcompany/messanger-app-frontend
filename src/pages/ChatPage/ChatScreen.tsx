@@ -45,9 +45,7 @@ function ChatScreen({
   const scrollRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    
-    console.log(messages.map((msg) => msg.messageSequence));
-    setMessageSequenceRef(messages?.[0]?.messageSequence);
+    setMessageSequenceRef(messages?.[0]?.messageSequence || 0);
   }, [messages]);
 
   const onScrollChatMessages = async () => {
@@ -73,7 +71,7 @@ function ChatScreen({
 
     const left = Math.max(messageSequenceRef - MessageQueryLimitPerReqeust, 0);
     const right = Math.max(messageSequenceRef, 20);
-
+    
     const data = await fetchMessagesInRange(
       currentlyChattingRoom?._id,
       currentUser?._id || "",
