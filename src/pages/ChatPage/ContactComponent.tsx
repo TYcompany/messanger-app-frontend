@@ -9,23 +9,20 @@ import {
   currentlyChattingUserState,
   currentlyChattingRoomState,
   currentUserState,
+  contactsMapState,
 } from "../../store/store";
 
-function ContactComponent({
-  contacts,
-  selectedTab,
-}: {
-  contacts: Array<UserType>;
-  selectedTab: string;
-}) {
+function ContactComponent({ selectedTab }: { selectedTab: string }) {
   const [currentlyChattingUser, setCurrentlyChattingUser] = useRecoilState(
     currentlyChattingUserState
   );
   const currentUser = useRecoilValue(currentUserState);
+  const contactsMap = useRecoilValue(contactsMapState);
+
   const [currentlyChattingRoom, setCurrentlyChattingRoom] = useRecoilState(
     currentlyChattingRoomState
   );
-  const [selectedUser, setSelectedUser] = useState(0);
+  const [selectedUser, setSelectedUser] = useState("");
 
   useEffect(() => {
     if (!currentUser) {
@@ -45,9 +42,9 @@ function ContactComponent({
     init();
   }, [currentlyChattingUser, currentUser]);
 
-  const onClickUserContact = (index: number, contact: UserType) => {
+  const onClickUserContact = (selectId: string, contact: UserType) => {
     setCurrentlyChattingUser(contact);
-    setSelectedUser(index);
+    setSelectedUser(selectId);
   };
 
   return (
@@ -71,18 +68,18 @@ function ContactComponent({
           </div>
         </div>
         <div className="contacts">
-          {contacts.map((contact, index) => (
+          {Object.values(contactsMap).map((contact) => (
             <div
-              key={"contact" + index}
-              className={`contact ${selectedUser === index && "selected"}`}
-              onClick={() => onClickUserContact(index, contact)}
+              key={"contact" + contact._id}
+              className={`contact ${selectedUser === contact._id && "selected"}`}
+              onClick={() => onClickUserContact(contact._id, contact)}
             >
               <div className="profile-image">
                 <img
                   src={`data:image/svg+xml;base64,${Buffer.from(contact.profileImage).toString(
                     "base64"
                   )}`}
-                  alt={"profile" + index}
+                  alt={"profile" + contact._id}
                 />
               </div>
               <div className="username">

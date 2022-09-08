@@ -1,14 +1,22 @@
 import { atom } from "recoil";
 import { MessageType } from "../lib/types/MessageType";
 import { RoomType } from "../lib/types/RoomType";
-import { UserType } from "../lib/types/UserType";
+import { UserType, UserMapType } from "../lib/types/UserType";
 
 // room state, user, messages, currentUser, currentlyChattingRoom
 
-//contacts
-// export const contactsState=atom({
-//   key:'contacts'
-// })
+export const contactsMapState = atom<UserMapType>({
+  key: "contactsMap",
+  default: {
+    "": {
+      userName: "",
+      email: "",
+      profileImage: "",
+      _id: "",
+      profileImageLink: "",
+    },
+  },
+});
 
 export const currentUserState = atom<UserType>({
   key: "currentUser",

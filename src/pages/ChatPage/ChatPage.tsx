@@ -5,21 +5,36 @@ import { useNavigate } from "react-router-dom";
 import ContactComponent from "./ContactComponent";
 import ChatScreen from "./ChatScreen";
 
-import { UserType } from "../../lib/types/UserType";
+import { UserMapType } from "../../lib/types/UserType";
 
 import { fetchUserContacts, fetchRoomDatasOfUser } from "../../lib/api/APIFunctions";
 
 import Socket from "../../socket/socket";
 import { useRecoilState } from "recoil";
-import { currentUserState } from "../../store/store";
-import { RoomType } from "../../lib/types/RoomType";
+import { contactsMapState, currentUserState } from "../../store/store";
+import { RoomType, RoomWithUserNameType } from "../../lib/types/RoomType";
 
 const socket = new Socket().getSocketInstance();
 
+const getRoomsWithUserName = (userId: string, contactsMap: UserMapType, rooms: RoomType[]) => {
+  const results: RoomWithUserNameType[] = [];
+
+  for (const room of rooms) {
+    const userNames = room.users
+      .filter((user) => user !== userId)
+      .map((user) => contactsMap[user]?.userName);
+
+    results.push({ ...room, userNames });
+  }
+
+  return results;
+};
+
 function ChatPage() {
   const navigate = useNavigate();
-  const [contacts, setContacts] = useState<UserType[]>([]);
+  const [contactsMap, setContactsMap] = useRecoilState(contactsMapState);
   const [rooms, setRooms] = useState<RoomType[]>([]);
+  const [roomsWithUserName, setRoomsWithUserName] = useState<RoomWithUserNameType[]>([]);
 
   const [currentUser, setCurrentUser] = useRecoilState(currentUserState);
   const [isConnectedToSocket, setIsConnectedToSocket] = useState(false);
@@ -33,6 +48,15 @@ function ChatPage() {
 
     setSelectedTab(e.currentTarget.name);
   };
+
+  useEffect(() => {
+    if (!contactsMap || !rooms || !currentUser?._id) {
+      return;
+    }
+
+    const nextRoomsWithUsername = getRoomsWithUserName(currentUser._id, contactsMap, rooms);
+    setRoomsWithUserName(nextRoomsWithUsername);
+  }, [contactsMap, rooms]);
 
   useEffect(() => {
     if (!localStorage.getItem("chat-app-user")) {
@@ -52,11 +76,15 @@ function ChatPage() {
     }
     const init = async () => {
       const tempContacts = await fetchUserContacts(currentUser._id);
-      setContacts(tempContacts);
+      const nextContacts: UserMapType = {};
+
+      for (const tempContact of tempContacts) {
+        nextContacts[tempContact._id] = tempContact;
+      }
+
+      setContactsMap(nextContacts);
       const tempRooms = await fetchRoomDatasOfUser(currentUser._id);
       setRooms(tempRooms);
-      console.log(tempRooms);
-      
     };
 
     init();
@@ -83,12 +111,17 @@ function ChatPage() {
             </button>
           </div>
 
-          <ContactComponent contacts={contacts} selectedTab={selectedTab} />
+          <ContactComponent selectedTab={selectedTab} />
 
-          <div className={selectedTab !== "chatting-tab-button" ? "display-none" : ""}>
-            roomsComponet
-            {rooms.map((room) => (
-              <div key={room._id} >{room._id}</div>
+          <div
+            className={`room-container ${
+              selectedTab !== "chatting-tab-button" ? "display-none" : ""
+            }`}
+          >
+            {roomsWithUserName.map((room) => (
+              <div className="room" key={room._id}>
+                {room?.title || room.userNames?.[0]}
+              </div>
             ))}
           </div>
         </div>
@@ -120,8 +153,11 @@ const Container = styled.div`
     }
     .contactComponent {
     }
-    .rooms-component {
+    .room-container {
       color: white;
+      .room {
+        color: white;
+      }
     }
     .display-none {
       display: none;
