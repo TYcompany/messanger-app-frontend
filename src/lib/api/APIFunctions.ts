@@ -8,8 +8,12 @@ import {
   SetProfileImageRoute,
   GetRoomDataOfPersonalRoute,
   GetRoomDatasOfUser,
+  GetUserDataRoute,
+  AddFriendRoute,
+  DeleteFriendRoute,
 } from "./APIRoutes";
 import { sleep } from "../etc/etcFunctions";
+import { UserType } from "../types/UserType";
 
 //if only querying data(if fails just they can return empty data), just return data ,else return response itself
 
@@ -39,6 +43,47 @@ export const registerRequest = async ({
   });
 };
 
+export const addFriend = async (currentUserId: string, friendUserId: string) => {
+  const res = await axios.post(`${AddFriendRoute}`, {
+    currentUserId,
+    friendUserId,
+  });
+  return res;
+};
+
+export const deleteFriend = async (currentUserId: string, friendUserId: string) => {
+  const res = await axios.post(`${DeleteFriendRoute}`, {
+    currentUserId,
+    friendUserId,
+  });
+  return res;
+};
+
+const getUserDataWithProfileImage = async (dt: UserType) => {
+  const profileImage = await axios.get(dt.profileImageLink);
+  return { ...dt, profileImage: profileImage.data };
+};
+
+export const fetchUserContacts = async (id: string) => {
+  const res = await axios.get(`${FetchUserContactsRoute}/${id}`);
+  const data = res?.data;
+
+  const promises = [];
+  for (const dt of data) {
+    const promise = getUserDataWithProfileImage(dt);
+    promises.push(promise);
+  }
+  const results = await Promise.all(promises);
+  return results;
+};
+
+export const getUserData = async (email: string) => {
+  const res = await axios.get(`${GetUserDataRoute}?email=${email}`);
+  const data = res?.data;
+  const result = await getUserDataWithProfileImage(data);
+  return result;
+};
+
 export const fetchRoomData = async (user1: string, user2: string) => {
   const users = [user1, user2].sort();
   const uri = `${GetRoomDataOfPersonalRoute}?user1=${users[0]}&user2=${users[1]}`;
@@ -58,26 +103,13 @@ export const fetchMessagesInRange = async (
   left: number,
   right: number
 ) => {
-  //
-  await sleep(1000);
+  await sleep(500);
 
   const res = await axios.get(
     `${GetMessagesInRangeRoute}?roomId=${roomId}&senderId=${senderId}
       &left=${left}&right=${right}`
   );
   return res.data;
-};
-
-export const fetchUserContacts = async (id: string) => {
-  const res = await axios.get(`${FetchUserContactsRoute}/${id}`);
-  const data = res?.data;
-
-  const tempContacts = [];
-  for (const dt of data) {
-    const profileImage = await axios.get(dt.profileImageLink);
-    tempContacts.push({ ...dt, profileImage: profileImage.data });
-  }
-  return tempContacts;
 };
 
 export const fetchProfileImages = async (numberOfImages: number) => {

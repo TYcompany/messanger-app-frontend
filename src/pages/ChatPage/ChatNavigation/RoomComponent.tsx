@@ -8,6 +8,7 @@ import {
   roomsWithuserDataState,
 } from "../../../store/store";
 import BasicModal from "../../../components/modals/BasicModal";
+import CreateRoomModalComponent from "./modals/CreateRoomModalComponent";
 
 function RoomComponent({ selectedTab }: { selectedTab: string }) {
   const [currentlyChattingRoom, setCurrentlyChattingRoom] = useRecoilState(
@@ -18,6 +19,7 @@ function RoomComponent({ selectedTab }: { selectedTab: string }) {
   );
   const [activeModalName, setActiveModalName] = useRecoilState(activeModalNameState);
   const roomsWithUserData = useRecoilValue(roomsWithuserDataState);
+  
   const onClickRoom = (roomData: RoomWithUserDataType) => {
     setCurrentlyChattingRoom(roomData);
     setCurrentlyChattingUser(roomData.userData[0]);
@@ -27,8 +29,6 @@ function RoomComponent({ selectedTab }: { selectedTab: string }) {
     e.preventDefault();
     setActiveModalName("createRoom");
   };
-
-  const ExampleFC = () => <h3>Your chosen fruit is:</h3>;
 
   return (
     <Container>
@@ -51,7 +51,7 @@ function RoomComponent({ selectedTab }: { selectedTab: string }) {
           Create New Room
         </button>
       </div>
-      <BasicModal modalName="createRoom" ModalComponent={ExampleFC}></BasicModal>
+      <BasicModal modalName="createRoom" ModalComponent={CreateRoomModalComponent}></BasicModal>
     </Container>
   );
 }

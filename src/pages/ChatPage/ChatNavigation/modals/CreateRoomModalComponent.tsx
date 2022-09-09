@@ -2,19 +2,15 @@ import React from "react";
 import { useRecoilValue } from "recoil";
 import styled from "styled-components";
 import { Buffer } from "buffer";
-import { contactsMapState } from "../../../store/store";
+import { contactsMapState } from "../../../../store/store";
 
-function CreateRoomComponent({ selectedTab }: { selectedTab: string }) {
+function CreateRoomModalComponent() {
   const contactsMap = useRecoilValue(contactsMapState);
 
   return (
     <Container>
-      <div
-        className={`create-room-container ${
-          selectedTab !== "create-room-tab-button" ? "display-none" : ""
-        }`}
-      >
-        <input type='text' placeholder="room title" />
+      <div className={`create-room-container `}>
+        <input type="text" placeholder="room title" />
         <div className="contacts">
           {Object.values(contactsMap).map((contact) => (
             <div key={"contact" + contact._id} className={`contact`}>
@@ -89,4 +85,4 @@ const Container = styled.div`
   }
 `;
 
-export default CreateRoomComponent;
+export default CreateRoomModalComponent;

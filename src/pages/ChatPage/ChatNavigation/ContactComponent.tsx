@@ -13,6 +13,7 @@ import {
   activeModalNameState,
 } from "../../../store/store";
 import BasicModal from "../../../components/modals/BasicModal";
+import AddFriendModalComponent from "./modals/AddFriendModalComponent";
 
 function ContactComponent({ selectedTab }: { selectedTab: string }) {
   const [currentlyChattingUser, setCurrentlyChattingUser] = useRecoilState(
@@ -25,8 +26,6 @@ function ContactComponent({ selectedTab }: { selectedTab: string }) {
     currentlyChattingRoomState
   );
   const [activeModalName, setActiveModalName] = useRecoilState(activeModalNameState);
-
-  const ExampleFC = () => <h3>Your chosen fruit is:</h3>;
 
   useEffect(() => {
     if (!currentUser) {
@@ -101,7 +100,7 @@ function ContactComponent({ selectedTab }: { selectedTab: string }) {
         </button>
       </div>
 
-      <BasicModal modalName="addFriend" ModalComponent={ExampleFC}></BasicModal>
+      <BasicModal modalName="addFriend" ModalComponent={AddFriendModalComponent}></BasicModal>
     </Container>
   );
 }

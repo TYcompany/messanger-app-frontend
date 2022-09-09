@@ -2,6 +2,10 @@ const host = "http://localhost:5000";
 export const RegisterRoute = `${host}/auth/register`;
 export const LoginRoute = `${host}/auth/login`;
 export const FetchUserContactsRoute = `${host}/auth/fetchUserContacts`;
+export const GetUserDataRoute = `${host}/auth/getUserData`;
+
+export const AddFriendRoute = `${host}/auth/addFriend`;
+export const DeleteFriendRoute = `${host}/auth/deleteFriend`;
 
 export const FetchProfileImagesRoute = `${host}/profile/fetchProfileImages`;
 export const SetProfileImageRoute = `${host}/profile/setProfileImage`;
