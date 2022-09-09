@@ -14,7 +14,7 @@ import Socket from "../../socket/socket";
 import { useRecoilState } from "recoil";
 import { contactsMapState, currentUserState } from "../../store/store";
 import { RoomType, RoomWithUserDataType } from "../../lib/types/RoomType";
-import CreateRoomComponent from "./CreateRoomComponent";
+import BasicModal from "./BasicModal";
 
 const socket = new Socket().getSocketInstance();
 
@@ -42,6 +42,8 @@ function ChatPage() {
   const [isPickerActive, setIsPickerActive] = useState(false);
 
   const [selectedTab, setSelectedTab] = useState("contacts-tab-button");
+
+  const [open, setOpen] = useState(false);
 
   const onClickTab = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
     e.preventDefault();
@@ -111,18 +113,16 @@ function ChatPage() {
             <button name="chatting-tab-button" onClick={(e) => onClickTab(e)}>
               Rooms
             </button>
-            <button name="create-room-tab-button" onClick={(e) => onClickTab(e)}>
-              Create New Room
-            </button>
           </div>
 
           <ContactComponent selectedTab={selectedTab} />
           <RoomComponent selectedTab={selectedTab} roomsWithUserName={roomsWithUserName} />
-          <CreateRoomComponent selectedTab={selectedTab} />
         </div>
-
         <ChatScreen setIsPickerActive={setIsPickerActive} isPickerActive={isPickerActive} />
       </div>
+
+     
+
     </Container>
   );
 }
@@ -147,15 +147,6 @@ const Container = styled.div`
     @media screen and (min-width: 720px) and (max-width: 1080px) {
       grid-template-columns: 35% 65%;
     }
-
-    .display-none {
-      display: none;
-    }
-  }
-  .create-room-button {
-    position: fixed;
-    bottom: 5rem;
-    right: 5rem;
   }
 `;
 

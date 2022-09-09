@@ -10,7 +10,9 @@ import {
   currentlyChattingRoomState,
   currentUserState,
   contactsMapState,
+  activeModalNameState,
 } from "../../store/store";
+import BasicModal from "./BasicModal";
 
 function ContactComponent({ selectedTab }: { selectedTab: string }) {
   const [currentlyChattingUser, setCurrentlyChattingUser] = useRecoilState(
@@ -22,6 +24,9 @@ function ContactComponent({ selectedTab }: { selectedTab: string }) {
   const [currentlyChattingRoom, setCurrentlyChattingRoom] = useRecoilState(
     currentlyChattingRoomState
   );
+  const [activeModalName, setActiveModalName] = useRecoilState(activeModalNameState);
+
+  const ExampleFC = () => <h3>Your chosen fruit is:</h3>;
 
   useEffect(() => {
     if (!currentUser) {
@@ -43,6 +48,11 @@ function ContactComponent({ selectedTab }: { selectedTab: string }) {
 
   const onClickUserContact = (contact: UserType) => {
     setCurrentlyChattingUser(contact);
+  };
+
+  const onClickAddFriend = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
+    e.preventDefault();
+    setActiveModalName("addFriend");
   };
 
   return (
@@ -69,7 +79,7 @@ function ContactComponent({ selectedTab }: { selectedTab: string }) {
           {Object.values(contactsMap).map((contact) => (
             <div
               key={"contact" + contact._id}
-              className={`contact ${currentlyChattingUser._id === contact._id && "selected"}`}
+              className={`contact ${currentlyChattingUser?._id === contact._id && "selected"}`}
               onClick={() => onClickUserContact(contact)}
             >
               <div className="profile-image">
@@ -86,7 +96,12 @@ function ContactComponent({ selectedTab }: { selectedTab: string }) {
             </div>
           ))}
         </div>
+        <button className="add-friend-button" onClick={(e) => onClickAddFriend(e)}>
+          Add Friend
+        </button>
       </div>
+
+      <BasicModal modalName="addFriend" ModalComponent={ExampleFC}></BasicModal>
     </Container>
   );
 }
@@ -177,9 +192,13 @@ const Container = styled.div`
         }
       }
     }
-    .display-none {
-      display: none;
+    .add-friend-button {
+      font-size: 1rem;
+      height: 2rem;
     }
+  }
+  .display-none {
+    display: none;
   }
 `;
 

@@ -57,4 +57,9 @@ export const currentlyChattingMessagesState = atom<MessageType[]>({
   default: [],
 });
 
+export const activeModalNameState = atom<string>({
+  key: "activeModalName",
+  default: "",
+});
+
 // store messages for while
