@@ -1,9 +1,6 @@
 import React, { useEffect, useState } from "react";
 import styled from "styled-components";
 import { useNavigate } from "react-router-dom";
-
-import ContactComponent from "./ContactComponent";
-import RoomComponent from "./RoomComponent";
 import ChatScreen from "./ChatScreen";
 
 import { UserMapType } from "../../lib/types/UserType";
@@ -12,13 +9,14 @@ import { fetchUserContacts, fetchRoomDatasOfUser } from "../../lib/api/APIFuncti
 
 import Socket from "../../socket/socket";
 import { useRecoilState } from "recoil";
-import { contactsMapState, currentUserState } from "../../store/store";
+import { contactsMapState, currentUserState, roomsWithuserDataState } from "../../store/store";
 import { RoomType, RoomWithUserDataType } from "../../lib/types/RoomType";
-import BasicModal from "./BasicModal";
+
+import ChatNavigation from "./ChatNavigation";
 
 const socket = new Socket().getSocketInstance();
 
-const getRoomsWithUserName = (userId: string, contactsMap: UserMapType, rooms: RoomType[]) => {
+const getRoomsWithUserData = (userId: string, contactsMap: UserMapType, rooms: RoomType[]) => {
   const results: RoomWithUserDataType[] = [];
 
   for (const room of rooms) {
@@ -34,32 +32,20 @@ function ChatPage() {
   const navigate = useNavigate();
   const [contactsMap, setContactsMap] = useRecoilState(contactsMapState);
   const [rooms, setRooms] = useState<RoomType[]>([]);
-  const [roomsWithUserName, setRoomsWithUserName] = useState<RoomWithUserDataType[]>([]);
+  const [roomsWithUserData, setRoomsWithUserData] =
+    useRecoilState<RoomWithUserDataType[]>(roomsWithuserDataState);
 
   const [currentUser, setCurrentUser] = useRecoilState(currentUserState);
   const [isConnectedToSocket, setIsConnectedToSocket] = useState(false);
 
   const [isPickerActive, setIsPickerActive] = useState(false);
 
-  const [selectedTab, setSelectedTab] = useState("contacts-tab-button");
-
-  const [open, setOpen] = useState(false);
-
-  const onClickTab = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
-    e.preventDefault();
-
-    setSelectedTab(e.currentTarget.name);
-  };
-  const onClickCreateRoom = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
-    e.preventDefault();
-  };
   useEffect(() => {
     if (!contactsMap || !rooms || !currentUser?._id) {
       return;
     }
 
-    const nextRoomsWithUsername = getRoomsWithUserName(currentUser._id, contactsMap, rooms);
-    setRoomsWithUserName(nextRoomsWithUsername);
+    setRoomsWithUserData(getRoomsWithUserData(currentUser._id, contactsMap, rooms));
   }, [contactsMap, rooms]);
 
   useEffect(() => {
@@ -105,24 +91,9 @@ function ChatPage() {
       }}
     >
       <div className="container">
-        <div className="left-navs">
-          <div>
-            <button name="contacts-tab-button" onClick={(e) => onClickTab(e)}>
-              Contacts
-            </button>
-            <button name="chatting-tab-button" onClick={(e) => onClickTab(e)}>
-              Rooms
-            </button>
-          </div>
-
-          <ContactComponent selectedTab={selectedTab} />
-          <RoomComponent selectedTab={selectedTab} roomsWithUserName={roomsWithUserName} />
-        </div>
+        <ChatNavigation />
         <ChatScreen setIsPickerActive={setIsPickerActive} isPickerActive={isPickerActive} />
       </div>
-
-     
-
     </Container>
   );
 }

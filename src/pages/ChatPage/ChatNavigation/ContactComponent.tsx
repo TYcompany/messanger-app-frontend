@@ -2,17 +2,17 @@ import React, { useState, useEffect } from "react";
 import styled from "styled-components";
 import { useRecoilState, useRecoilValue } from "recoil";
 
-import { UserType } from "../../lib/types/UserType";
+import { UserType } from "../../../lib/types/UserType";
 import { Buffer } from "buffer";
-import { fetchRoomData } from "../../lib/api/APIFunctions";
+import { fetchRoomData } from "../../../lib/api/APIFunctions";
 import {
   currentlyChattingUserState,
   currentlyChattingRoomState,
   currentUserState,
   contactsMapState,
   activeModalNameState,
-} from "../../store/store";
-import BasicModal from "./BasicModal";
+} from "../../../store/store";
+import BasicModal from "../../../components/modals/BasicModal";
 
 function ContactComponent({ selectedTab }: { selectedTab: string }) {
   const [currentlyChattingUser, setCurrentlyChattingUser] = useRecoilState(

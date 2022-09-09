@@ -2,7 +2,7 @@ import React from "react";
 import { useRecoilValue } from "recoil";
 import styled from "styled-components";
 import { Buffer } from "buffer";
-import { contactsMapState } from "../../store/store";
+import { contactsMapState } from "../../../store/store";
 
 function CreateRoomComponent({ selectedTab }: { selectedTab: string }) {
   const contactsMap = useRecoilValue(contactsMapState);

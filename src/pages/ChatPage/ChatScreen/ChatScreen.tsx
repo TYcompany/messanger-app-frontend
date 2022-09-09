@@ -3,20 +3,20 @@ import { Buffer } from "buffer";
 import styled from "styled-components";
 import { useRecoilValue } from "recoil";
 
-import { MessageType } from "../../lib/types/MessageType";
+import { MessageType } from "../../../lib/types/MessageType";
 
 import ChatMessagesContainer from "./ChatMessagesContainer";
 import ChatInput from "./ChatInput";
 
-import { fetchMessagesInRange } from "../../lib/api/APIFunctions";
+import { fetchMessagesInRange } from "../../../lib/api/APIFunctions";
 
-import Socket from "../../socket/socket";
+import Socket from "../../../socket/socket";
 
 import {
   currentlyChattingRoomState,
   currentlyChattingUserState,
   currentUserState,
-} from "../../store/store";
+} from "../../../store/store";
 
 const socket = new Socket().getSocketInstance();
 

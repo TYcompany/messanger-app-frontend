@@ -1,8 +1,8 @@
 import React from "react";
 import styled from "styled-components";
 
-import { MessageType } from "../../lib/types/MessageType";
-import { UserType } from "../../lib/types/UserType";
+import { MessageType } from "../../../lib/types/MessageType";
+import { UserType } from "../../../lib/types/UserType";
 
 function ChatMessagesContainer({
   messages,

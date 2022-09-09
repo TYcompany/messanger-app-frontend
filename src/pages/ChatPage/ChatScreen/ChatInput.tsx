@@ -4,7 +4,7 @@ import { IoMdSend } from "react-icons/io";
 import { BsEmojiSmileFill } from "react-icons/bs";
 
 import Picker from "emoji-picker-react";
-import { UserType } from "../../lib/types/UserType";
+import { UserType } from "../../../lib/types/UserType";
 
 function ChatInput({
   sendMessage,

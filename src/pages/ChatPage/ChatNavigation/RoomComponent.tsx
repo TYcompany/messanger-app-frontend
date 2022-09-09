@@ -1,21 +1,15 @@
-import { RoomWithUserDataType } from "../../lib/types/RoomType";
+import { RoomWithUserDataType } from "../../../lib/types/RoomType";
 import styled from "styled-components";
-import { useRecoilState } from "recoil";
+import { useRecoilState, useRecoilValue } from "recoil";
 import {
   activeModalNameState,
   currentlyChattingRoomState,
   currentlyChattingUserState,
-} from "../../store/store";
-import BasicModal from "./BasicModal";
+  roomsWithuserDataState,
+} from "../../../store/store";
+import BasicModal from "../../../components/modals/BasicModal";
 
-
-function RoomComponent({
-  selectedTab,
-  roomsWithUserName,
-}: {
-  selectedTab: string;
-  roomsWithUserName: RoomWithUserDataType[];
-}) {
+function RoomComponent({ selectedTab }: { selectedTab: string }) {
   const [currentlyChattingRoom, setCurrentlyChattingRoom] = useRecoilState(
     currentlyChattingRoomState
   );
@@ -23,7 +17,7 @@ function RoomComponent({
     currentlyChattingUserState
   );
   const [activeModalName, setActiveModalName] = useRecoilState(activeModalNameState);
-
+  const roomsWithUserData = useRecoilValue(roomsWithuserDataState);
   const onClickRoom = (roomData: RoomWithUserDataType) => {
     setCurrentlyChattingRoom(roomData);
     setCurrentlyChattingUser(roomData.userData[0]);
@@ -42,7 +36,7 @@ function RoomComponent({
         className={`room-container ${selectedTab !== "chatting-tab-button" ? "display-none" : ""}`}
       >
         <div className="rooms">
-          {roomsWithUserName.map((room) => (
+          {roomsWithUserData.map((room) => (
             <div
               className={`room ${currentlyChattingRoom._id === room._id ? "selected" : ""}`}
               key={room._id}
