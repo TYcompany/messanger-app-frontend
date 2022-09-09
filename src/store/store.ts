@@ -42,7 +42,7 @@ export const currentlyChattingRoomState = atom<RoomType>({
     totalMessageNumber: 1,
     updatedAt: "",
     users: [],
-    _id: "currentlyChattingRoom",
+    _id: "",
   },
 });
 

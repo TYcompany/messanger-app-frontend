@@ -104,7 +104,7 @@ export const fetchMessagesInRange = async (
   right: number
 ) => {
   await sleep(500);
-
+  
   const res = await axios.get(
     `${GetMessagesInRangeRoute}?roomId=${roomId}&senderId=${senderId}
       &left=${left}&right=${right}`

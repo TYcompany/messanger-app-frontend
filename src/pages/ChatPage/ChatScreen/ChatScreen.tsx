@@ -71,7 +71,7 @@ function ChatScreen({
 
     const left = Math.max(messageSequenceRef - MessageQueryLimitPerReqeust, 0);
     const right = Math.max(messageSequenceRef, 20);
-    
+
     const data = await fetchMessagesInRange(
       currentlyChattingRoom?._id,
       currentUser?._id || "",
@@ -109,9 +109,13 @@ function ChatScreen({
       const left = Math.max(totalMessageNumber - 20, 0);
       const right = left + 20;
 
+      if (!currentlyChattingRoom?._id || !currentUser?._id) {
+        return [];
+      }
+
       const data = await fetchMessagesInRange(
-        currentlyChattingRoom?._id,
-        currentUser?._id || "",
+        currentlyChattingRoom._id,
+        currentUser._id,
         left,
         right
       );
