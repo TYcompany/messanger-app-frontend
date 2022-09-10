@@ -165,6 +165,7 @@ function ChatScreen({
 
     const messageDto = {
       senderId: currentUser?._id,
+      senderName: currentUser?.userName,
       roomId,
       text,
       isPersonalChat: true,

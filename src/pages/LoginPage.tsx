@@ -35,7 +35,7 @@ function LoginPage() {
 
   useEffect(() => {
     if (localStorage.getItem("chat-app-user")) {
-      navigate("/");
+      navigate("/chat");
     }
   }, []);
 
@@ -57,9 +57,8 @@ function LoginPage() {
 
     const profileImage = await axios.get(userData.profileImageLink);
     userData.profileImage = profileImage.data;
-
     localStorage.setItem("chat-app-user", JSON.stringify(userData));
-    navigate("/");
+    navigate("/chat");
   };
 
   const onChange = (e: React.ChangeEvent<HTMLInputElement>) => {

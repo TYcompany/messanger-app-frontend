@@ -19,7 +19,7 @@ function RoomComponent({ selectedTab }: { selectedTab: string }) {
   );
   const [activeModalName, setActiveModalName] = useRecoilState(activeModalNameState);
   const roomsWithUserData = useRecoilValue(roomsWithuserDataState);
-  
+
   const onClickRoom = (roomData: RoomWithUserDataType) => {
     setCurrentlyChattingRoom(roomData);
     setCurrentlyChattingUser(roomData.userData[0]);
@@ -36,7 +36,7 @@ function RoomComponent({ selectedTab }: { selectedTab: string }) {
         className={`room-container ${selectedTab !== "chatting-tab-button" ? "display-none" : ""}`}
       >
         <div className="rooms">
-          {roomsWithUserData.map((room) => (
+          {roomsWithUserData.map((room: RoomWithUserDataType) => (
             <div
               className={`room ${currentlyChattingRoom._id === room._id ? "selected" : ""}`}
               key={room._id}
@@ -48,7 +48,7 @@ function RoomComponent({ selectedTab }: { selectedTab: string }) {
           ))}
         </div>
         <button className={`create-room-button`} onClick={(e) => onClickCreateRoom(e)}>
-          Create New Room
+          Create Group Chat Room
         </button>
       </div>
       <BasicModal modalName="createRoom" ModalComponent={CreateRoomModalComponent}></BasicModal>

@@ -28,6 +28,7 @@ function ChatMessagesContainer({
               className={`message ${message.senderId === currentUser?._id ? "sent" : "recieved"}`}
             >
               <div className="content">
+                {message.senderId !== currentUser?._id && <p>{message.senderName}</p>}
                 <p>{message.text}</p>
               </div>
             </div>

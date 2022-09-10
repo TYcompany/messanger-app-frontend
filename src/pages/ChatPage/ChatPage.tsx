@@ -40,11 +40,15 @@ function ChatPage() {
 
   const [isPickerActive, setIsPickerActive] = useState(false);
 
+  const onLogout = () => {
+    localStorage.setItem("chat-app-user", "");
+    navigate("/login");
+  };
   useEffect(() => {
     if (!contactsMap || !rooms || !currentUser?._id) {
       return;
     }
-
+    
     setRoomsWithUserData(getRoomsWithUserData(currentUser._id, contactsMap, rooms));
   }, [contactsMap, rooms]);
 
@@ -90,6 +94,7 @@ function ChatPage() {
         setIsPickerActive(false);
       }}
     >
+      <button onClick={() => onLogout()}>Logout</button>
       <div className="container">
         <ChatNavigation />
         <ChatScreen setIsPickerActive={setIsPickerActive} isPickerActive={isPickerActive} />

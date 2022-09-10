@@ -1,15 +1,7 @@
 import React from "react";
 
 function MainPage() {
-  const onLogout = () => {
-    localStorage.setItem("chat-app-user", "");
-  };
-  return (
-    <div>
-      MainPage
-      <button onClick={() => onLogout()}>Logout</button>
-    </div>
-  );
+  return <div>MainPage</div>;
 }
 
 export default MainPage;
