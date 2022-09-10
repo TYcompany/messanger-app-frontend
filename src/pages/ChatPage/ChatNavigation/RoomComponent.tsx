@@ -42,7 +42,7 @@ function RoomComponent({ selectedTab }: { selectedTab: string }) {
               key={room._id}
               onClick={() => onClickRoom(room)}
             >
-              {room.title || room.userData.map((userData) => userData?.userName)?.join(", ")} (
+              {room.roomTitle || room.userData.map((userData) => userData?.userName)?.join(", ")} (
               {room.userData?.length})
             </div>
           ))}

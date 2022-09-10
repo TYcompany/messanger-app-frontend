@@ -11,6 +11,7 @@ import {
   GetUserDataRoute,
   AddFriendRoute,
   DeleteFriendRoute,
+  CreateGroupRoomRoute,
 } from "./APIRoutes";
 import { sleep } from "../etc/etcFunctions";
 import { UserType } from "../types/UserType";
@@ -97,6 +98,16 @@ export const fetchRoomDatasOfUser = async (userId: string) => {
   return res.data;
 };
 
+export const createGroupRoom = async (roomTitle: string, users: string[], roomHost: string) => {
+  const dto = {
+    roomTitle,
+    users,
+    roomHost,
+  };
+  const res = await axios.post(CreateGroupRoomRoute, dto);
+  return res;
+};
+
 export const fetchMessagesInRange = async (
   roomId: string,
   senderId: string,
@@ -104,7 +115,7 @@ export const fetchMessagesInRange = async (
   right: number
 ) => {
   await sleep(500);
-  
+
   const res = await axios.get(
     `${GetMessagesInRangeRoute}?roomId=${roomId}&senderId=${senderId}
       &left=${left}&right=${right}`

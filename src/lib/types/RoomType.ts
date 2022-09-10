@@ -1,7 +1,7 @@
 import { UserType } from "./UserType";
 
 export interface RoomType {
-  title?: string;
+  roomTitle?: string;
   createdAt: string;
   isPersonalChat: boolean;
   totalMessageNumber: number;

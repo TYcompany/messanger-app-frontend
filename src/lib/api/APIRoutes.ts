@@ -16,3 +16,4 @@ export const GetMessagesInRangeRoute = `${host}/message/getMessagesInRange`;
 
 export const GetRoomDataOfPersonalRoute = `${host}/room/getRoomDataOfPersonal`;
 export const GetRoomDatasOfUser = `${host}/room/getRoomDatasOfUser`;
+export const CreateGroupRoomRoute = `${host}/room/createGroupRoom`;
