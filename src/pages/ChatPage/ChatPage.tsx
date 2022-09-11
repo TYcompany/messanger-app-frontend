@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from "react";
 import styled from "styled-components";
 import { useNavigate } from "react-router-dom";
+import Button from "@mui/material/Button";
+
 import ChatScreen from "./ChatScreen";
 
 import { UserMapType } from "../../lib/types/UserType";
@@ -48,7 +50,7 @@ function ChatPage() {
     if (!contactsMap || !rooms || !currentUser?._id) {
       return;
     }
-    
+
     setRoomsWithUserData(getRoomsWithUserData(currentUser._id, contactsMap, rooms));
   }, [contactsMap, rooms]);
 
@@ -94,7 +96,9 @@ function ChatPage() {
         setIsPickerActive(false);
       }}
     >
-      <button onClick={() => onLogout()}>Logout</button>
+      <Button onClick={() => onLogout()} variant="contained" color="secondary">
+        Logout
+      </Button>
       <div className="container">
         <ChatNavigation />
         <ChatScreen setIsPickerActive={setIsPickerActive} isPickerActive={isPickerActive} />

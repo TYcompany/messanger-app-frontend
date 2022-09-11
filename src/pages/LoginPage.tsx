@@ -4,7 +4,6 @@ import styled from "styled-components";
 import toast, { Toaster } from "react-hot-toast";
 import axios from "axios";
 
-import { LoginRoute } from "../lib/api/APIRoutes";
 import { loginRequest } from "../lib/api/APIFunctions";
 
 // toast.promise(
