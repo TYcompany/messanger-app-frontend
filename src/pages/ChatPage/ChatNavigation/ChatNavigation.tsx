@@ -4,13 +4,13 @@ import { PeopleAlt, ChatBubble } from "@mui/icons-material";
 import ContactComponent from "./ContactComponent";
 import RoomComponent from "./RoomComponent";
 
-function a11yProps(index: number) {
-  return {
-    id: `simple-tab-${index}`,
-    "aria-controls": `simple-tabpanel-${index}`,
-  };
-}
-
+// function a11yProps(index: number) {
+//   return {
+//     id: `simple-tab-${index}`,
+//     "aria-controls": `simple-tabpanel-${index}`,
+//   };
+// }
+//{...a11yProps(1)}
 const tabsInfo: { [key: number]: string } = {
   0: "contacts-tab-button",
   1: "chatting-tab-button",
@@ -27,8 +27,8 @@ function ChatNavigation() {
   return (
     <div className="chat-navigation">
       <Tabs value={value} onChange={onChangeTab} aria-label="basic tabs example">
-        <Tab label={<PeopleAlt fontSize="large" />} {...a11yProps(0)} />
-        <Tab label={<ChatBubble fontSize="large" />} {...a11yProps(1)} />
+        <Tab label={<PeopleAlt fontSize="large" />} />
+        <Tab label={<ChatBubble fontSize="large" />} />
       </Tabs>
 
       <ContactComponent selectedTab={selectedTab} />
