@@ -3,6 +3,7 @@ import styled from "styled-components";
 
 import { MessageType } from "../../../lib/types/MessageType";
 import { UserType } from "../../../lib/types/UserType";
+import MessageItem from "./MessageItem";
 
 function ChatMessagesContainer({
   messages,
@@ -21,19 +22,9 @@ function ChatMessagesContainer({
     <Container>
       <div className="messages" ref={scrollRef} onScroll={() => onScrollChatMessages()}>
         {isLoadingPastMessages && <div> loading past messages</div>}
-        {messages.map((message) => {
-          return (
-            <div
-              key={message._id}
-              className={`message ${message.senderId === currentUser?._id ? "sent" : "recieved"}`}
-            >
-              <div className="content">
-                {message.senderId !== currentUser?._id && <p>{message.senderName}</p>}
-                <p>{message.text}</p>
-              </div>
-            </div>
-          );
-        })}
+        {messages.map((message) => (
+          <MessageItem message={message} />
+        ))}
         <div className="end-of-message">End Of Messages</div>
       </div>
     </Container>
@@ -47,31 +38,6 @@ const Container = styled.div`
   .messages {
     overflow: scroll;
     height: 100vh;
-
-    .message {
-      overflow: scroll;
-      display: flex;
-      align-items: center;
-      padding-left: 1rem;
-      padding-right: 1rem;
-
-      .content {
-        max-width: 40%;
-        overflow: break-word;
-        padding: 1rem;
-        font-size: 1.1.rem;
-        border-radius: 1rem;
-        color: #d1d1d1;
-      }
-    }
-    .sent {
-      justify-content: flex-end;
-      background-color: #4f04ff21;
-    }
-    .recieved {
-      justify-content: flex-start;
-      background-color: #9900ff20;
-    }
 
     .end-of-message {
       overflow: break-word;
