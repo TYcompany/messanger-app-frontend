@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from "react";
 import styled from "styled-components";
 import { useNavigate } from "react-router-dom";
-import Button from "@mui/material/Button";
 
 import ChatScreen from "./ChatScreen";
 
@@ -42,10 +41,6 @@ function ChatPage() {
 
   const [isPickerActive, setIsPickerActive] = useState(false);
 
-  const onLogout = () => {
-    localStorage.setItem("chat-app-user", "");
-    navigate("/login");
-  };
   useEffect(() => {
     if (!contactsMap || !rooms || !currentUser?._id) {
       return;
@@ -96,9 +91,6 @@ function ChatPage() {
         setIsPickerActive(false);
       }}
     >
-      <Button onClick={() => onLogout()} variant="contained" color="secondary">
-        Logout
-      </Button>
       <div className="container">
         <ChatNavigation />
         <ChatScreen setIsPickerActive={setIsPickerActive} isPickerActive={isPickerActive} />
@@ -118,12 +110,12 @@ const Container = styled.div`
   background-color: #131324;
 
   .container {
-    height: 85vh;
-    width: 85vw;
+    height: 90vh;
+    width: 90vw;
     background-color: #00000076;
     display: grid;
     grid-template-columns: 25% 75%;
-
+    gap: 1rem;
     @media screen and (min-width: 720px) and (max-width: 1080px) {
       grid-template-columns: 35% 65%;
     }

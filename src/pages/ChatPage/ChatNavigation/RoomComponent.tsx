@@ -9,6 +9,7 @@ import {
 } from "../../../store/store";
 import BasicModal from "../../../components/modals/BasicModal";
 import CreateRoomModalComponent from "./modals/CreateRoomModalComponent";
+import { Button } from "@mui/material";
 
 function RoomComponent({ selectedTab }: { selectedTab: string }) {
   const [currentlyChattingRoom, setCurrentlyChattingRoom] = useRecoilState(
@@ -47,9 +48,9 @@ function RoomComponent({ selectedTab }: { selectedTab: string }) {
             </div>
           ))}
         </div>
-        <button className={`create-room-button`} onClick={(e) => onClickCreateRoom(e)}>
+        <Button className={`create-room-button`} onClick={(e) => onClickCreateRoom(e)}>
           Create Group Chat Room
-        </button>
+        </Button>
       </div>
       <BasicModal modalName="createRoom" ModalComponent={CreateRoomModalComponent}></BasicModal>
     </Container>
@@ -57,10 +58,7 @@ function RoomComponent({ selectedTab }: { selectedTab: string }) {
 }
 
 const Container = styled.div`
-  background-color: white;
   .room-container {
-    display: flex;
-    flex-direction: column;
     .rooms {
       display: flex;
       flex-direction: column;

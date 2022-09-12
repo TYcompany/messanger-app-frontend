@@ -14,6 +14,7 @@ import {
 } from "../../../store/store";
 import BasicModal from "../../../components/modals/BasicModal";
 import AddFriendModalComponent from "./modals/AddFriendModalComponent";
+import { Button } from "@mui/material";
 
 function ContactComponent({ selectedTab }: { selectedTab: string }) {
   const [currentlyChattingUser, setCurrentlyChattingUser] = useRecoilState(
@@ -31,7 +32,7 @@ function ContactComponent({ selectedTab }: { selectedTab: string }) {
     if (!currentUser) {
       return;
     }
-    console.log(currentUser)
+    console.log(currentUser);
   }, [currentUser]);
 
   useEffect(() => {
@@ -62,19 +63,6 @@ function ContactComponent({ selectedTab }: { selectedTab: string }) {
           selectedTab !== "contacts-tab-button" ? "display-none" : ""
         }`}
       >
-        <div className="brand">
-          <div className="profile-image">
-            <img
-              src={`data:image/svg+xml;base64,${Buffer.from(
-                currentUser.profileImage || ""
-              ).toString("base64")}`}
-              alt={"profile-currentUser"}
-            />
-          </div>
-          <div className="username">
-            <h3>{currentUser.userName}</h3>
-          </div>
-        </div>
         <div className="contacts">
           {Object.values(contactsMap).map((contact) => (
             <div
@@ -96,9 +84,9 @@ function ContactComponent({ selectedTab }: { selectedTab: string }) {
             </div>
           ))}
         </div>
-        <button className="add-friend-button" onClick={(e) => onClickAddFriend(e)}>
+        <Button className="add-friend-button" onClick={(e) => onClickAddFriend(e)}>
           Add Friend
-        </button>
+        </Button>
       </div>
 
       <BasicModal modalName="addFriend" ModalComponent={AddFriendModalComponent}></BasicModal>
@@ -108,31 +96,13 @@ function ContactComponent({ selectedTab }: { selectedTab: string }) {
 
 const Container = styled.div`
   .contact-container {
-    display: grid;
-    grid-template-rows: 10% 75% 15%;
-    overflow: scroll;
-    background-color: #080420;
-    height: 80vh;
-
-    .brand {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 1rem;
-      img {
-        height: 2rem;
-      }
-      h3 {
-        color: white;
-      }
-    }
-
     .contacts {
       display: flex;
       flex-direction: column;
       align-items: center;
       overflow: auto;
       gap: 0.8rem;
+      height: 60vh;
       .contact {
         &::-webkit-scrollbar {
           background-color: #ffffff39;
