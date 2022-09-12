@@ -32,7 +32,6 @@ function ContactComponent({ selectedTab }: { selectedTab: string }) {
     if (!currentUser) {
       return;
     }
-    console.log(currentUser);
   }, [currentUser]);
 
   useEffect(() => {

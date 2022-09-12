@@ -38,8 +38,14 @@ function ChatNavigation() {
           onChange={onChangeTab}
           aria-label="basic tabs example"
         >
-          <Tab className={"chat-navigation-tab"} label={<PeopleAlt fontSize="inherit" />} />
-          <Tab className={"chat-navigation-tab"} label={<ChatBubble fontSize="inherit" />} />
+          <Tab
+            className={`chat-navigation-tab ${value === 0 ? "selected-tab" : ""}`}
+            label={<PeopleAlt fontSize="inherit" />}
+          />
+          <Tab
+            className={`chat-navigation-tab ${value === 1 ? "selected-tab" : ""}`}
+            label={<ChatBubble fontSize="inherit" />}
+          />
         </Tabs>
         <div className="chat-navigation-contents">
           <div className="my-profile">
@@ -75,11 +81,13 @@ const Container = styled.div`
     align-items: space-between;
     justify-content: space-evenly;
     width: 100%;
-
     .chat-navigation-tab {
+      color: #b0b3b8;
       font-size: 3rem;
-      //background-color: red;
       width: 50%;
+    }
+    .selected-tab {
+      color: #1976d2;
     }
   }
 

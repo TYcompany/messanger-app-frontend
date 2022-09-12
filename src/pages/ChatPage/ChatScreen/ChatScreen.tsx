@@ -183,7 +183,6 @@ function ChatScreen({
       {currentlyChattingUser?._id && (
         <>
           <div className="chat-header">
-            <div className="user-details"></div>
             <div className="profile">
               <img
                 src={`data:image/svg+xml;base64,${Buffer.from(
@@ -228,18 +227,17 @@ const Container = styled.div`
     justify-content: space-between;
     align-items: center;
     padding: 0 2rem;
-    .user-details {
+
+    .profile {
       display: flex;
       align-items: center;
       gap: 1rem;
-      .profile {
-        img {
-          height: 1rem;
-        }
-        .username {
-          h3 {
-            color: white;
-          }
+      img {
+        width: 3rem;
+      }
+      .username {
+        h3 {
+          color: white;
         }
       }
     }

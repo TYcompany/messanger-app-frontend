@@ -37,7 +37,7 @@ function RegisterPage() {
 
   useEffect(() => {
     if (localStorage.getItem("chat-app-user")) {
-      navigate("/");
+      navigate("/chat");
     }
   }, [navigate]);
 
@@ -57,7 +57,7 @@ function RegisterPage() {
 
     localStorage.setItem("chat-app-user", JSON.stringify(res.data.user));
     toast(res.data.message);
-    navigate("/");
+    navigate("/setProfile");
   };
 
   const onChange = (e: React.ChangeEvent<HTMLInputElement>) => {

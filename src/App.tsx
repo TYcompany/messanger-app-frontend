@@ -38,7 +38,7 @@ function App() {
   return (
     <BrowserRouter>
       <div className="App">
-        <NavContainer>
+        {/* <NavContainer>
           <Link to="/" className="nav-link">
             Home
           </Link>
@@ -54,7 +54,7 @@ function App() {
           <Link to="/chat" className="nav-link">
             Chat
           </Link>
-        </NavContainer>
+        </NavContainer> */}
         <Routes>
           {routes.map((route, i) => {
             return (

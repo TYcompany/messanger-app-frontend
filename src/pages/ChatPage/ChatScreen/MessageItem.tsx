@@ -23,7 +23,7 @@ function MessageItem({ message }: { message: MessageType }) {
                   alt={"profile" + contactsMap[message.senderId]?._id}
                 />
               </div>
-              <div>{message.senderName}</div>
+              <div>{message.senderName || contactsMap[message.senderId]?.userName}</div>
             </div>
           )}
           <div className="message-text">{message.text}</div>
@@ -44,7 +44,7 @@ const Container = styled.div`
     .content {
       max-width: 40%;
       overflow: break-word;
-      padding: 1rem;
+      padding: 0.5rem;
       font-size: 1.1.rem;
       border-radius: 1rem;
       color: #d1d1d1;
@@ -55,7 +55,6 @@ const Container = styled.div`
         justify-content: flex-start;
         align-items: center;
 
-        background-color: yellow;
         gap: 0.5rem;
         .profile-image {
           width: 2rem;
@@ -63,24 +62,29 @@ const Container = styled.div`
       }
 
       .message-text {
-        background-color: red;
+        background-color: #3e4042;
         max-width: 20rem;
         overflow-wrap: break-word;
 
         text-align: left;
+        border-radius: 1rem;
+        padding: 0.5rem 0.77rem;
       }
     }
   }
   .sent {
     justify-content: flex-end;
     text-align: right;
-    background-color: #4f04ff21;
+
+    .content {
+      .message-text {
+        background-color: #0084ff;
+      }
+    }
   }
   .recieved {
     justify-content: flex-start;
-
     text-align: left;
-    background-color: #9900ff20;
   }
 `;
 
