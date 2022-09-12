@@ -11,19 +11,16 @@ function MessageItem({ message }: { message: MessageType }) {
 
   return (
     <Container>
-      <div
-        key={message._id}
-        className={`message ${message.senderId === currentUser?._id ? "sent" : "recieved"}`}
-      >
+      <div className={`message ${message.senderId === currentUser?._id ? "sent" : "recieved"}`}>
         <div className="content">
           {message.senderId !== currentUser?._id && (
             <div className="profile">
               <div className="profile-image">
                 <img
                   src={`data:image/svg+xml;base64,${Buffer.from(
-                    contactsMap[message.senderId]?.profileImage
+                    contactsMap[message.senderId]?.profileImage || ""
                   ).toString("base64")}`}
-                  alt={"profile" + contactsMap[message.senderId]._id}
+                  alt={"profile" + contactsMap[message.senderId]?._id}
                 />
               </div>
               <div>{message.senderName}</div>

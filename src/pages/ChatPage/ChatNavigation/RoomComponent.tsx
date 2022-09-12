@@ -3,6 +3,7 @@ import styled from "styled-components";
 import { useRecoilState, useRecoilValue } from "recoil";
 import {
   activeModalNameState,
+  contactsMapState,
   currentlyChattingRoomState,
   currentlyChattingUserState,
   roomsWithuserDataState,
@@ -10,6 +11,7 @@ import {
 import BasicModal from "../../../components/modals/BasicModal";
 import CreateRoomModalComponent from "./modals/CreateRoomModalComponent";
 import { Button } from "@mui/material";
+import { getUserDataByUserIds } from "../../../lib/api/APIFunctions";
 
 function RoomComponent({ selectedTab }: { selectedTab: string }) {
   const [currentlyChattingRoom, setCurrentlyChattingRoom] = useRecoilState(
@@ -19,10 +21,38 @@ function RoomComponent({ selectedTab }: { selectedTab: string }) {
     currentlyChattingUserState
   );
   const [activeModalName, setActiveModalName] = useRecoilState(activeModalNameState);
-  const roomsWithUserData = useRecoilValue(roomsWithuserDataState);
+  const [roomsWithUserData, setRoomsWithUserData] = useRecoilState(roomsWithuserDataState);
+  const [contactMap, setContactMap] = useRecoilState(contactsMapState);
 
-  const onClickRoom = (roomData: RoomWithUserDataType) => {
+  const onClickRoom = async (roomData: RoomWithUserDataType) => {
+    let isEmptyValueContained = false;
+    for (const userDt of roomData.userData) {
+      if (!userDt) {
+        isEmptyValueContained = true;
+        break;
+      }
+    }
+
+    if (isEmptyValueContained) {
+      const userData = await getUserDataByUserIds(roomData.users);
+
+      const nextContactMap = JSON.parse(JSON.stringify(contactMap));
+
+      for (const userDt of userData) {
+        nextContactMap[userDt._id] = userDt;
+      }
+
+      setContactMap(nextContactMap);
+
+      roomData = { ...roomData, userData };
+    }
+    
+    setRoomsWithUserData((prev) => [
+      roomData,
+      ...prev.filter((prevRoom) => prevRoom._id !== roomData._id),
+    ]);
     setCurrentlyChattingRoom(roomData);
+
     setCurrentlyChattingUser(roomData.userData[0]);
   };
 

@@ -8,10 +8,11 @@ import {
   SetProfileImageRoute,
   GetRoomDataOfPersonalRoute,
   GetRoomDatasOfUser,
-  GetUserDataRoute,
+  GetUserDataByEmailRoute,
   AddFriendRoute,
   DeleteFriendRoute,
   CreateGroupRoomRoute,
+  GetUserDataByUserIdsRoute,
 } from "./APIRoutes";
 import { sleep } from "../etc/etcFunctions";
 import { UserType } from "../types/UserType";
@@ -78,11 +79,24 @@ export const fetchUserContacts = async (id: string) => {
   return results;
 };
 
-export const getUserData = async (email: string) => {
-  const res = await axios.get(`${GetUserDataRoute}?email=${email}`);
+export const getUserDataByEmail = async (email: string) => {
+  const res = await axios.get(`${GetUserDataByEmailRoute}?email=${email}`);
   const data = res?.data;
   const result = await getUserDataWithProfileImage(data);
   return result;
+};
+
+export const getUserDataByUserIds = async (userIds: string[]) => {
+  const res = await axios.post(`${GetUserDataByUserIdsRoute}`, {
+    userIds,
+  });
+  const userDatas: UserType[] = res.data;
+  const promises = [];
+
+  for (const userData of userDatas) {
+    promises.push(getUserDataWithProfileImage(userData));
+  }
+  return await Promise.all(promises);
 };
 
 export const fetchRoomData = async (user1: string, user2: string) => {

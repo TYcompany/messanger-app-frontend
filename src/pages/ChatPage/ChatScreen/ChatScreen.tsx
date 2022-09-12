@@ -177,10 +177,10 @@ function ChatScreen({
 
   return (
     <Container>
-      {!currentlyChattingUser && (
+      {!currentlyChattingUser?._id && (
         <div>welcome {currentUser?.userName}! please select person to chat with.</div>
       )}
-      {currentlyChattingUser && (
+      {currentlyChattingUser?._id && (
         <>
           <div className="chat-header">
             <div className="user-details"></div>
@@ -224,6 +224,7 @@ const Container = styled.div`
 
   .chat-header {
     display: flex;
+
     justify-content: space-between;
     align-items: center;
     padding: 0 2rem;
@@ -233,7 +234,7 @@ const Container = styled.div`
       gap: 1rem;
       .profile {
         img {
-          height: 3rem;
+          height: 1rem;
         }
         .username {
           h3 {

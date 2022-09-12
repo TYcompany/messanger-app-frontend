@@ -23,7 +23,7 @@ function ChatMessagesContainer({
       <div className="messages" ref={scrollRef} onScroll={() => onScrollChatMessages()}>
         {isLoadingPastMessages && <div> loading past messages</div>}
         {messages.map((message) => (
-          <MessageItem message={message} />
+          <MessageItem key={"message" + message._id} message={message} />
         ))}
         <div className="end-of-message">End Of Messages</div>
       </div>

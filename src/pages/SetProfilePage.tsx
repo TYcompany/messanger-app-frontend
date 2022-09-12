@@ -67,7 +67,9 @@ function SetProfilePage() {
                 className={`profile-image ${selectedProfileImage === index && "selected"}`}
               >
                 <img
-                  src={`data:image/svg+xml;base64,${Buffer.from(profileImage).toString("base64")}`}
+                  src={`data:image/svg+xml;base64,${Buffer.from(profileImage || "").toString(
+                    "base64"
+                  )}`}
                   alt={"profile" + index}
                   onClick={() => setSelectedProfileImage(index)}
                 />

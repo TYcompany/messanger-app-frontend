@@ -5,7 +5,7 @@ import TextField from "@mui/material/TextField";
 import Box from "@mui/material/Box";
 import { Buffer } from "buffer";
 
-import { addFriend, getUserData } from "../../../../lib/api/APIFunctions";
+import { addFriend, getUserDataByEmail } from "../../../../lib/api/APIFunctions";
 import { UserType } from "../../../../lib/types/UserType";
 import { currentUserState } from "../../../../store/store";
 import { useRecoilValue } from "recoil";
@@ -20,7 +20,7 @@ function AddFriendModalComponent() {
     if (!formData?.get("email")) {
       return;
     }
-    const data = await getUserData(formData.get("email") as string);
+    const data = await getUserDataByEmail(formData.get("email") as string);
     setUserData(data);
   };
 
