@@ -56,7 +56,7 @@ function RegisterPage() {
     }
 
     localStorage.setItem("chat-app-user", JSON.stringify(res.data.user));
-    toast(res.data.message);
+    toast.success(res.data.message);
     navigate("/setProfile");
   };
 

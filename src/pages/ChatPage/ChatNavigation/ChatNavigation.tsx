@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Tabs, Tab, Button } from "@mui/material";
 import { PeopleAlt, ChatBubble } from "@mui/icons-material";
 import ContactComponent from "./ContactComponent";
@@ -8,6 +8,7 @@ import { currentUserState } from "../../../store/store";
 import { useNavigate } from "react-router-dom";
 import { Buffer } from "buffer";
 import styled from "styled-components";
+
 
 const tabsInfo: { [key: number]: string } = {
   0: "contacts-tab-button",
@@ -19,6 +20,7 @@ function ChatNavigation() {
   const [value, setValue] = useState(0);
   const currentUser = useRecoilValue(currentUserState);
   const navigate = useNavigate();
+
   const onChangeTab = (event: React.SyntheticEvent, newValue: number) => {
     setValue(newValue);
     setSelectedTab(tabsInfo[newValue]);

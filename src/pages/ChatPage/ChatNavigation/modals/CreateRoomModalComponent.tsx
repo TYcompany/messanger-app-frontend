@@ -1,11 +1,19 @@
 import React, { useState } from "react";
-import { useRecoilValue } from "recoil";
+import { useRecoilState, useRecoilValue } from "recoil";
 import styled from "styled-components";
 import { Buffer } from "buffer";
-import { contactsMapState, currentUserState } from "../../../../store/store";
+import {
+  activeModalNameState,
+  contactsMapState,
+  currentUserState,
+  roomsWithuserDataState,
+} from "../../../../store/store";
 import { UserType } from "../../../../lib/types/UserType";
-import { createGroupRoom } from "../../../../lib/api/APIFunctions";
+import { createGroupRoom, fetchRoomDatasOfUser } from "../../../../lib/api/APIFunctions";
 import { Box, Button, TextField } from "@mui/material";
+import toast from "react-hot-toast";
+import { RoomWithUserDataType } from "../../../../lib/types/RoomType";
+import { getRoomsWithUserData } from "../../../../lib/etc/etcFunctions";
 
 function CreateRoomModalComponent() {
   const contactsMap = useRecoilValue(contactsMapState);
@@ -13,6 +21,10 @@ function CreateRoomModalComponent() {
 
   const [selectedUsers, setSelectedUsers] = useState<UserType[]>([]);
   const [roomTitle, setRoomTitle] = useState("");
+  const [activeModalName, setActiveModalName] = useRecoilState(activeModalNameState);
+  const [roomsWithUserData, setRoomsWithUserData] =
+    useRecoilState<RoomWithUserDataType[]>(roomsWithuserDataState);
+
   const addSelectedUser = (userData: UserType) => {
     for (const selectedUser of selectedUsers) {
       if (selectedUser._id === userData._id) {
@@ -29,27 +41,35 @@ function CreateRoomModalComponent() {
     e.preventDefault();
 
     if (roomTitle?.length < 3) {
-      alert("Minimum length of room title is 3!");
+      toast.error("Minimum length of room title is 3!");
       return;
     }
     if (selectedUsers?.length < 3) {
-      alert("At least 3 people should be selected!");
+      toast.error("At least 3 people should be selected!");
       return;
     }
+    try {
+      await createGroupRoom(
+        roomTitle,
+        selectedUsers.map((selectedUser) => selectedUser._id),
+        currentUser._id
+      );
+      toast.success("Successfully created a room!");
 
-    const res = await createGroupRoom(
-      roomTitle,
-      selectedUsers.map((selectedUser) => selectedUser._id),
-      currentUser._id
-    );
-    console.log(res);
+      const tempRooms = await fetchRoomDatasOfUser(currentUser._id);
+      setRoomsWithUserData(getRoomsWithUserData(currentUser._id, contactsMap, tempRooms));
+
+      setActiveModalName("");
+    } catch (e) {
+      toast.error("Create Room Failed!");
+    }
   };
   return (
     <Container>
       <Box
         className="create-room-container"
         component="form"
-        onSubmit={(e) => onSubmitCreateRoom(e)}
+        onSubmit={(e: React.FormEvent<HTMLFormElement>) => onSubmitCreateRoom(e)}
         noValidate
         sx={{ mt: 1 }}
       >

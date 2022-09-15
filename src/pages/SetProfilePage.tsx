@@ -43,7 +43,7 @@ function SetProfilePage() {
     localStorage.setItem("chat-app-user", JSON.stringify(user));
     navigate("/");
 
-    toast("Successfully set profile image");
+    toast.success("Successfully set profile image");
   };
 
   return (

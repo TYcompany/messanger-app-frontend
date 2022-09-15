@@ -12,22 +12,13 @@ import Socket from "../../socket/socket";
 import { useRecoilState } from "recoil";
 import { contactsMapState, currentUserState, roomsWithuserDataState } from "../../store/store";
 import { RoomType, RoomWithUserDataType } from "../../lib/types/RoomType";
+import { getRoomsWithUserData } from "../../lib/etc/etcFunctions";
 
 import ChatNavigation from "./ChatNavigation";
 
+import { Toaster } from "react-hot-toast";
+
 const socket = new Socket().getSocketInstance();
-
-const getRoomsWithUserData = (userId: string, contactsMap: UserMapType, rooms: RoomType[]) => {
-  const results: RoomWithUserDataType[] = [];
-
-  for (const room of rooms) {
-    const userData = room.users.filter((user) => user !== userId).map((user) => contactsMap[user]);
-
-    results.push({ ...room, userData });
-  }
-
-  return results;
-};
 
 function ChatPage() {
   const navigate = useNavigate();
@@ -61,24 +52,25 @@ function ChatPage() {
     socket.emit("add-user", { userId: user._id, userName: user.userName });
   }, [navigate]);
 
+  const initUserContactsAndRooms = async () => {
+    const tempContacts = await fetchUserContacts(currentUser._id);
+    const nextContacts: UserMapType = {};
+
+    for (const tempContact of tempContacts) {
+      nextContacts[tempContact._id] = tempContact;
+    }
+
+    setContactsMap(nextContacts);
+    const tempRooms = await fetchRoomDatasOfUser(currentUser._id);
+    setRooms(tempRooms);
+  };
+
   useEffect(() => {
     if (!currentUser?._id) {
       return;
     }
-    const init = async () => {
-      const tempContacts = await fetchUserContacts(currentUser._id);
-      const nextContacts: UserMapType = {};
 
-      for (const tempContact of tempContacts) {
-        nextContacts[tempContact._id] = tempContact;
-      }
-
-      setContactsMap(nextContacts);
-      const tempRooms = await fetchRoomDatasOfUser(currentUser._id);
-      setRooms(tempRooms);
-    };
-
-    init();
+    initUserContactsAndRooms();
   }, [currentUser]);
 
   return (
@@ -95,6 +87,7 @@ function ChatPage() {
         <ChatNavigation />
         <ChatScreen setIsPickerActive={setIsPickerActive} isPickerActive={isPickerActive} />
       </div>
+      <Toaster position="bottom-left" reverseOrder={true} />
     </Container>
   );
 }
