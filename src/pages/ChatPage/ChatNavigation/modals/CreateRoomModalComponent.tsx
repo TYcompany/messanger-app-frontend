@@ -5,6 +5,7 @@ import { Buffer } from "buffer";
 import { contactsMapState, currentUserState } from "../../../../store/store";
 import { UserType } from "../../../../lib/types/UserType";
 import { createGroupRoom } from "../../../../lib/api/APIFunctions";
+import { Box, Button, TextField } from "@mui/material";
 
 function CreateRoomModalComponent() {
   const contactsMap = useRecoilValue(contactsMapState);
@@ -24,7 +25,9 @@ function CreateRoomModalComponent() {
     setSelectedUsers([...selectedUsers.filter((u) => u._id !== userData._id)]);
   };
 
-  const onSubmitCreateRoom = async () => {
+  const onSubmitCreateRoom = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+
     if (roomTitle?.length < 3) {
       alert("Minimum length of room title is 3!");
       return;
@@ -43,20 +46,36 @@ function CreateRoomModalComponent() {
   };
   return (
     <Container>
-      <div className={`create-room-container `}>
-        <input
+      <Box
+        className="create-room-container"
+        component="form"
+        onSubmit={(e) => onSubmitCreateRoom(e)}
+        noValidate
+        sx={{ mt: 1 }}
+      >
+        <TextField
+          className="room-title-input"
+          margin="normal"
+          required
+          fullWidth
+          id="room-title-input"
+          name="room-title-input"
+          label="room title"
+          autoFocus
           type="text"
           placeholder="room title"
           value={roomTitle}
           onChange={(e) => setRoomTitle(e.currentTarget.value)}
         />
-        <div style={{ color: "white", background: "gray", height: "3rem" }}>
+
+        <div className="selected-users">
           {selectedUsers.map((selectedUser) => (
             <div
+              className="selected-user"
               key={"selected-user" + selectedUser._id}
               onClick={() => removeSelectedUser(selectedUser)}
             >
-              {selectedUser.userName}
+              {selectedUser.userName + " x"}
             </div>
           ))}
         </div>
@@ -82,8 +101,10 @@ function CreateRoomModalComponent() {
           ))}
         </div>
 
-        <button onClick={() => onSubmitCreateRoom()}>submit</button>
-      </div>
+        <Button type="submit" fullWidth variant="contained" sx={{ mt: 3, mb: 2 }}>
+          Create
+        </Button>
+      </Box>
     </Container>
   );
 }
@@ -93,9 +114,23 @@ const Container = styled.div`
     display: flex;
     flex-direction: column;
     overflow: scroll;
-    background-color: #080420;
+
     height: 80vh;
 
+    .selected-users {
+      display: flex;
+      flex-direction: row;
+      .selected-user {
+        margin: 0.1rem;
+        padding: 0.1rem 0.5rem;
+        max-width: fit-content;
+
+        border-radius: 1rem;
+        background-color: gray;
+        color: white;
+        text-align: center;
+      }
+    }
     .contacts {
       display: flex;
       flex-direction: column;
@@ -126,7 +161,7 @@ const Container = styled.div`
         }
         .username {
           h3 {
-            color: white;
+            color: gray;
           }
         }
       }

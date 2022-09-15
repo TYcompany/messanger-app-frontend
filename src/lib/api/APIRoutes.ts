@@ -2,7 +2,7 @@ const host = "http://localhost:5000";
 export const RegisterRoute = `${host}/auth/register`;
 export const LoginRoute = `${host}/auth/login`;
 export const FetchUserContactsRoute = `${host}/auth/fetchUserContacts`;
-export const GetUserDataByEmailRoute = `${host}/auth/getUserByEmailData`;
+export const GetUserDataByEmailRoute = `${host}/auth/getUserDataByEmail`;
 export const GetUserDataByUserIdsRoute = `${host}/auth/getUserDataByUserIds`;
 
 export const AddFriendRoute = `${host}/auth/addFriend`;
