@@ -46,7 +46,7 @@ function RoomComponent({ selectedTab }: { selectedTab: string }) {
 
       roomData = { ...roomData, userData };
     }
-    
+
     setRoomsWithUserData((prev) => [
       roomData,
       ...prev.filter((prevRoom) => prevRoom._id !== roomData._id),
@@ -96,6 +96,7 @@ const Container = styled.div`
       background-color: #080420;
       height: 60vh;
       .room {
+        margin-bottom: 0.5rem;
         color: white;
         overflow: ellipsis;
         &::-webkit-scrollbar {
