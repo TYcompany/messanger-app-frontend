@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import styled from "styled-components";
 import { useNavigate } from "react-router-dom";
 
@@ -17,8 +17,16 @@ import { getRoomsWithUserData } from "../../lib/etc/etcFunctions";
 import ChatNavigation from "./ChatNavigation";
 
 import { Toaster } from "react-hot-toast";
+import { AppBar, Box, Drawer, IconButton, Toolbar, Typography } from "@mui/material";
+
+import MenuIcon from "@mui/icons-material/Menu";
 
 const socket = new Socket().getSocketInstance();
+
+const drawerWidth = 240;
+
+const MobileWidth = 760;
+const isMobile = window.innerWidth <= MobileWidth;
 
 function ChatPage() {
   const navigate = useNavigate();
@@ -31,6 +39,12 @@ function ChatPage() {
   const [isConnectedToSocket, setIsConnectedToSocket] = useState(false);
 
   const [isPickerActive, setIsPickerActive] = useState(false);
+
+  const [mobileOpen, setMobileOpen] = useState(false);
+
+  const handleDrawerToggle = () => {
+    setMobileOpen(!mobileOpen);
+  };
 
   useEffect(() => {
     if (!contactsMap || !rooms || !currentUser?._id) {
@@ -83,8 +97,46 @@ function ChatPage() {
         setIsPickerActive(false);
       }}
     >
+      <AppBar
+        sx={{
+          width: { sm: `calc(100% - ${drawerWidth}px)` },
+
+          display: { sm: "none" },
+        }}
+      >
+        <Toolbar>
+          <IconButton
+            color="inherit"
+            aria-label="open drawer"
+            edge="start"
+            onClick={handleDrawerToggle}
+            sx={{ mr: 2, display: { sm: "none" } }}
+          >
+            <MenuIcon />
+          </IconButton>
+          {/* <Typography variant="h6" noWrap component="div">
+            Responsive drawer
+          </Typography> */}
+        </Toolbar>
+      </AppBar>
       <div className="container">
-        <ChatNavigation />
+        <Drawer
+          variant={isMobile ? "temporary" : "permanent"}
+          open={mobileOpen}
+          onClose={handleDrawerToggle}
+          ModalProps={{
+            keepMounted: true, // Better open performance on mobile.
+          }}
+          sx={{
+            "& .MuiDrawer-paper": {
+              boxSizing: "border-box",
+              minWidth: `${isMobile ? "80%" : "20%"}`,
+            },
+          }}
+        >
+          <ChatNavigation />
+        </Drawer>
+
         <ChatScreen setIsPickerActive={setIsPickerActive} isPickerActive={isPickerActive} />
       </div>
       <Toaster position="bottom-left" reverseOrder={true} />
@@ -95,23 +147,20 @@ function ChatPage() {
 const Container = styled.div`
   height: 100vh;
   width: 100vw;
+  overflow: hidden;
+
   display: flex;
   flex-direction: column;
   justify-content: center;
-  gap: 1rem;
+
   align-items: center;
   background-color: #131324;
 
   .container {
-    height: 90vh;
-    width: 90vw;
     background-color: #00000076;
     display: grid;
+    width: 100%;
     grid-template-columns: 25% 75%;
-    gap: 1rem;
-    @media screen and (min-width: 720px) and (max-width: 1080px) {
-      grid-template-columns: 35% 65%;
-    }
   }
 `;
 

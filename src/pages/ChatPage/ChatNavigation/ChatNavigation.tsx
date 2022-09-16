@@ -9,7 +9,6 @@ import { useNavigate } from "react-router-dom";
 import { Buffer } from "buffer";
 import styled from "styled-components";
 
-
 const tabsInfo: { [key: number]: string } = {
   0: "contacts-tab-button",
   1: "chatting-tab-button",
@@ -77,6 +76,10 @@ function ChatNavigation() {
 
 const Container = styled.div`
   width: 25vw;
+
+  @media screen and (max-width: 750px) {
+    width: 100%;
+  }
 
   .chat-navigation-tabs {
     display: flex;

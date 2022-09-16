@@ -35,11 +35,10 @@ function MessageItem({ message }: { message: MessageType }) {
 
 const Container = styled.div`
   .message {
-    overflow: scroll;
     display: flex;
     align-items: center;
-    padding-left: 1rem;
-    padding-right: 1rem;
+    padding-left: 0.33rem;
+    padding-right: 0.33rem;
 
     .content {
       max-width: 40%;

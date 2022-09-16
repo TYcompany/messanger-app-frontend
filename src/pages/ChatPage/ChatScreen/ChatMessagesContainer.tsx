@@ -33,15 +33,23 @@ function ChatMessagesContainer({
 const Container = styled.div`
   display: flex;
   flex-direction: column;
-  height: 80%;
+  height: 85%;
+
+  @media screen and (max-width: 760px) {
+    width: 100vw;
+  }
 
   .messages {
     overflow: scroll;
     height: 100vh;
 
+    @media screen and (max-width: 760px) {
+      width: 100%;
+    }
+
     .end-of-message {
       overflow: break-word;
-      padding: 1rem;
+      padding-bottom: 0.5rem;
       font-size: 1.1rem;
     }
   }

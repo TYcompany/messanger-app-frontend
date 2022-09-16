@@ -11,18 +11,15 @@ function ChatInput({
   setText,
   text,
   isPickerActive,
-  setIsPickerActive
+  setIsPickerActive,
 }: {
-
-  sendMessage:Function,
-  setText:Function,
-  text:string,
-  isPickerActive:Boolean,
-  setIsPickerActive:Function
+  sendMessage: Function;
+  setText: Function;
+  text: string;
+  isPickerActive: Boolean;
+  setIsPickerActive: Function;
 }) {
-  useEffect(() => {
-    
-  }, []);
+  useEffect(() => {}, []);
 
   const onSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -37,9 +34,7 @@ function ChatInput({
       <div className="button-container">
         <div className="emoji">
           <BsEmojiSmileFill onClick={() => setIsPickerActive(!isPickerActive)} />
-          {isPickerActive && (
-            <Picker onEmojiClick={(e, emoji) => setText(text + emoji.emoji)}/>
-          )}
+          {isPickerActive && <Picker onEmojiClick={(e, emoji) => setText(text + emoji.emoji)} />}
         </div>
       </div>
       <form className="input-container" onSubmit={(e) => onSubmit(e)}>
@@ -63,8 +58,15 @@ const Container = styled.div`
   grid-template-columns: 5% 95%;
   align-items: center;
   background-color: #080420;
+  gap: 1rem;
   padding: 0 2rem;
   padding-bottom: 0.3rem;
+  padding-top: 1rem;
+  @media screen and (max-width: 760px) {
+    width: 100vw;
+    padding: 0 0.5rem;
+  }
+
   .button-container {
     display: flex;
     align-items: center;
@@ -83,7 +85,11 @@ const Container = styled.div`
         background-color: #080420;
         box-shadow: 0 5px 10px #9a86f3;
         border-color: #9186f3;
-        
+
+        @media screen and (max-width: 760px) {
+          top: -350px;
+        }
+
         .emoji-categories {
           button {
             filter: contrast(0);
@@ -110,20 +116,25 @@ const Container = styled.div`
   }
 
   .input-container {
-    display: flex;
+    display: grid;
     align-items: center;
-    gap: 2rem;
-    width: 100%;
+    max-width: 95%;
+    grid-template-columns: 80% 20%;
     border-radius: 2rem;
     background-color: #ffffff34;
+
+    @media screen and (max-width: 760px) {
+      max-width: calc(95% - 1rem);
+      grid-template-columns: 80% 20%;
+    }
     input {
-      width: 90%;
       height: 60%;
       background-color: transparent;
       color: white;
       border: none;
       font-size: 1.2rem;
       padding-left: 1rem;
+
       &::selection {
         background-color: #9186f3;
       }
@@ -135,7 +146,6 @@ const Container = styled.div`
       display: flex;
       align-items: center;
       justify-content: center;
-      padding: 0.3rem 2rem;
       border-radius: 2rem;
       background-color: #9a86f3;
       border: none;

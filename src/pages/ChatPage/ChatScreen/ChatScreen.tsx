@@ -219,14 +219,15 @@ function ChatScreen({
 const Container = styled.div`
   color: white;
   padding-top: 1rem;
-  height: 80vh;
+  height: 90vh;
+  width: 100%;
 
   .chat-header {
     display: flex;
 
     justify-content: space-between;
     align-items: center;
-    padding: 0 2rem;
+    padding: 0.5rem;
 
     .profile {
       display: flex;

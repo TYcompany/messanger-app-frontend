@@ -1,7 +1,11 @@
 import React from "react";
-
+import ResponsiveDrawer from "./ResponsiveDrawer";
 function MainPage() {
-  return <div>MainPage</div>;
+  return (
+    <div>
+      <ResponsiveDrawer />
+    </div>
+  );
 }
 
 export default MainPage;
