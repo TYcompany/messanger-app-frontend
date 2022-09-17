@@ -3,6 +3,7 @@ import { Link, useNavigate } from "react-router-dom";
 import styled from "styled-components";
 import toast, { Toaster } from "react-hot-toast";
 import axios from "axios";
+import { Cookies } from "react-cookie";
 
 import { loginRequest } from "../lib/api/APIFunctions";
 
@@ -26,6 +27,7 @@ import { loginRequest } from "../lib/api/APIFunctions";
 
 function LoginPage() {
   const navigate = useNavigate();
+  const cookies = new Cookies();
 
   const [values, setValues] = useState({
     userName: "",
@@ -56,6 +58,11 @@ function LoginPage() {
 
     const profileImage = await axios.get(userData.profileImageLink);
     userData.profileImage = profileImage.data;
+
+    const access_token = res.data.access_token;
+    cookies.set("access_token", access_token);
+    axios.defaults.headers.common["Authorization"] = "Bearer " + access_token;
+
     localStorage.setItem("chat-app-user", JSON.stringify(userData));
     navigate("/chat");
   };

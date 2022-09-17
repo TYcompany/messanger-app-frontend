@@ -17,7 +17,11 @@ import {
 import { sleep } from "../etc/etcFunctions";
 import { UserType } from "../types/UserType";
 
+import { Cookies } from "react-cookie";
+
 //if only querying data(if fails just they can return empty data), just return data ,else return response itself
+
+const cookies = new Cookies();
 
 export const loginRequest = async (userName: string, password: string) => {
   return await axios.post(LoginRoute, {
