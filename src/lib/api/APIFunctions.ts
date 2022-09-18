@@ -13,6 +13,7 @@ import {
   DeleteFriendRoute,
   CreateGroupRoomRoute,
   GetUserDataByUserIdsRoute,
+  RefreshAccessTokenRoute,
 } from "./APIRoutes";
 import { sleep } from "../etc/etcFunctions";
 import { UserType } from "../types/UserType";
@@ -22,6 +23,18 @@ import { Cookies } from "react-cookie";
 //if only querying data(if fails just they can return empty data), just return data ,else return response itself
 
 const cookies = new Cookies();
+
+export const refreshAccessToken = async (access_token: string) => {
+  const res = await axios.post(RefreshAccessTokenRoute, {
+    access_token,
+  });
+  return res.data;
+};
+
+export const refreshAccessTokenCookies = async () => {
+  const access_token = await refreshAccessToken(cookies.get("access_token"));
+  cookies.set("access_token", access_token);
+};
 
 export const loginRequest = async (userName: string, password: string) => {
   return await axios.post(LoginRoute, {

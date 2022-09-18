@@ -3,9 +3,10 @@ import { Link, useNavigate } from "react-router-dom";
 import styled from "styled-components";
 import toast, { Toaster } from "react-hot-toast";
 import axios from "axios";
+import { Cookies } from "react-cookie";
 
-import { RegisterRoute } from "../lib/api/APIRoutes";
-import { registerRequest } from "../lib/api/APIFunctions";
+import { refreshAccessTokenCookies, registerRequest } from "../lib/api/APIFunctions";
+import { removeAuthData, setAuthData } from "../lib/etc/etcFunctions";
 
 // toast.promise(
 //   saveSettings(settings),
@@ -25,6 +26,8 @@ import { registerRequest } from "../lib/api/APIFunctions";
 //   },
 // }
 
+const cookies = new Cookies();
+
 function RegisterPage() {
   const navigate = useNavigate();
 
@@ -36,8 +39,18 @@ function RegisterPage() {
   });
 
   useEffect(() => {
-    if (localStorage.getItem("chat-app-user")) {
-      navigate("/chat");
+    const init = async () => {
+      try {
+        await refreshAccessTokenCookies();
+        navigate("/chat");
+      } catch (e) {
+        console.log(e);
+        removeAuthData();
+      }
+    };
+
+    if (cookies.get("access_token")) {
+      init();
     }
   }, [navigate]);
 
@@ -55,7 +68,12 @@ function RegisterPage() {
       return;
     }
 
-    localStorage.setItem("chat-app-user", JSON.stringify(res.data.user));
+    const userData = res.data.user;
+
+    const access_token = res.data.access_token;
+
+    setAuthData(userData, access_token);
+
     toast.success(res.data.message);
     navigate("/setProfile");
   };

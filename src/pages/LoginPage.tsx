@@ -5,7 +5,8 @@ import toast, { Toaster } from "react-hot-toast";
 import axios from "axios";
 import { Cookies } from "react-cookie";
 
-import { loginRequest } from "../lib/api/APIFunctions";
+import { loginRequest, refreshAccessTokenCookies } from "../lib/api/APIFunctions";
+import { removeAuthData, setAuthData } from "../lib/etc/etcFunctions";
 
 // toast.promise(
 //   saveSettings(settings),
@@ -35,10 +36,19 @@ function LoginPage() {
   });
 
   useEffect(() => {
-    if (localStorage.getItem("chat-app-user")) {
-      navigate("/chat");
+    const init = async () => {
+      try {
+        await refreshAccessTokenCookies();
+        navigate("/chat");
+      } catch (e) {
+        console.log(e);
+        removeAuthData();
+      }
+    };
+    if (cookies.get("access_token")) {
+      init();
     }
-  }, []);
+  }, [navigate]);
 
   const onSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -54,17 +64,14 @@ function LoginPage() {
       toast.error("login failed" + res.data.message);
       return;
     }
-    const userData = res.data.user;
 
+    const userData = res.data.user;
     const profileImage = await axios.get(userData.profileImageLink);
     userData.profileImage = profileImage.data;
 
     const access_token = res.data.access_token;
-    cookies.set("access_token", access_token);
-    axios.defaults.headers.common["Authorization"] = "Bearer " + access_token;
-
-    localStorage.setItem("chat-app-user", JSON.stringify(userData));
-    navigate("/chat");
+    setAuthData(userData, access_token);
+    navigate("/setProfile");
   };
 
   const onChange = (e: React.ChangeEvent<HTMLInputElement>) => {

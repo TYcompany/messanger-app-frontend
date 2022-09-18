@@ -4,8 +4,16 @@ import styled from "styled-components";
 
 import toast, { Toaster } from "react-hot-toast";
 import CubeLoader from "../components/CubeLoader";
-import { fetchProfileImages, setProfileImage } from "../lib/api/APIFunctions";
+import {
+  fetchProfileImages,
+  refreshAccessTokenCookies,
+  setProfileImage,
+} from "../lib/api/APIFunctions";
 import { Buffer } from "buffer";
+import { removeAuthData } from "../lib/etc/etcFunctions";
+import { Cookies } from "react-cookie";
+
+const cookies = new Cookies();
 
 function SetProfilePage() {
   const navigate = useNavigate();
@@ -14,8 +22,18 @@ function SetProfilePage() {
   const [profileImages, setProfileImages] = useState<string[]>([]);
 
   useEffect(() => {
-    if (!localStorage.getItem("chat-app-user")) {
-      navigate("/login");
+    const init = async () => {
+      try {
+        await refreshAccessTokenCookies();
+        navigate("/chat");
+      } catch (e) {
+        console.log(e);
+        removeAuthData();
+      }
+    };
+
+    if (cookies.get("access_token")) {
+      init();
     }
   }, [navigate]);
 
@@ -41,7 +59,7 @@ function SetProfilePage() {
     const data = res.data;
     user.profileImage = data.image;
     localStorage.setItem("chat-app-user", JSON.stringify(user));
-    navigate("/");
+    navigate("/chat");
 
     toast.success("Successfully set profile image");
   };

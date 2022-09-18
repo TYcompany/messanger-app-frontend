@@ -6,13 +6,18 @@ import ChatScreen from "./ChatScreen";
 
 import { UserMapType } from "../../lib/types/UserType";
 
-import { fetchUserContacts, fetchRoomDatasOfUser } from "../../lib/api/APIFunctions";
+import {
+  fetchUserContacts,
+  fetchRoomDatasOfUser,
+  refreshAccessToken,
+  refreshAccessTokenCookies,
+} from "../../lib/api/APIFunctions";
 
 import Socket from "../../socket/socket";
 import { useRecoilState } from "recoil";
 import { contactsMapState, currentUserState, roomsWithuserDataState } from "../../store/store";
 import { RoomType, RoomWithUserDataType } from "../../lib/types/RoomType";
-import { getRoomsWithUserData } from "../../lib/etc/etcFunctions";
+import { getRoomsWithUserData, removeAuthData } from "../../lib/etc/etcFunctions";
 
 import ChatNavigation from "./ChatNavigation";
 
@@ -20,6 +25,9 @@ import { Toaster } from "react-hot-toast";
 import { AppBar, Box, Drawer, IconButton, Toolbar, Typography } from "@mui/material";
 
 import MenuIcon from "@mui/icons-material/Menu";
+import { Cookies } from "react-cookie";
+
+const cookies = new Cookies();
 
 const socket = new Socket().getSocketInstance();
 
@@ -55,15 +63,26 @@ function ChatPage() {
   }, [contactsMap, rooms]);
 
   useEffect(() => {
-    if (!localStorage.getItem("chat-app-user")) {
+    const init = async () => {
+      try {
+        await refreshAccessTokenCookies();
+        const user = JSON.parse(localStorage.getItem("chat-app-user") || "");
+
+        setCurrentUser(user);
+        socket.emit("add-user", { userId: user._id, userName: user.userName });
+      } catch (e) {
+        console.log(e);
+        removeAuthData();
+        navigate("/login");
+      }
+    };
+
+    if (cookies.get("access_token")) {
+      init();
+    } else {
+      removeAuthData();
       navigate("/login");
-      return;
     }
-    const user = JSON.parse(localStorage.getItem("chat-app-user") || "");
-
-    setCurrentUser(user);
-
-    socket.emit("add-user", { userId: user._id, userName: user.userName });
   }, [navigate]);
 
   const initUserContactsAndRooms = async () => {

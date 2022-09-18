@@ -1,5 +1,9 @@
 import { RoomType, RoomWithUserDataType } from "../types/RoomType";
-import { UserMapType } from "../types/UserType";
+import { UserMapType, UserType } from "../types/UserType";
+import { Cookies } from "react-cookie";
+import axios from "axios";
+
+const cookies = new Cookies();
 
 export function sleep(ms: number) {
   return new Promise((resolve) => setTimeout(resolve, ms));
@@ -19,4 +23,16 @@ export const getRoomsWithUserData = (
   }
 
   return results;
+};
+
+export const setAuthData = (userData: UserType, access_token: string) => {
+  cookies.set("access_token", access_token);
+  axios.defaults.headers.common["Authorization"] = "Bearer " + access_token;
+  localStorage.setItem("chat-app-user", JSON.stringify(userData));
+};
+
+export const removeAuthData = () => {
+  cookies.remove("access_token");
+  axios.defaults.headers.common["Authorization"] = "";
+  localStorage.removeItem("chat-app-user");
 };
