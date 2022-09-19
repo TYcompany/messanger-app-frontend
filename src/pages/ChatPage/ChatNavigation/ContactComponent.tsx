@@ -33,12 +33,6 @@ function ContactComponent({ selectedTab }: { selectedTab: string }) {
   const [activeModalName, setActiveModalName] = useRecoilState(activeModalNameState);
 
   useEffect(() => {
-    if (!currentUser) {
-      return;
-    }
-  }, [currentUser]);
-
-  useEffect(() => {
     if (!currentlyChattingUser?._id || !currentUser?._id) {
       return;
     }
@@ -50,8 +44,10 @@ function ContactComponent({ selectedTab }: { selectedTab: string }) {
     init();
   }, [currentlyChattingUser, currentUser]);
 
-  const onClickUserContact = (contact: UserType) => {
+  const onClickUserContact = async (contact: UserType) => {
     setCurrentlyChattingUser(contact);
+    const res = await fetchRoomData(currentlyChattingUser._id, contact?._id);
+    setCurrentlyChattingRoom(res.data);
   };
 
   const onClickAddFriend = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
