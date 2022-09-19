@@ -21,7 +21,7 @@ import { getRoomsWithUserData, removeAuthData } from "../../lib/etc/etcFunctions
 
 import ChatNavigation from "./ChatNavigation";
 
-import { Toaster } from "react-hot-toast";
+import toast, { Toaster } from "react-hot-toast";
 import { AppBar, Box, Drawer, IconButton, Toolbar, Typography } from "@mui/material";
 
 import MenuIcon from "@mui/icons-material/Menu";
@@ -71,7 +71,8 @@ function ChatPage() {
         setCurrentUser(user);
         socket.emit("add-user", { userId: user._id, userName: user.userName });
       } catch (e) {
-        console.log(e);
+        console.log("refresh failed on chat page " + e);
+
         removeAuthData();
         navigate("/login");
       }
@@ -94,7 +95,15 @@ function ChatPage() {
     }
 
     setContactsMap(nextContacts);
-    const tempRooms = await fetchRoomDatasOfUser(currentUser._id);
+    let tempRooms;
+    try {
+      tempRooms = await fetchRoomDatasOfUser(currentUser._id);
+    } catch (e) {
+      toast.error("fetchRoomData failed! " + e);
+      removeAuthData();
+      navigate("/login");
+    }
+
     setRooms(tempRooms);
   };
 
@@ -102,7 +111,6 @@ function ChatPage() {
     if (!currentUser?._id) {
       return;
     }
-
     initUserContactsAndRooms();
   }, [currentUser]);
 

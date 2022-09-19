@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import styled from "styled-components";
 import { useRecoilState, useRecoilValue } from "recoil";
 
@@ -15,8 +16,11 @@ import {
 import BasicModal from "../../../components/modals/BasicModal";
 import AddFriendModalComponent from "./modals/AddFriendModalComponent";
 import { Button } from "@mui/material";
+import { removeAuthData } from "../../../lib/etc/etcFunctions";
 
 function ContactComponent({ selectedTab }: { selectedTab: string }) {
+  const navigate = useNavigate();
+
   const [currentlyChattingUser, setCurrentlyChattingUser] = useRecoilState(
     currentlyChattingUserState
   );
@@ -40,8 +44,15 @@ function ContactComponent({ selectedTab }: { selectedTab: string }) {
     }
 
     const init = async () => {
-      const res = await fetchRoomData(currentlyChattingUser._id, currentUser?._id);
-      setCurrentlyChattingRoom(res.data);
+      try {
+        const res = await fetchRoomData(currentlyChattingUser._id, currentUser?._id);
+        setCurrentlyChattingRoom(res.data);
+      } catch (e) {
+        console.log(e);
+        
+        removeAuthData();
+        navigate("/login");
+      }
     };
     init();
   }, [currentlyChattingUser, currentUser]);

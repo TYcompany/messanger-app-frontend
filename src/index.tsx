@@ -6,8 +6,22 @@ import App from "./App";
 import reportWebVitals from "./reportWebVitals";
 import { indexedDB } from "./lib/localDatabase/indexedDB";
 import { RecoilRoot } from "recoil";
+import axios from "axios";
+import { Cookies } from "react-cookie";
+import { removeAuthData } from "./lib/etc/etcFunctions";
+import { refreshAccessToken } from "./lib/api/APIFunctions";
+
+const cookies = new Cookies();
 
 indexedDB();
+const access_token = cookies.get("access_token");
+
+if (!access_token) {
+  removeAuthData();
+} else {
+  refreshAccessToken(access_token)
+  axios.defaults.headers.common["Authorization"] = "Bearer " + access_token;
+}
 
 const root = ReactDOM.createRoot(document.getElementById("root") as HTMLElement);
 root.render(
