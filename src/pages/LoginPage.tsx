@@ -61,7 +61,11 @@ function LoginPage() {
     }
 
     const userData = res.data.user;
-    const profileImage = await axios.get(userData.profileImageLink);
+    const profileImage = await axios.get(userData.profileImageLink, {
+      headers: {
+        Authorization: "",
+      },
+    });
     userData.profileImage = profileImage.data;
 
     const access_token = res.data.access_token;
