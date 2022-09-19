@@ -37,13 +37,8 @@ function LoginPage() {
 
   useEffect(() => {
     const init = async () => {
-      try {
-        await refreshAccessTokenCookies();
-        navigate("/chat");
-      } catch (e) {
-        console.log(e);
-        removeAuthData();
-      }
+      await refreshAccessTokenCookies();
+      navigate("/chat");
     };
     if (cookies.get("access_token")) {
       init();

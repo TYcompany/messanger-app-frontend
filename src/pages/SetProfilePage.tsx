@@ -23,13 +23,8 @@ function SetProfilePage() {
 
   useEffect(() => {
     const init = async () => {
-      try {
-        await refreshAccessTokenCookies();
-        navigate("/chat");
-      } catch (e) {
-        console.log(e);
-        removeAuthData();
-      }
+      await refreshAccessTokenCookies();
+      navigate("/chat");
     };
 
     if (cookies.get("access_token")) {
@@ -51,7 +46,9 @@ function SetProfilePage() {
   const setProfilePicture = async () => {
     const user = JSON.parse(localStorage.getItem("chat-app-user") || "");
     if (!user) {
-      toast.error("fail to get userData please logout and login again!");
+      toast.error("fail to get userData please login again!");
+      removeAuthData();
+      navigate("/login");
       return;
     }
 

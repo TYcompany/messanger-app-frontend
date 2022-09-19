@@ -44,15 +44,8 @@ function ContactComponent({ selectedTab }: { selectedTab: string }) {
     }
 
     const init = async () => {
-      try {
-        const res = await fetchRoomData(currentlyChattingUser._id, currentUser?._id);
-        setCurrentlyChattingRoom(res.data);
-      } catch (e) {
-        console.log(e);
-        
-        removeAuthData();
-        navigate("/login");
-      }
+      const res = await fetchRoomData(currentlyChattingUser._id, currentUser?._id);
+      setCurrentlyChattingRoom(res.data);
     };
     init();
   }, [currentlyChattingUser, currentUser]);

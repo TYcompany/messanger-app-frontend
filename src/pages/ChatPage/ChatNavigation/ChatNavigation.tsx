@@ -8,6 +8,7 @@ import { currentUserState } from "../../../store/store";
 import { useNavigate } from "react-router-dom";
 import { Buffer } from "buffer";
 import styled from "styled-components";
+import { removeAuthData } from "../../../lib/etc/etcFunctions";
 
 const tabsInfo: { [key: number]: string } = {
   0: "contacts-tab-button",
@@ -25,8 +26,9 @@ function ChatNavigation() {
     setSelectedTab(tabsInfo[newValue]);
   };
 
-  const onLogout = () => {
-    localStorage.setItem("chat-app-user", "");
+  const onLogout = async () => {
+    removeAuthData();
+
     navigate("/login");
   };
 

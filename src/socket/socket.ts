@@ -16,15 +16,17 @@ export default class Socket {
 
   init() {
     const socket = this.socket;
-    console.log('inititd')
+    console.log("inititd");
+
     socket.on("connect", () => {
       console.log("connected");
     });
     socket.on("exception", (msg) => {
       console.log(msg);
     });
-    socket.on("disconnect", () => {});
-    
+    socket.on("disconnect", () => {
+      console.log("disconnected");
+    });
   }
   getSocketInstance() {
     return this.socket;

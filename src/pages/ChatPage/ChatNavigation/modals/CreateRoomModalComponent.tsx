@@ -156,7 +156,7 @@ const Container = styled.div`
       flex-direction: column;
       align-items: center;
       overflow: auto;
-      gap: 0.8rem;
+      gap: 0.5rem;
       .contact {
         &::-webkit-scrollbar {
           background-color: #ffffff39;
@@ -164,7 +164,7 @@ const Container = styled.div`
           border-radius: 1rem;
         }
         background-color: #ffffff39;
-        min-height: 5rem;
+        min-height: 2rem;
         width: 90%;
         cursor: pointer;
         border-radius: 0.2rem;

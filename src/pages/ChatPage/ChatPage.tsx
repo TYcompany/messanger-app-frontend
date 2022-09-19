@@ -64,18 +64,11 @@ function ChatPage() {
 
   useEffect(() => {
     const init = async () => {
-      try {
-        await refreshAccessTokenCookies();
-        const user = JSON.parse(localStorage.getItem("chat-app-user") || "");
+      await refreshAccessTokenCookies();
+      const user = JSON.parse(localStorage.getItem("chat-app-user") || "");
 
-        setCurrentUser(user);
-        socket.emit("add-user", { userId: user._id, userName: user.userName });
-      } catch (e) {
-        console.log("refresh failed on chat page " + e);
-
-        removeAuthData();
-        navigate("/login");
-      }
+      setCurrentUser(user);
+      socket.emit("add-user", { userId: user._id, userName: user.userName });
     };
 
     if (cookies.get("access_token")) {
@@ -96,13 +89,8 @@ function ChatPage() {
 
     setContactsMap(nextContacts);
     let tempRooms;
-    try {
-      tempRooms = await fetchRoomDatasOfUser(currentUser._id);
-    } catch (e) {
-      toast.error("fetchRoomData failed! " + e);
-      removeAuthData();
-      navigate("/login");
-    }
+
+    tempRooms = await fetchRoomDatasOfUser(currentUser._id);
 
     setRooms(tempRooms);
   };
