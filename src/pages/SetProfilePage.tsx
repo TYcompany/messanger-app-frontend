@@ -24,7 +24,6 @@ function SetProfilePage() {
   useEffect(() => {
     const init = async () => {
       await refreshAccessTokenCookies();
-      navigate("/chat");
     };
 
     if (cookies.get("access_token")) {

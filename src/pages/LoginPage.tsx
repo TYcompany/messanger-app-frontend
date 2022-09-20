@@ -70,7 +70,7 @@ function LoginPage() {
 
     const access_token = res.data.access_token;
     setAuthData(userData, access_token);
-    navigate("/setProfile");
+    navigate("/chat");
   };
 
   const onChange = (e: React.ChangeEvent<HTMLInputElement>) => {

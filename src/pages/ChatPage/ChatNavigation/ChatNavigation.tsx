@@ -21,6 +21,12 @@ function ChatNavigation() {
   const currentUser = useRecoilValue(currentUserState);
   const navigate = useNavigate();
 
+  const onClickProfileImage = () => {
+    if (window.confirm("wanto move to setProfile page?")) {
+      navigate("/setProfile");
+    }
+  };
+
   const onChangeTab = (event: React.SyntheticEvent, newValue: number) => {
     setValue(newValue);
     setSelectedTab(tabsInfo[newValue]);
@@ -58,6 +64,7 @@ function ChatNavigation() {
                   currentUser?.profileImage || ""
                 ).toString("base64")}`}
                 alt={"profile-currentUser"}
+                onClick={() => onClickProfileImage()}
               />
             </div>
             <div className="username">
@@ -116,6 +123,7 @@ const Container = styled.div`
       height: 3rem;
       font-size: 1.33rem;
       img {
+        cursor: pointer;
         height: 2rem;
       }
       h3 {
