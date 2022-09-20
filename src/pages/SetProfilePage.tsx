@@ -52,8 +52,8 @@ function SetProfilePage() {
     }
 
     const res = await setProfileImage(user._id, profileImages[selectedProfileImage]);
-    const data = res.data;
-    user.profileImage = data.image;
+    
+    user.profileImage = profileImages[selectedProfileImage];
     localStorage.setItem("chat-app-user", JSON.stringify(user));
     navigate("/chat");
 

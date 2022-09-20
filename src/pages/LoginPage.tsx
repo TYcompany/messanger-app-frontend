@@ -6,7 +6,7 @@ import axios from "axios";
 import { Cookies } from "react-cookie";
 
 import { loginRequest, refreshAccessTokenCookies } from "../lib/api/APIFunctions";
-import { removeAuthData, setAuthData } from "../lib/etc/etcFunctions";
+import { setAuthData } from "../lib/etc/etcFunctions";
 
 // toast.promise(
 //   saveSettings(settings),
@@ -63,12 +63,14 @@ function LoginPage() {
     const userData = res.data.user;
     const profileImage = await axios.get(userData.profileImageLink, {
       headers: {
+        "Cache-Control": "no-cache",
         Authorization: "",
       },
     });
     userData.profileImage = profileImage.data;
 
     const access_token = res.data.access_token;
+
     setAuthData(userData, access_token);
     navigate("/chat");
   };

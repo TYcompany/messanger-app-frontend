@@ -22,7 +22,7 @@ function ChatNavigation() {
   const navigate = useNavigate();
 
   const onClickProfileImage = () => {
-    if (window.confirm("wanto move to setProfile page?")) {
+    if (window.confirm("Want to move to setProfile page?")) {
       navigate("/setProfile");
     }
   };
