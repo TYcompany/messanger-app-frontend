@@ -1,4 +1,4 @@
-import React, { Suspense } from "react";
+import React, { Suspense, useEffect, useState } from "react";
 import styled from "styled-components";
 
 import { MessageType } from "../../../lib/types/MessageType";
@@ -18,12 +18,34 @@ function ChatMessagesContainer({
   onScrollChatMessages: Function;
   isLoadingPastMessages: boolean;
 }) {
+  const [isMessageHeaderMap, setIsMessageHeaderMap] = useState<{ [key: string]: boolean }>({});
+  useEffect(() => {
+    if (messages.length <= 0) {
+      return;
+    }
+    const nextHeaderMap = { ...isMessageHeaderMap };
+
+    nextHeaderMap[messages[0]._id] = true;
+    for (let i = 1; i < messages.length; i++) {
+      if (messages[i - 1].senderId === messages[i].senderId) {
+        nextHeaderMap[messages[i]._id] = false;
+      } else {
+        nextHeaderMap[messages[i]._id] = true;
+      }
+    }
+    setIsMessageHeaderMap(nextHeaderMap);
+  }, [messages]);
+
   return (
     <Container>
       <div className="messages" ref={scrollRef} onScroll={() => onScrollChatMessages()}>
         {isLoadingPastMessages && <div> loading past messages</div>}
         {messages.map((message) => (
-          <MessageItem key={"message" + message._id} message={message} />
+          <MessageItem
+            isMessageHeaderMap={isMessageHeaderMap}
+            key={"message" + message._id}
+            message={message}
+          />
         ))}
         <div className="end-of-message">End Of Messages</div>
       </div>

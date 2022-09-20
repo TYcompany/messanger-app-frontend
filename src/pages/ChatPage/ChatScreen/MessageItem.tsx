@@ -5,7 +5,13 @@ import { MessageType } from "../../../lib/types/MessageType";
 import { contactsMapState, currentUserState } from "../../../store/store";
 import { Buffer } from "buffer";
 
-function MessageItem({ message }: { message: MessageType }) {
+function MessageItem({
+  message,
+  isMessageHeaderMap,
+}: {
+  message: MessageType;
+  isMessageHeaderMap: { [key: string]: boolean };
+}) {
   const currentUser = useRecoilValue(currentUserState);
   const contactsMap = useRecoilValue(contactsMapState);
 
@@ -13,7 +19,7 @@ function MessageItem({ message }: { message: MessageType }) {
     <Container>
       <div className={`message ${message.senderId === currentUser?._id ? "sent" : "recieved"}`}>
         <div className="content">
-          {message.senderId !== currentUser?._id && (
+          {message.senderId !== currentUser?._id && isMessageHeaderMap[message._id] && (
             <div className="profile">
               <div className="profile-image">
                 <img

@@ -38,7 +38,7 @@ function ContactComponent({ selectedTab }: { selectedTab: string }) {
     }
 
     const init = async () => {
-      const res = await fetchRoomData(currentlyChattingUser._id, currentUser?._id);
+      const res = await fetchRoomData(currentlyChattingUser?._id, currentUser?._id);
       setCurrentlyChattingRoom(res.data);
     };
     init();
@@ -46,7 +46,7 @@ function ContactComponent({ selectedTab }: { selectedTab: string }) {
 
   const onClickUserContact = async (contact: UserType) => {
     setCurrentlyChattingUser(contact);
-    const res = await fetchRoomData(currentlyChattingUser._id, contact?._id);
+    const res = await fetchRoomData(currentlyChattingUser?._id, contact?._id);
     setCurrentlyChattingRoom(res.data);
   };
 

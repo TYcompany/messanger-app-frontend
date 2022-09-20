@@ -126,12 +126,20 @@ export const getUserDataByUserIds = async (userIds: string[]) => {
 };
 
 export const fetchRoomData = async (user1: string, user2: string) => {
+  if (user1.length !== 24 || user2.length !== 24) {
+    console.log('user id is invalid both should be 24')
+    return { data: {} };
+  }
   const users = [user1, user2].sort();
   const uri = `${GetRoomDataOfPersonalRoute}?user1=${users[0]}&user2=${users[1]}`;
   return await axios.get(uri);
 };
 
 export const fetchRoomDatasOfUser = async (userId: string) => {
+  if (userId.length !== 24) {
+    console.log('user id is invalid should be 24')
+    return { data: {} };
+  }
   const uri = `${GetRoomDatasOfUser}?userId=${userId}`;
   const res = await axios.get(uri);
 
