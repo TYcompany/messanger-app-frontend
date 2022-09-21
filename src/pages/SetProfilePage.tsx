@@ -9,6 +9,8 @@ import {
   refreshAccessTokenCookies,
   setProfileImage,
 } from "../lib/api/APIFunctions";
+import SetProfileImageWithUpload from "./setProfileImageWithUpload";
+
 import { Buffer } from "buffer";
 import { removeAuthData } from "../lib/etc/etcFunctions";
 import { Cookies } from "react-cookie";
@@ -52,7 +54,7 @@ function SetProfilePage() {
     }
 
     const res = await setProfileImage(user._id, profileImages[selectedProfileImage]);
-    
+
     user.profileImage = profileImages[selectedProfileImage];
     localStorage.setItem("chat-app-user", JSON.stringify(user));
     navigate("/chat");
@@ -63,6 +65,7 @@ function SetProfilePage() {
   return (
     <>
       <div>SetProfilePage</div>
+      <SetProfileImageWithUpload />
       {isLoading ? (
         <Container>
           {" "}

@@ -44,8 +44,8 @@ export const loginRequest = async (userName: string, password: string) => {
   });
 };
 
-export const testRequest = async (body: any) => {
-  return await axios.post(TestRoute, body);
+export const testRequest = async (userId: string, profileImage: string) => {
+  return await axios.post(TestRoute, { userId, profileImage });
 };
 
 export const registerRequest = async ({
