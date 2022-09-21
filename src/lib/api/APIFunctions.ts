@@ -14,6 +14,7 @@ import {
   CreateGroupRoomRoute,
   GetUserDataByUserIdsRoute,
   RefreshAccessTokenRoute,
+  TestRoute,
 } from "./APIRoutes";
 import { sleep } from "../etc/etcFunctions";
 import { UserType } from "../types/UserType";
@@ -41,6 +42,18 @@ export const loginRequest = async (userName: string, password: string) => {
     userName,
     password,
   });
+};
+
+export const testRequest = async (body: any) => {
+  console.log(body);
+
+  return await axios.post(TestRoute, body);
+
+  // , {
+  //   headers: {
+  //     'Content-Type': 'multipart/form-data'
+  //   },
+  // }
 };
 
 export const registerRequest = async ({
@@ -127,7 +140,7 @@ export const getUserDataByUserIds = async (userIds: string[]) => {
 
 export const fetchRoomData = async (user1: string, user2: string) => {
   if (user1.length !== 24 || user2.length !== 24) {
-    console.log('user id is invalid both should be 24')
+    console.log("user id is invalid both should be 24");
     return { data: {} };
   }
   const users = [user1, user2].sort();
@@ -137,7 +150,7 @@ export const fetchRoomData = async (user1: string, user2: string) => {
 
 export const fetchRoomDatasOfUser = async (userId: string) => {
   if (userId.length !== 24) {
-    console.log('user id is invalid should be 24')
+    console.log("user id is invalid should be 24");
     return { data: {} };
   }
   const uri = `${GetRoomDatasOfUser}?userId=${userId}`;

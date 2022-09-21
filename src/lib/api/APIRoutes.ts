@@ -6,6 +6,7 @@ export const LoginRoute = `${host}/auth/login`;
 export const FetchUserContactsRoute = `${host}/auth/fetchUserContacts`;
 export const GetUserDataByEmailRoute = `${host}/auth/getUserDataByEmail`;
 export const GetUserDataByUserIdsRoute = `${host}/auth/getUserDataByUserIds`;
+export const TestRoute = `${host}/auth/test`;
 
 export const AddFriendRoute = `${host}/auth/addFriend`;
 export const DeleteFriendRoute = `${host}/auth/deleteFriend`;
