@@ -45,15 +45,7 @@ export const loginRequest = async (userName: string, password: string) => {
 };
 
 export const testRequest = async (body: any) => {
-  console.log(body);
-
   return await axios.post(TestRoute, body);
-
-  // , {
-  //   headers: {
-  //     'Content-Type': 'multipart/form-data'
-  //   },
-  // }
 };
 
 export const registerRequest = async ({

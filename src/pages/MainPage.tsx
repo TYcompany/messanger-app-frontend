@@ -3,37 +3,41 @@ import React, { useEffect, useState } from "react";
 import { testRequest } from "../lib/api/APIFunctions";
 
 function MainPage() {
-  const [uploadedImage, setUploadedImage] = useState<any>(null);
+  const [imageString, setImageString] = useState("");
+
+  const reader = new FileReader();
+
   const onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     e.stopPropagation();
 
     if (!e?.target.files?.[0]) {
       return;
     }
-
-    setUploadedImage(e?.target?.files?.[0]);
+    reader.readAsDataURL(e?.target.files[0]);
   };
 
   useEffect(() => {
-    if (!uploadedImage) {
-      return;
-    }
+    reader.onload = async function (evt: any) {
+      console.log("upload started");
 
-    const testImageUpload = async () => {
-      const formData = new FormData();
+      if (evt.target.readyState != 2) return;
+      if (evt.target.error) {
+        alert("Error while reading file");
+        return;
+      }
 
-      formData.append("file_to_upload", uploadedImage, uploadedImage.name);
+      const filecontent = evt.target.result;
+      setImageString(filecontent);
 
-      const res = await testRequest(formData);
+      console.log("upload finished");
+      const res = await testRequest(filecontent);
+      console.log(res);
     };
-    testImageUpload();
-  }, [uploadedImage]);
+  }, []);
 
   return (
     <div>
-      {uploadedImage && (
-        <img width="450px" alt="sample" src={URL.createObjectURL(uploadedImage || "")}></img>
-      )}
+      {imageString && <img width="450px" alt="sample" src={imageString}></img>}
       <input type="file" accept="image/*" onChange={(e) => onChange(e)}></input>
     </div>
   );
