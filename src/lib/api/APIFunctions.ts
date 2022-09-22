@@ -121,12 +121,14 @@ export const getUserDataByUserIds = async (userIds: string[]) => {
   const res = await axios.post(`${GetUserDataByUserIdsRoute}`, {
     userIds,
   });
+
   const userDatas: UserType[] = res.data;
   const promises = [];
 
   for (const userData of userDatas) {
     promises.push(getUserDataWithProfileImage(userData));
   }
+
   return await Promise.all(promises);
 };
 
