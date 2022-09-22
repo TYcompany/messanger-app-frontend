@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef } from "react";
+import React, { useEffect, useState, useRef, Suspense } from "react";
 import { Buffer } from "buffer";
 import styled from "styled-components";
 import { useRecoilValue } from "recoil";
@@ -32,7 +32,7 @@ function ChatScreen({
   const currentUser = useRecoilValue(currentUserState);
   const currentlyChattingUser = useRecoilValue(currentlyChattingUserState);
   const currentlyChattingRoom = useRecoilValue(currentlyChattingRoomState);
-  const [isLoading, setIsLoading] = useState(false);
+  const [isLoadingInitialMessages, setIsLoadingInitialMessages] = useState(false);
   const [messages, setMessages] = useState<MessageType[]>([]);
   const [receivedMessage, setRecievedMessage] = useState<MessageType | undefined>();
   const [pastMessages, setPastMessages] = useState<MessageType[]>([]);
@@ -83,25 +83,26 @@ function ChatScreen({
   };
 
   useEffect(() => {
-    if (!currentlyChattingRoom) {
-      return;
-    }
-
     const initSocket = async () => {
       socket.removeAllListeners("message");
       socket.on("message", async (receivedMessage: MessageType) => {
         setRecievedMessage(receivedMessage);
-        scrollRef.current?.scrollIntoView({ behavior: "smooth" });
       });
     };
+    initSocket();
+    scrollRef.current?.scrollIntoView({ behavior: "smooth" });
+  }, []);
+
+  useEffect(() => {
+    if (!currentlyChattingRoom) {
+      return;
+    }
 
     const init = async () => {
+      setIsLoadingInitialMessages(true);
       const data = await fetchRecentMessages();
-
       setMessages(data || []);
-
-      scrollRef.current?.scrollIntoView({ behavior: "smooth" });
-      initSocket();
+      setIsLoadingInitialMessages(false);
     };
 
     const fetchRecentMessages = async () => {
@@ -194,12 +195,14 @@ function ChatScreen({
               </div>
             </div>
           )}
+
           <ChatMessagesContainer
             messages={messages}
             currentUser={currentUser}
             scrollRef={scrollRef}
             onScrollChatMessages={onScrollChatMessages}
             isLoadingPastMessages={isLoadingPastMessages}
+            isLoadingInitialMessages={isLoadingInitialMessages}
           />
 
           <ChatInput

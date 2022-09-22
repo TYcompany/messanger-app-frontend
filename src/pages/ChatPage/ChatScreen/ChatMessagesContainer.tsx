@@ -11,12 +11,14 @@ function ChatMessagesContainer({
   currentUser,
   onScrollChatMessages,
   isLoadingPastMessages,
+  isLoadingInitialMessages,
 }: {
   messages: MessageType[];
   scrollRef: React.RefObject<HTMLDivElement>;
   currentUser: UserType | undefined;
   onScrollChatMessages: Function;
   isLoadingPastMessages: boolean;
+  isLoadingInitialMessages: boolean;
 }) {
   const [isMessageHeaderMap, setIsMessageHeaderMap] = useState<{ [key: string]: boolean }>({});
   useEffect(() => {
@@ -40,13 +42,17 @@ function ChatMessagesContainer({
     <Container>
       <div className="messages" ref={scrollRef} onScroll={() => onScrollChatMessages()}>
         {isLoadingPastMessages && <div> loading past messages</div>}
-        {messages.map((message) => (
-          <MessageItem
-            isMessageHeaderMap={isMessageHeaderMap}
-            key={"message" + message._id}
-            message={message}
-          />
-        ))}
+        {isLoadingInitialMessages ? (
+          <div>loading messages...</div>
+        ) : (
+          messages.map((message) => (
+            <MessageItem
+              isMessageHeaderMap={isMessageHeaderMap}
+              key={"message" + message._id}
+              message={message}
+            />
+          ))
+        )}
         <div className="end-of-message">End Of Messages</div>
       </div>
     </Container>
