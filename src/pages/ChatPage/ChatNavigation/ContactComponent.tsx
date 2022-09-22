@@ -34,7 +34,9 @@ function ContactComponent({ selectedTab }: { selectedTab: string }) {
 
   const onClickUserContact = async (contact: UserType) => {
     setCurrentlyChattingUser(contact);
-    const res = await fetchRoomData(currentlyChattingUser?._id, contact?._id);
+
+    const res = await fetchRoomData(currentUser?._id, contact?._id);
+
     setCurrentlyChattingRoom(res.data);
   };
 

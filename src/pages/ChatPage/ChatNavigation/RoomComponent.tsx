@@ -49,8 +49,7 @@ function RoomComponent({ selectedTab }: { selectedTab: string }) {
 
       roomData = { ...roomData, userData: [...userData] };
     }
-    console.log(roomData);
-    
+
     setRoomsWithUserData((prev) => [
       roomData,
       ...prev.filter((prevRoom) => prevRoom._id !== roomData._id),
