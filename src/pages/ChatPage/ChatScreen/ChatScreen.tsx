@@ -184,12 +184,7 @@ function ChatScreen({
         <>
           <div className="chat-header">
             <div className="profile">
-              <img
-                src={`data:image/svg+xml;base64,${Buffer.from(
-                  currentlyChattingUser?.profileImage || ""
-                ).toString("base64")}`}
-                alt="profile"
-              />
+              <img src={`${currentlyChattingUser?.profileImage || ""}`} alt="profile" />
               <div className="username">
                 <h3>{currentlyChattingUser?.userName}</h3>
               </div>
@@ -235,6 +230,8 @@ const Container = styled.div`
       gap: 1rem;
       img {
         width: 3rem;
+        height: 3rem;
+        border-radius: 50%;
       }
       .username {
         h3 {

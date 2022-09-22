@@ -1,9 +1,14 @@
 import React, { useEffect, useState } from "react";
 import { useRecoilValue } from "recoil";
+import { useNavigate } from "react-router-dom";
+
 import { setProfileImage, testRequest } from "../lib/api/APIFunctions";
+import { removeAuthData } from "../lib/etc/etcFunctions";
 import { currentUserState } from "../store/store";
 
 function SetProfileImageWithUpload() {
+  const navigate = useNavigate();
+
   const [imageString, setImageString] = useState<string>("");
 
   const currentUser = useRecoilValue(currentUserState);
@@ -43,25 +48,23 @@ function SetProfileImageWithUpload() {
       return;
     }
     const user = JSON.parse(localStorage.getItem("chat-app-user") || "");
+
     if (!user) {
-      toast.error("fail to get userData please login again!");
+      //toast.error("fail to get userData please login again!");
       removeAuthData();
       navigate("/login");
       return;
     }
 
     e.preventDefault();
-    console.log(imageString);
 
     const res = await setProfileImage(user._id, imageString);
 
-    user.profileImage = imageString
+    user.profileImage = imageString;
     localStorage.setItem("chat-app-user", JSON.stringify(user));
     navigate("/chat");
 
-    toast.success("Successfully set profile image");
-
-    console.log(res);
+    // toast.success("Successfully set profile image");
   };
 
   return (

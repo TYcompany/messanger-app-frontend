@@ -89,12 +89,7 @@ function AddFriendModalComponent() {
             onClick={() => onClickAddFriendButton()}
           >
             <div className="profile-image">
-              <img
-                src={`data:image/svg+xml;base64,${Buffer.from(
-                  userData?.profileImage || ""
-                ).toString("base64")}`}
-                alt={"profile" + userData?._id}
-              />
+              <img src={`${userData?.profileImage || ""}`} alt={"profile" + userData?._id} />
             </div>
             <div className="username">
               <h3>{userData?.userName}</h3>

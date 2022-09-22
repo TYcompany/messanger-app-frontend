@@ -61,14 +61,17 @@ function LoginPage() {
     }
 
     const userData = res.data.user;
-    const profileImage = await axios.get(userData.profileImageLink, {
-      headers: {
-        "Cache-Control": "no-cache",
-        Authorization: "",
-      },
-    });
-    userData.profileImage = profileImage.data;
-
+    try {
+      const profileImage = await axios.get(userData.profileImageLink, {
+        headers: {
+          "Cache-Control": "no-cache",
+          Authorization: "",
+        },
+      });
+      userData.profileImage = profileImage.data;
+    } catch (e) {
+      console.log(e);
+    }
     const access_token = res.data.access_token;
 
     setAuthData(userData, access_token);

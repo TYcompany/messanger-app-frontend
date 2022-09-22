@@ -23,9 +23,7 @@ function MessageItem({
             <div className="profile">
               <div className="profile-image">
                 <img
-                  src={`data:image/svg+xml;base64,${Buffer.from(
-                    contactsMap[message.senderId]?.profileImage || ""
-                  ).toString("base64")}`}
+                  src={`${contactsMap[message.senderId]?.profileImage || ""}`}
                   alt={"profile" + contactsMap[message.senderId]?._id}
                 />
               </div>
@@ -63,6 +61,11 @@ const Container = styled.div`
         gap: 0.5rem;
         .profile-image {
           width: 2rem;
+          img {
+            border-radius: 50%;
+            width: 2rem;
+            height: 2rem;
+          }
         }
       }
 

@@ -107,12 +107,7 @@ function CreateRoomModalComponent() {
               className={`contact`}
             >
               <div className="profile-image">
-                <img
-                  src={`data:image/svg+xml;base64,${Buffer.from(contact.profileImage).toString(
-                    "base64"
-                  )}`}
-                  alt={"profile" + contact._id}
-                />
+                <img src={`${contact.profileImage || ""}`} alt={"profile" + contact._id} />
               </div>
               <div className="username">
                 <h3>{contact.userName}</h3>

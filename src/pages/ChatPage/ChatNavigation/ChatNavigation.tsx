@@ -60,9 +60,7 @@ function ChatNavigation() {
           <div className="my-profile">
             <div className="profile-image">
               <img
-                src={`data:image/svg+xml;base64,${Buffer.from(
-                  currentUser?.profileImage || ""
-                ).toString("base64")}`}
+                src={currentUser?.profileImage || ""}
                 alt={"profile-currentUser"}
                 onClick={() => onClickProfileImage()}
               />
@@ -124,7 +122,9 @@ const Container = styled.div`
       font-size: 1.33rem;
       img {
         cursor: pointer;
+        width: 2rem;
         height: 2rem;
+        border-radius:50% ;
       }
       h3 {
         color: white;

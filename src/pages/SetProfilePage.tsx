@@ -53,7 +53,11 @@ function SetProfilePage() {
       return;
     }
 
-    const res = await setProfileImage(user._id, profileImages[selectedProfileImage]);
+    const imageString = `data:image/svg+xml;base64,${Buffer.from(
+      profileImages[selectedProfileImage] || ""
+    ).toString("base64")}`;
+
+    const res = await setProfileImage(user._id, imageString);
 
     user.profileImage = profileImages[selectedProfileImage];
     localStorage.setItem("chat-app-user", JSON.stringify(user));
