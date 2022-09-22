@@ -43,6 +43,7 @@ export const currentlyChattingRoomState = atom<RoomType>({
     updatedAt: "",
     users: [],
     _id: "",
+    roomTitle: "",
   },
 });
 

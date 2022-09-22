@@ -1,6 +1,6 @@
 import { RoomWithUserDataType } from "../../../lib/types/RoomType";
 import styled from "styled-components";
-import { useRecoilState, useRecoilValue } from "recoil";
+import { useRecoilState } from "recoil";
 import {
   activeModalNameState,
   contactsMapState,
@@ -26,6 +26,7 @@ function RoomComponent({ selectedTab }: { selectedTab: string }) {
 
   const onClickRoom = async (roomData: RoomWithUserDataType) => {
     let isEmptyValueContained = false;
+
     const UserIdsWithData = new Set(roomData.userData.map((userDt) => userDt._id));
 
     for (const userId of roomData.users) {
@@ -46,9 +47,10 @@ function RoomComponent({ selectedTab }: { selectedTab: string }) {
 
       setContactMap(nextContactMap);
 
-      roomData = { ...roomData, userData };
+      roomData = { ...roomData, userData: [...userData] };
     }
-
+    console.log(roomData);
+    
     setRoomsWithUserData((prev) => [
       roomData,
       ...prev.filter((prevRoom) => prevRoom._id !== roomData._id),

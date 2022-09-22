@@ -182,14 +182,18 @@ function ChatScreen({
       )}
       {currentlyChattingUser?._id && (
         <>
-          <div className="chat-header">
-            <div className="profile">
-              <img src={`${currentlyChattingUser?.profileImage || ""}`} alt="profile" />
-              <div className="username">
-                <h3>{currentlyChattingUser?.userName}</h3>
+          {currentlyChattingRoom?.roomTitle ? (
+            <div>{currentlyChattingRoom?.roomTitle}</div>
+          ) : (
+            <div className="chat-header">
+              <div className="profile">
+                <img src={`${currentlyChattingUser?.profileImage || ""}`} alt="profile" />
+                <div className="username">
+                  <h3>{currentlyChattingUser?.userName}</h3>
+                </div>
               </div>
             </div>
-          </div>
+          )}
           <ChatMessagesContainer
             messages={messages}
             currentUser={currentUser}

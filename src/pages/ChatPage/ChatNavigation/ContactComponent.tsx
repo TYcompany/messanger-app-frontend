@@ -32,18 +32,6 @@ function ContactComponent({ selectedTab }: { selectedTab: string }) {
   );
   const [activeModalName, setActiveModalName] = useRecoilState(activeModalNameState);
 
-  useEffect(() => {
-    if (!currentlyChattingUser?._id || !currentUser?._id) {
-      return;
-    }
-
-    const init = async () => {
-      const res = await fetchRoomData(currentlyChattingUser?._id, currentUser?._id);
-      setCurrentlyChattingRoom(res.data);
-    };
-    init();
-  }, [currentlyChattingUser, currentUser]);
-
   const onClickUserContact = async (contact: UserType) => {
     setCurrentlyChattingUser(contact);
     const res = await fetchRoomData(currentlyChattingUser?._id, contact?._id);
