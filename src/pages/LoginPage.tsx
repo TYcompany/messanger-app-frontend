@@ -64,7 +64,6 @@ function LoginPage() {
     try {
       const profileImage = await axios.get(userData.profileImageLink, {
         headers: {
-          "Cache-Control": "no-cache",
           Authorization: "",
         },
       });

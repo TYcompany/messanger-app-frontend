@@ -14,11 +14,15 @@ import SetProfileImageWithUpload from "./setProfileImageWithUpload";
 import { Buffer } from "buffer";
 import { removeAuthData } from "../lib/etc/etcFunctions";
 import { Cookies } from "react-cookie";
+import { currentUserState } from "../store/store";
+import { useRecoilState } from "recoil";
 
 const cookies = new Cookies();
 
 function SetProfilePage() {
   const navigate = useNavigate();
+  const [currentUser, setCurrentUser] = useRecoilState(currentUserState);
+
   const [isLoading, setIsLoading] = useState(true);
   const [selectedProfileImage, setSelectedProfileImage] = useState(0);
   const [profileImages, setProfileImages] = useState<string[]>([]);
@@ -44,7 +48,7 @@ function SetProfilePage() {
     init();
   }, []);
 
-  const setProfilePicture = async () => {
+  const submitSetProfileImage = async () => {
     const user = JSON.parse(localStorage.getItem("chat-app-user") || "");
     if (!user) {
       toast.error("fail to get userData please login again!");
@@ -59,8 +63,11 @@ function SetProfilePage() {
 
     const res = await setProfileImage(user._id, imageString);
 
-    user.profileImage = profileImages[selectedProfileImage];
+    user.profileImage = imageString;
+    user.profileImageLink = res.data.profileImageLink;
+
     localStorage.setItem("chat-app-user", JSON.stringify(user));
+
     navigate("/chat");
 
     toast.success("Successfully set profile image");
@@ -97,7 +104,7 @@ function SetProfilePage() {
               </div>
             ))}
           </div>
-          <button className={"submit-button"} onClick={() => setProfilePicture()}>
+          <button className={"submit-button"} onClick={() => submitSetProfileImage()}>
             Select
           </button>
         </Container>

@@ -124,7 +124,7 @@ const Container = styled.div`
         cursor: pointer;
         width: 2rem;
         height: 2rem;
-        border-radius:50% ;
+        border-radius: 50%;
       }
       h3 {
         color: white;
