@@ -89,7 +89,11 @@ function AddFriendModalComponent() {
             onClick={() => onClickAddFriendButton()}
           >
             <div className="profile-image">
-              <img src={`${userData?.profileImage || ""}`} alt={"profile" + userData?._id} />
+              <img
+                style={{ width: "100%",  borderRadius: "50%" }}
+                src={`${userData?.profileImage || ""}`}
+                alt={"profile" + userData?._id}
+              />
             </div>
             <div className="username">
               <h3>{userData?.userName}</h3>

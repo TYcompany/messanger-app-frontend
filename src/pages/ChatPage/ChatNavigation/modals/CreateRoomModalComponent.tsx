@@ -172,6 +172,8 @@ const Container = styled.div`
         .profile-image {
           img {
             height: 3rem;
+            width: 3rem;
+            border-radius: 50%;
           }
         }
         .username {
