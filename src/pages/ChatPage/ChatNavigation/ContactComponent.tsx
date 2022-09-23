@@ -68,7 +68,11 @@ function ContactComponent({ selectedTab }: { selectedTab: string }) {
             </div>
           ))}
         </div>
-        <Button className="add-friend-button" onClick={(e) => onClickAddFriend(e)}>
+        <Button
+          className="add-friend-button"
+          variant="contained"
+          onClick={(e) => onClickAddFriend(e)}
+        >
           Add Friend
         </Button>
       </div>
@@ -149,8 +153,10 @@ const Container = styled.div`
       }
     }
     .add-friend-button {
-      font-size: 1rem;
-      height: 2rem;
+      font-size: 1.2rem;
+      width:100% ;
+      margin-top:1rem;
+      height: 3rem;
     }
   }
   .display-none {

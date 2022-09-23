@@ -14,7 +14,7 @@ import {
 } from "../../lib/api/APIFunctions";
 
 import Socket from "../../socket/socket";
-import { useRecoilState } from "recoil";
+import { useRecoilState, useRecoilValue } from "recoil";
 import {
   contactsMapState,
   currentUserState,
@@ -30,7 +30,7 @@ import toast, { Toaster } from "react-hot-toast";
 import { AppBar, Box, Drawer, IconButton, Toolbar, Typography } from "@mui/material";
 
 import MenuIcon from "@mui/icons-material/Menu";
-import { ThemeType } from "../../styles/themes";
+import themes, { ThemeType } from "../../styles/themes";
 
 import { Cookies } from "react-cookie";
 
@@ -64,6 +64,8 @@ function ChatPage() {
   const [isPickerActive, setIsPickerActive] = useState(false);
 
   const [mobileOpen, setMobileOpen] = useState(false);
+
+  const themeName = useRecoilValue(themeState);
 
   const handleDrawerToggle = () => {
     setMobileOpen(!mobileOpen);
@@ -161,6 +163,7 @@ function ChatPage() {
             "& .MuiDrawer-paper": {
               boxSizing: "border-box",
               minWidth: `${isMobile ? "80%" : "20%"}`,
+              backgroundColor: `${themes[themeName]?.background[0]}`,
             },
           }}
         >
@@ -188,7 +191,6 @@ const Container = styled.div`
   background-color: #131324;
   background-color: ${({ theme }) => theme.background[0]};
   .container {
-    background-color: #00000076;
     display: grid;
     width: 100%;
     grid-template-columns: 25% 75%;

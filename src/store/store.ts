@@ -8,7 +8,7 @@ import { ThemeType } from "../styles/themes";
 
 export const themeState = atom<ThemeType>({
   key: "theme",
-  default: ThemeType.LIGHT,
+  default: ThemeType.DARK,
 });
 
 export const contactsMapState = atom<UserMapType>({

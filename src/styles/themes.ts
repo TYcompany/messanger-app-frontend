@@ -7,13 +7,21 @@ const lightTheme = {
   background: ["#fff"],
   grays: [],
 };
+
+//#ffffff39 , Button#9186f3
+
 const darkTheme = {
-  background: ["#131324"],
+  //buttons
+  buttonDefault: "#ffffff39",
+  buttonActive: "#9186f3",
+
+  background: ["rgba(0, 0, 0, 0.87)", "#131324"],
+
   grays: [],
 };
 
 type ThemeInterface = {
-  [key in ThemeType]: Object;
+  [key in ThemeType]: (typeof lightTheme | typeof darkTheme);
 };
 
 const themes: ThemeInterface = {

@@ -81,8 +81,12 @@ function RoomComponent({ selectedTab }: { selectedTab: string }) {
             </div>
           ))}
         </div>
-        <Button className={`create-room-button`} onClick={(e) => onClickCreateRoom(e)}>
-          Create Group Chat Room
+        <Button
+          className={`create-room-button`}
+          variant="contained"
+          onClick={(e) => onClickCreateRoom(e)}
+        >
+          Create Group Chat
         </Button>
       </div>
       <BasicModal modalName="createRoom" ModalComponent={CreateRoomModalComponent}></BasicModal>
@@ -125,7 +129,10 @@ const Container = styled.div`
       }
     }
     .create-room-button {
-      font-size: 1rem;
+      font-size: 1.2rem;
+      width:100% ;
+      margin-top:1rem;
+      height: 3rem;
     }
   }
 
