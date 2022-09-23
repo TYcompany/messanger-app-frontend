@@ -42,7 +42,7 @@ function ChatMessagesContainer({
   return (
     <Container>
       <div className="messages" ref={scrollRef} onScroll={() => onScrollChatMessages()}>
-        {(isLoadingPastMessages || isLoadingInitialMessages||true ) && <RingLoader />}
+        {(isLoadingPastMessages || isLoadingInitialMessages) && <RingLoader />}
         {messages.map((message) => (
           <MessageItem
             isMessageHeaderMap={isMessageHeaderMap}
@@ -50,7 +50,9 @@ function ChatMessagesContainer({
             message={message}
           />
         ))}
-        <div className="end-of-message">End Of Messages</div>
+
+        {/* TODO change it to show messages exist below */}
+        {/* <div className="end-of-message">End Of Messages</div> */}
       </div>
     </Container>
   );
