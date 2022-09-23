@@ -1,5 +1,6 @@
 import React, { Suspense, useEffect, useState } from "react";
 import styled from "styled-components";
+import RollerLoader from "../../../components/RollerLoader";
 
 import { MessageType } from "../../../lib/types/MessageType";
 import { UserType } from "../../../lib/types/UserType";
@@ -41,18 +42,14 @@ function ChatMessagesContainer({
   return (
     <Container>
       <div className="messages" ref={scrollRef} onScroll={() => onScrollChatMessages()}>
-        {isLoadingPastMessages && <div> loading past messages</div>}
-        {isLoadingInitialMessages ? (
-          <div>loading messages...</div>
-        ) : (
-          messages.map((message) => (
-            <MessageItem
-              isMessageHeaderMap={isMessageHeaderMap}
-              key={"message" + message._id}
-              message={message}
-            />
-          ))
-        )}
+        {(isLoadingPastMessages || isLoadingInitialMessages) && <RollerLoader />}
+        {messages.map((message) => (
+          <MessageItem
+            isMessageHeaderMap={isMessageHeaderMap}
+            key={"message" + message._id}
+            message={message}
+          />
+        ))}
         <div className="end-of-message">End Of Messages</div>
       </div>
     </Container>
