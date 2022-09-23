@@ -1,6 +1,6 @@
 import React, { Suspense, useEffect, useState } from "react";
 import styled from "styled-components";
-import RollerLoader from "../../../components/RollerLoader";
+import RingLoader from "../../../components/RingLoader/RingLoader";
 
 import { MessageType } from "../../../lib/types/MessageType";
 import { UserType } from "../../../lib/types/UserType";
@@ -42,7 +42,7 @@ function ChatMessagesContainer({
   return (
     <Container>
       <div className="messages" ref={scrollRef} onScroll={() => onScrollChatMessages()}>
-        {(isLoadingPastMessages || isLoadingInitialMessages) && <RollerLoader />}
+        {(isLoadingPastMessages || isLoadingInitialMessages||true ) && <RingLoader />}
         {messages.map((message) => (
           <MessageItem
             isMessageHeaderMap={isMessageHeaderMap}
