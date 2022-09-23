@@ -2,8 +2,14 @@ import { atom } from "recoil";
 import { MessageType } from "../lib/types/MessageType";
 import { RoomType, RoomWithUserDataType } from "../lib/types/RoomType";
 import { UserType, UserMapType } from "../lib/types/UserType";
+import { ThemeType } from "../styles/themes";
 
 // room state, user, messages, currentUser, currentlyChattingRoom
+
+export const themeState = atom<ThemeType>({
+  key: "theme",
+  default: ThemeType.LIGHT,
+});
 
 export const contactsMapState = atom<UserMapType>({
   key: "contactsMap",

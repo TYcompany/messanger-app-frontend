@@ -5,6 +5,10 @@ import styled from "styled-components";
 import "./App.css";
 
 import CubeLoader from "./components/CubeLoader";
+import { ThemeProvider } from "styled-components";
+import themes, { ThemeType } from "./styles/themes";
+import { useRecoilValue } from "recoil";
+import { themeState } from "./store/store";
 
 const routes = [
   {
@@ -35,10 +39,13 @@ const routes = [
 ];
 
 function App() {
+  const themeName = useRecoilValue<ThemeType>(themeState);
+
   return (
-    <BrowserRouter>
-      <div className="App">
-        {/* <NavContainer>
+    <ThemeProvider theme={themes[themeName]}>
+      <BrowserRouter>
+        <div className="App">
+          {/* <NavContainer>
           <Link to="/" className="nav-link">
             Home
           </Link>
@@ -55,23 +62,24 @@ function App() {
             Chat
           </Link>
         </NavContainer> */}
-        <Routes>
-          {routes.map((route, i) => {
-            return (
-              <Route
-                key={(i * 777).toString() + route.path}
-                path={route.path}
-                element={
-                  <Suspense fallback={<CubeLoader />}>
-                    <route.element />
-                  </Suspense>
-                }
-              />
-            );
-          })}
-        </Routes>
-      </div>
-    </BrowserRouter>
+          <Routes>
+            {routes.map((route, i) => {
+              return (
+                <Route
+                  key={(i * 777).toString() + route.path}
+                  path={route.path}
+                  element={
+                    <Suspense fallback={<CubeLoader />}>
+                      <route.element />
+                    </Suspense>
+                  }
+                />
+              );
+            })}
+          </Routes>
+        </div>
+      </BrowserRouter>
+    </ThemeProvider>
   );
 }
 

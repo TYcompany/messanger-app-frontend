@@ -15,7 +15,12 @@ import {
 
 import Socket from "../../socket/socket";
 import { useRecoilState } from "recoil";
-import { contactsMapState, currentUserState, roomsWithuserDataState } from "../../store/store";
+import {
+  contactsMapState,
+  currentUserState,
+  roomsWithuserDataState,
+  themeState,
+} from "../../store/store";
 import { RoomType, RoomWithUserDataType } from "../../lib/types/RoomType";
 import { getRoomsWithUserData, removeAuthData } from "../../lib/etc/etcFunctions";
 
@@ -25,6 +30,8 @@ import toast, { Toaster } from "react-hot-toast";
 import { AppBar, Box, Drawer, IconButton, Toolbar, Typography } from "@mui/material";
 
 import MenuIcon from "@mui/icons-material/Menu";
+import { ThemeType } from "../../styles/themes";
+
 import { Cookies } from "react-cookie";
 
 const cookies = new Cookies();
@@ -37,6 +44,14 @@ const MobileWidth = 760;
 const isMobile = window.innerWidth <= MobileWidth;
 
 function ChatPage() {
+  //toggleTheme for test
+  //   const [theme, setTheme] = useRecoilState(themeState);
+  //   <button
+  //   onClick={() => setTheme(theme === ThemeType.DARK ? ThemeType.LIGHT : ThemeType.DARK)}
+  // >
+  //   theme change
+  // </button>
+
   const navigate = useNavigate();
   const [contactsMap, setContactsMap] = useRecoilState(contactsMapState);
   const [rooms, setRooms] = useState<RoomType[]>([]);
@@ -169,8 +184,9 @@ const Container = styled.div`
   justify-content: center;
 
   align-items: center;
-  background-color: #131324;
 
+  background-color: #131324;
+  background-color: ${({ theme }) => theme.background[0]};
   .container {
     background-color: #00000076;
     display: grid;

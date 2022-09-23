@@ -19,7 +19,7 @@ const access_token = cookies.get("access_token");
 if (!access_token) {
   removeAuthData();
 } else {
-  refreshAccessToken(access_token)
+  refreshAccessToken(access_token);
   axios.defaults.headers.common["Authorization"] = "Bearer " + access_token;
 }
 
