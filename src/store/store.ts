@@ -8,7 +8,7 @@ import { v4 as uuid } from "uuid";
 // room state, user, messages, currentUser, currentlyChattingRoom
 
 export const themeState = atom<ThemeType>({
-  key: "theme",
+  key: "theme" + uuid(),
   default: ThemeType.DARK,
 });
 
