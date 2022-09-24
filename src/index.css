@@ -8,6 +8,10 @@ body {
   max-height:100vh;
   max-width: 100vw;
   overflow: hidden;
+
+}
+body:focus{
+  outline: 5px solid red;
 }
 
 code {

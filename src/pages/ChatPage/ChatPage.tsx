@@ -129,6 +129,10 @@ function ChatPage() {
         setIsPickerActive(false);
       }}
     >
+      <a className="skip-to-chat-screen" href="#chat-screen">
+        Skip to Chat screen
+      </a>
+
       <AppBar
         sx={{
           width: { sm: `calc(100% - ${drawerWidth}px)` },
@@ -151,6 +155,7 @@ function ChatPage() {
           </Typography> */}
         </Toolbar>
       </AppBar>
+
       <div className="container">
         <Drawer
           variant={isMobile ? "temporary" : "permanent"}
@@ -190,6 +195,21 @@ const Container = styled.div`
 
   background-color: #131324;
   background-color: ${({ theme }) => theme.background[0]};
+
+  .skip-to-chat-screen {
+    position: fixed;
+    display: hidden;
+
+    &:focus {
+      display: block;
+
+      background: gray;
+      width: 100vw;
+      top: 0;
+      font-size: 2rem;
+    }
+  }
+
   .container {
     display: grid;
     width: 100%;

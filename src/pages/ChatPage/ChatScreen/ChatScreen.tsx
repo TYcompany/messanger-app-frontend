@@ -177,7 +177,7 @@ function ChatScreen({
   };
 
   return (
-    <Container>
+    <Container id="chat-screen">
       {!currentlyChattingUser?._id && (
         <div>welcome {currentUser?.userName}! please select person to chat with.</div>
       )}
