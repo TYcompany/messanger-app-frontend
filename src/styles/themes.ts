@@ -1,3 +1,20 @@
+
+//style informations
+
+const getRgbaString = (red: number, green: number, blue: number, alpha: number) => {
+  return `rgba(${red.toString()}, ${green.toString()}, ${blue.toString()}, ${alpha.toString()})`;
+};
+
+const getGrayList = () => {
+  return Array.from(Array(11).keys()).map((num) => getRgbaString(0, 0, 0, num / 10));
+};
+
+const Color = {
+  gray: getGrayList(),
+};
+
+console.log(Color);
+
 export enum ThemeType {
   LIGHT = "LIGHT",
   DARK = "DARK",
@@ -21,7 +38,7 @@ const darkTheme = {
 };
 
 type ThemeInterface = {
-  [key in ThemeType]: (typeof lightTheme | typeof darkTheme);
+  [key in ThemeType]: typeof lightTheme | typeof darkTheme;
 };
 
 const themes: ThemeInterface = {

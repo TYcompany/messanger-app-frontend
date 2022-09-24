@@ -3,6 +3,7 @@ import { MessageType } from "../lib/types/MessageType";
 import { RoomType, RoomWithUserDataType } from "../lib/types/RoomType";
 import { UserType, UserMapType } from "../lib/types/UserType";
 import { ThemeType } from "../styles/themes";
+import { v4 as uuid } from "uuid";
 
 // room state, user, messages, currentUser, currentlyChattingRoom
 
@@ -12,7 +13,7 @@ export const themeState = atom<ThemeType>({
 });
 
 export const contactsMapState = atom<UserMapType>({
-  key: "contactsMap",
+  key: "contactsMap" + uuid(),
   default: {
     "": {
       userName: "",
@@ -25,12 +26,12 @@ export const contactsMapState = atom<UserMapType>({
 });
 
 export const roomsWithuserDataState = atom<RoomWithUserDataType[]>({
-  key: "roomsWithUserData",
+  key: "roomsWithUserData" + uuid(),
   default: [],
 });
 
 export const currentUserState = atom<UserType>({
-  key: "currentUser",
+  key: "currentUser" + uuid(),
   default: {
     userName: "",
     email: "",
@@ -41,7 +42,7 @@ export const currentUserState = atom<UserType>({
 });
 
 export const currentlyChattingRoomState = atom<RoomType>({
-  key: "currentlyChattingRoom",
+  key: "currentlyChattingRoom" + uuid(),
   default: {
     createdAt: "",
     isPersonalChat: true,
@@ -54,7 +55,7 @@ export const currentlyChattingRoomState = atom<RoomType>({
 });
 
 export const currentlyChattingUserState = atom<UserType>({
-  key: "currentlyChattingUser",
+  key: "currentlyChattingUser" + uuid(),
   default: {
     userName: "",
     email: "",
@@ -65,12 +66,12 @@ export const currentlyChattingUserState = atom<UserType>({
 });
 
 export const currentlyChattingMessagesState = atom<MessageType[]>({
-  key: "currentlyChattingMessages",
+  key: "currentlyChattingMessages" + uuid(),
   default: [],
 });
 
 export const activeModalNameState = atom<string>({
-  key: "activeModalName",
+  key: "activeModalName" + uuid(),
   default: "",
 });
 

@@ -16,6 +16,7 @@
     "@types/react": "^18.0.0",
     "@types/react-dom": "^18.0.0",
     "@types/styled-components": "^5.1.25",
+    "@types/uuid": "^8.3.4",
     "axios": "^0.27.2",
     "buffer": "^6.0.3",
     "emoji-picker-react": "^3.6.1",
@@ -33,6 +34,7 @@
     "socket.io-client": "^4.5.1",
     "styled-components": "^5.3.5",
     "typescript": "^4.4.2",
+    "uuid": "^9.0.0",
     "web-vitals": "^2.1.0"
   },
   "scripts": {
