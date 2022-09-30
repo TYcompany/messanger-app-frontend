@@ -117,6 +117,7 @@ function ChatPage() {
       return;
     }
     initUserContactsAndRooms();
+    console.log(currentUser);
   }, [currentUser]);
 
   return (
