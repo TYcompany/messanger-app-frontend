@@ -112,7 +112,13 @@ export const fetchUserContacts = async (id: string) => {
 
 export const getUserDataByEmail = async (email: string) => {
   const res = await axios.get(`${GetUserDataByEmailRoute}?email=${email}`);
+
   const data = res?.data;
+
+  if (data.error) {
+    return data;
+  }
+
   const result = await getUserDataWithProfileImage(data);
   return result;
 };

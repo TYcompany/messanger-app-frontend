@@ -44,6 +44,11 @@ function AddFriendModalComponent() {
 
     try {
       const data = await getUserDataByEmail(formData.get("email") as string);
+      if (data?.error) {
+        toast.error(data.error);
+        return;
+      }
+
       setUserData(data);
     } catch (e) {
       toast.error("Search with such email failed!");
@@ -90,7 +95,7 @@ function AddFriendModalComponent() {
           >
             <div className="profile-image">
               <img
-                style={{ width: "100%",  borderRadius: "50%" }}
+                style={{ width: "100%", borderRadius: "50%" }}
                 src={`${userData?.profileImage || ""}`}
                 alt={"profile" + userData?._id}
               />
