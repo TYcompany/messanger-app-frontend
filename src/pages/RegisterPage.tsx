@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import styled from "styled-components";
 import toast, { Toaster } from "react-hot-toast";
-import axios from "axios";
+import axios, { AxiosError } from "axios";
 import { Cookies } from "react-cookie";
 
 import { refreshAccessTokenCookies, registerRequest } from "../lib/api/APIFunctions";
@@ -56,10 +56,17 @@ function RegisterPage() {
       return;
     }
     const { password, passwordConfirm, userName, email } = values;
-    const res = await registerRequest({ password, passwordConfirm, userName, email });
-
-    if (res.status !== 201) {
-      toast.error("register failed" + res.data.message);
+    let res;
+    try {
+      res = await registerRequest({ password, passwordConfirm, userName, email });
+    } catch (e) {
+      if (e instanceof AxiosError) {
+        toast.error(e.response?.data?.message);
+        return;
+      }
+    }
+    if (!res?.data) {
+      toast.error("No data recieved from server");
       return;
     }
 

@@ -39,12 +39,10 @@ export const refreshAccessTokenCookies = async () => {
 };
 
 export const loginRequest = async (userName: string, password: string) => {
-  const res = await axios.post(LoginRoute, {
+  return await axios.post(LoginRoute, {
     userName,
     password,
   });
-
-  return res;
 };
 
 export const testRequest = async (userId: string, profileImage: string) => {
