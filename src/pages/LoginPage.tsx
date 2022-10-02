@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import styled from "styled-components";
-import toast, { Toaster } from "react-hot-toast";
-import axios from "axios";
+import toast from "react-hot-toast";
+import axios, { Axios, AxiosError } from "axios";
 import { Cookies } from "react-cookie";
 
 import { loginRequest, refreshAccessTokenCookies } from "../lib/api/APIFunctions";
@@ -52,11 +52,18 @@ function LoginPage() {
       return;
     }
     const { password, userName } = values;
+    let res;
+    try {
+      res = await loginRequest(userName, password);
+    } catch (e) {
+      if (e instanceof AxiosError) {
+        toast.error(e.response?.data?.message);
+        return;
+      }
+    }
 
-    const res = await loginRequest(userName, password);
-
-    if (res.status !== 201) {
-      toast.error("login failed" + res.data.message);
+    if (!res?.data) {
+      toast.error("No data recieved from server");
       return;
     }
 
@@ -118,7 +125,6 @@ function LoginPage() {
           </span>
         </form>
       </FormContainer>
-      <Toaster position="bottom-left" reverseOrder={true} />
     </>
   );
 }

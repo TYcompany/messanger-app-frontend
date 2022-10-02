@@ -3,7 +3,6 @@ import Button from "@mui/material/Button";
 import TextField from "@mui/material/TextField";
 
 import Box from "@mui/material/Box";
-import { Buffer } from "buffer";
 
 import { addFriend, fetchUserContacts, getUserDataByEmail } from "../../../../lib/api/APIFunctions";
 import { UserMapType, UserType } from "../../../../lib/types/UserType";

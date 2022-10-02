@@ -1,7 +1,7 @@
 import { lazy, Suspense } from "react";
 import { BrowserRouter, Link, Route, Routes } from "react-router-dom";
 import styled from "styled-components";
-
+import { Toaster } from "react-hot-toast";
 import "./App.css";
 
 import CubeLoader from "./components/CubeLoader";
@@ -77,6 +77,7 @@ function App() {
               );
             })}
           </Routes>
+          <Toaster position="bottom-left" reverseOrder={true} />
         </div>
       </BrowserRouter>
     </ThemeProvider>

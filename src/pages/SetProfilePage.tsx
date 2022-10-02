@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import styled from "styled-components";
 
-import toast, { Toaster } from "react-hot-toast";
+import toast from "react-hot-toast";
 import CubeLoader from "../components/CubeLoader";
 import {
   fetchProfileImages,
@@ -109,8 +109,6 @@ function SetProfilePage() {
           </button>
         </Container>
       )}
-
-      <Toaster />
     </>
   );
 }

@@ -125,7 +125,6 @@ function RegisterPage() {
           </span>
         </form>
       </FormContainer>
-      <Toaster position="bottom-left" reverseOrder={true} />
     </>
   );
 }

@@ -26,7 +26,7 @@ import { getRoomsWithUserData, removeAuthData } from "../../lib/etc/etcFunctions
 
 import ChatNavigation from "./ChatNavigation";
 
-import toast, { Toaster } from "react-hot-toast";
+import toast from "react-hot-toast";
 import { AppBar, Box, Drawer, IconButton, Toolbar, Typography } from "@mui/material";
 
 import MenuIcon from "@mui/icons-material/Menu";
@@ -178,7 +178,6 @@ function ChatPage() {
 
         <ChatScreen setIsPickerActive={setIsPickerActive} isPickerActive={isPickerActive} />
       </div>
-      <Toaster position="bottom-left" reverseOrder={true} />
     </Container>
   );
 }

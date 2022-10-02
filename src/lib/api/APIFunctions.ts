@@ -1,4 +1,4 @@
-import axios from "axios";
+import axios, { AxiosError } from "axios";
 import {
   LoginRoute,
   RegisterRoute,
@@ -20,6 +20,7 @@ import { sleep } from "../etc/etcFunctions";
 import { UserType } from "../types/UserType";
 
 import { Cookies } from "react-cookie";
+import { NOTFOUND } from "dns";
 
 //if only querying data(if fails just they can return empty data), just return data ,else return response itself
 
@@ -38,10 +39,12 @@ export const refreshAccessTokenCookies = async () => {
 };
 
 export const loginRequest = async (userName: string, password: string) => {
-  return await axios.post(LoginRoute, {
+  const res = await axios.post(LoginRoute, {
     userName,
     password,
   });
+
+  return res;
 };
 
 export const testRequest = async (userId: string, profileImage: string) => {
