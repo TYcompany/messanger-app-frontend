@@ -1,77 +1,33 @@
 import React, { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import styled from "styled-components";
 import toast, { Toaster } from "react-hot-toast";
-import axios, { AxiosError } from "axios";
-import { Cookies } from "react-cookie";
 
-import { refreshAccessTokenCookies, registerRequest } from "../../lib/api/APIFunctions";
-import { removeAuthData, setAuthData } from "../../lib/etc/etcFunctions";
+import { Cookies } from "react-cookie";
 import { useRecoilState } from "recoil";
-import { registerStepState } from "../../store/store";
+import { registerInputValueState, registerStepState } from "../../store/store";
 
 const cookies = new Cookies();
 
 function InputUserInformationPage() {
-  const navigate = useNavigate();
   const [activeStep, setActiveStep] = useRecoilState(registerStepState);
 
-  const [values, setValues] = useState({
-    userName: "",
-    email: "",
-    phoneNumber: "",
-    password: "",
-    passwordConfirm: "",
-  });
-
-  useEffect(() => {
-    const init = async () => {
-      await refreshAccessTokenCookies();
-      navigate("/chat");
-    };
-
-    if (cookies.get("access_token")) {
-      init();
-    }
-  }, [navigate]);
-
-  const onSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-
-    if (!validateInputValue()) {
-      return;
-    }
-    const { password, passwordConfirm, userName, email } = values;
-    let res;
-    try {
-      res = await registerRequest({ password, passwordConfirm, userName, email });
-    } catch (e) {
-      if (e instanceof AxiosError) {
-        toast.error(e.response?.data?.message);
-        return;
-      }
-    }
-    if (!res?.data) {
-      toast.error("No data recieved from server");
-      return;
-    }
-
-    const userData = res.data.user;
-
-    const access_token = res.data.access_token;
-
-    setAuthData(userData, access_token);
-
-    toast.success(res.data.message);
-    navigate("/setProfile");
-  };
+  const [values, setValues] = useRecoilState(registerInputValueState);
 
   const onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setValues({ ...values, [e.target.name]: e.target.value });
   };
 
+  const onSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+
+    if (!validateInputValue()) {
+      return;
+    }
+
+    setActiveStep(activeStep + 1);
+  };
   const validateInputValue = () => {
-    const { password, passwordConfirm, userName, email } = values;
+    const { password, passwordConfirm, userName } = values;
     if (password !== passwordConfirm) {
       toast.error("password and passwordConfirm is not the same!");
       return false;
@@ -98,21 +54,31 @@ function InputUserInformationPage() {
             <h1>Register</h1>
           </div>
 
-          <input type="text" placeholder="Username" name="userName" onChange={(e) => onChange(e)} />
-          <input type="text" placeholder="Email" name="email" onChange={(e) => onChange(e)} />
+          <input
+            type="text"
+            placeholder="Username"
+            name="userName"
+            value={values.userName}
+            onChange={(e) => onChange(e)}
+          />
+
+          {/* <input type="text" placeholder="Email" name="email" onChange={(e) => onChange(e)} /> */}
+
           <input
             type="password"
             placeholder="Password"
             name="password"
+            value={values.password}
             onChange={(e) => onChange(e)}
           />
           <input
             type="password"
             placeholder="Password confirm"
             name="passwordConfirm"
+            value={values.passwordConfirm}
             onChange={(e) => onChange(e)}
           />
-          <button type="submit">Sign up</button>
+          <button type="submit">Next</button>
           <span>
             Already have an account? <Link to="/login">Login</Link>{" "}
           </span>
