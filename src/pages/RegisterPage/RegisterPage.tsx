@@ -9,6 +9,11 @@ import { refreshAccessTokenCookies, registerRequest } from "../../lib/api/APIFun
 import { removeAuthData, setAuthData } from "../../lib/etc/etcFunctions";
 import DotsMobileStepper from "./DotsMobileStepper";
 import HorizontalLinearStepper from "./HorizontalLinearStepper";
+import AuthenticationPage from "./AuthenticationPage";
+import InputUserInformationPage from "./InputUserInformationPage";
+import { useRecoilState } from "recoil";
+import { registerStepState } from "../../store/store";
+import SetProfilePage from "../SetProfilePage";
 
 // toast.promise(
 //   saveSettings(settings),
@@ -32,10 +37,12 @@ const cookies = new Cookies();
 
 function RegisterPage() {
   const navigate = useNavigate();
+  const [activeStep, setActiveStep] = useRecoilState(registerStepState);
 
   const [values, setValues] = useState({
     userName: "",
     email: "",
+    phoneNumber: "",
     password: "",
     passwordConfirm: "",
   });
@@ -113,31 +120,11 @@ function RegisterPage() {
         ) : (
           <DotsMobileStepper></DotsMobileStepper>
         )}
-        <form onSubmit={(e) => onSubmit(e)}>
-          <div className="title">
-            <img src="" alt="" />
-            <h1>Register</h1>
-          </div>
+        {activeStep === 0 && <InputUserInformationPage></InputUserInformationPage>}
 
-          <input type="text" placeholder="Username" name="userName" onChange={(e) => onChange(e)} />
-          <input type="text" placeholder="Email" name="email" onChange={(e) => onChange(e)} />
-          <input
-            type="password"
-            placeholder="Password"
-            name="password"
-            onChange={(e) => onChange(e)}
-          />
-          <input
-            type="password"
-            placeholder="Password confirm"
-            name="passwordConfirm"
-            onChange={(e) => onChange(e)}
-          />
-          <button type="submit">Sign up</button>
-          <span>
-            Already have an account? <Link to="/login">Login</Link>{" "}
-          </span>
-        </form>
+        {activeStep === 1 && <AuthenticationPage></AuthenticationPage>}
+        {/* {activeStep === 2 && <SetProfilePage></SetProfilePage>} */}
+        
       </FormContainer>
     </>
   );

@@ -4,18 +4,22 @@ import MobileStepper from "@mui/material/MobileStepper";
 import Button from "@mui/material/Button";
 import KeyboardArrowLeft from "@mui/icons-material/KeyboardArrowLeft";
 import KeyboardArrowRight from "@mui/icons-material/KeyboardArrowRight";
+import { useRecoilState } from "recoil";
+import { registerStepState } from "../../store/store";
 
 export default function DotsMobileStepper() {
+  const [activeStep, setActiveStep] = useRecoilState(registerStepState);
+
   const theme = useTheme();
-  const [activeStep, setActiveStep] = React.useState(0);
+
   const maxStep = 3;
 
   const handleNext = () => {
-    setActiveStep((prevActiveStep) => prevActiveStep + 1);
+    setActiveStep(activeStep + 1);
   };
 
   const handleBack = () => {
-    setActiveStep((prevActiveStep) => prevActiveStep - 1);
+    setActiveStep(activeStep - 1);
   };
 
   return (

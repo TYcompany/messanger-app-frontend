@@ -7,6 +7,22 @@ import { v4 as uuid } from "uuid";
 
 // room state, user, messages, currentUser, currentlyChattingRoom
 
+export const registerStepState = atom<number>({
+  key: "registerStep" + uuid(),
+  default: 0,
+});
+
+export const registerInputValueState = atom({
+  key: "registerInput" + uuid(),
+  default: {
+    userName: "",
+    email: "",
+    phoneNumber: "",
+    password: "",
+    passwordConfirm: "",
+  },
+});
+
 export const themeState = atom<ThemeType>({
   key: "theme" + uuid(),
   default: ThemeType.DARK,
