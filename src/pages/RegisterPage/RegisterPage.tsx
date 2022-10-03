@@ -5,8 +5,10 @@ import toast, { Toaster } from "react-hot-toast";
 import axios, { AxiosError } from "axios";
 import { Cookies } from "react-cookie";
 
-import { refreshAccessTokenCookies, registerRequest } from "../lib/api/APIFunctions";
-import { removeAuthData, setAuthData } from "../lib/etc/etcFunctions";
+import { refreshAccessTokenCookies, registerRequest } from "../../lib/api/APIFunctions";
+import { removeAuthData, setAuthData } from "../../lib/etc/etcFunctions";
+import DotsMobileStepper from "./DotsMobileStepper";
+import HorizontalLinearStepper from "./HorizontalLinearStepper";
 
 // toast.promise(
 //   saveSettings(settings),
@@ -106,6 +108,11 @@ function RegisterPage() {
   return (
     <>
       <FormContainer>
+        {window.innerWidth >= 760 ? (
+          <HorizontalLinearStepper></HorizontalLinearStepper>
+        ) : (
+          <DotsMobileStepper></DotsMobileStepper>
+        )}
         <form onSubmit={(e) => onSubmit(e)}>
           <div className="title">
             <img src="" alt="" />

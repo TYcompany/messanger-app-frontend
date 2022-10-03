@@ -1,13 +1,20 @@
-import { useState } from "react";
-import IntlTelInput from "react-intl-tel-input";
+import axios from "axios";
+import { useEffect, useState } from "react";
+import IntlTelInput, { CountryData } from "react-intl-tel-input";
 import "react-intl-tel-input/dist/main.css";
 
 function MainPage() {
   const [phoneNumber, setPhoneNumber] = useState("");
-  const handlePhoneChange = (status: any, pn: any, country: any) => {
-    console.log(status, pn, country);
-    setPhoneNumber(pn)
+  const handlePhoneChange = (
+    isValid: boolean,
+    value: string,
+    selectedCountryData: CountryData,
+    fullNumber: string,
+    extension: string
+  ) => {
+    setPhoneNumber(fullNumber);
   };
+
   return (
     <div>
       <h1> Waicker</h1>
@@ -17,6 +24,7 @@ function MainPage() {
         inputClassName="form-control"
         value={phoneNumber}
         onPhoneNumberChange={handlePhoneChange}
+        defaultCountry={"kr"}
       />
     </div>
   );
