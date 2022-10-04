@@ -1,38 +1,42 @@
-import React from "react";
-import Box from "@mui/material/Box";
-import InputLabel from "@mui/material/InputLabel";
-import MenuItem from "@mui/material/MenuItem";
-import FormControl from "@mui/material/FormControl";
-import Select, { SelectChangeEvent } from "@mui/material/Select";
+import * as React from "react";
 import styled from "styled-components";
 
-import { CountryData } from "../../metaData/CountryData";
+import Box from "@mui/material/Box";
+import TextField from "@mui/material/TextField";
+import Autocomplete from "@mui/material/Autocomplete";
+import { countries } from "../../metaData/CountryData";
 
 function CountryCodeSelectInput() {
-  const [selectCountryCode, setSelectCountryCode] = React.useState("");
-
-  const handleChange = (event: SelectChangeEvent) => {
-    setSelectCountryCode(event.target.value as string);
-  };
-
   return (
-    <Container>
-      <FormControl fullWidth className="form-control">
-        <InputLabel className="select-label">Country</InputLabel>
-        <Select
-          className="select"
-          value={selectCountryCode}
-          label="Country"
-          onChange={handleChange}
-        >
-          {CountryData.map((countryData) => (
-            <MenuItem key={countryData[0] + "-item"} value={countryData[1]}>
-              {countryData[0] + " " + countryData[2]}
-            </MenuItem>
-          ))}
-        </Select>
-      </FormControl>
-    </Container>
+    <Autocomplete
+      id="country-select-demo"
+      sx={{ width: 300 }}
+      options={countries}
+      autoHighlight
+      getOptionLabel={(option) => option.label}
+      renderOption={(props, option) => (
+        <Box component="li" sx={{ "& > img": { mr: 2, flexShrink: 0 } }} {...props}>
+          <img
+            loading="lazy"
+            width="20"
+            src={`https://flagcdn.com/w20/${option.code.toLowerCase()}.png`}
+            srcSet={`https://flagcdn.com/w40/${option.code.toLowerCase()}.png 2x`}
+            alt=""
+          />
+          {option.label} ({option.code}) +{option.phone}
+        </Box>
+      )}
+      renderInput={(params) => (
+        <TextField
+          {...params}
+          label="Choose a country"
+          inputProps={{
+            ...params.inputProps,
+            autoComplete: "new-password", // disable autocomplete and autofill
+          }}
+        />
+      )}
+    />
   );
 }
 
@@ -41,6 +45,7 @@ const Container = styled.div`
 
   .form-control {
     .select {
+      text-align: left;
     }
   }
 `;
