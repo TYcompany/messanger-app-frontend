@@ -13,7 +13,18 @@ function AuthenticationPage() {
   //email or phone
   const [authType, setAuthType] = useState("email");
 
+  const [email, setEmail] = useState("");
+  const [selectedCountryDial, setSelectedCountryDial] = React.useState("82");
   const [phoneNumber, setPhoneNumber] = useState("");
+
+  const onSubmitPhoneNumber = () => {
+    //submit
+    console.log(selectedCountryDial + ") " + phoneNumber);
+  };
+
+  const onSubmitEmail = () => {
+    //submit
+  };
 
   return (
     <Container>
@@ -28,13 +39,22 @@ function AuthenticationPage() {
         <div>
           phoneNumber
           <div className="phone-number-input-container">
-            <CountryCodeSelectInput></CountryCodeSelectInput>
-            <input className="phone-number" type="text" placeholder="ex) 01012345678"></input>
+            <CountryCodeSelectInput
+              selectedCountryDial={selectedCountryDial}
+              setSelectedCountryDial={setSelectedCountryDial}
+            />
+            <input
+              value={phoneNumber}
+              onChange={(e) => setPhoneNumber(e.target.value)}
+              className="phone-number"
+              type="text"
+              placeholder="ex) 01012345678"
+            ></input>
           </div>
           <h3 onClick={() => setAuthType("email")}>Want to authenticate with email?</h3>
         </div>
       )}
-      <Button>Send</Button>
+      <Button onClick={() => onSubmitPhoneNumber()}>Send</Button>
     </Container>
   );
 }

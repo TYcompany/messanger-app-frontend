@@ -6,20 +6,19 @@ import TextField from "@mui/material/TextField";
 import Autocomplete from "@mui/material/Autocomplete";
 import { countryDatas, CountryType } from "../../metaData/CountryData";
 
-function CountryCodeSelectInput() {
-  const [selectedCountryDial, setSelectedCountryDial] = React.useState("82");
-
+function CountryCodeSelectInput({
+  selectedCountryDial,
+  setSelectedCountryDial,
+}: {
+  selectedCountryDial: string;
+  setSelectedCountryDial: Function;
+}) {
   const handleChange = (e: React.SyntheticEvent<Element, Event>, country: CountryType | null) => {
     if (!country) {
       return;
     }
     setSelectedCountryDial(country.phone);
   };
-  console.log();
-
-  React.useEffect(() => {
-    console.log(selectedCountryDial);
-  }, [selectedCountryDial]);
 
   return (
     <Autocomplete
@@ -29,6 +28,7 @@ function CountryCodeSelectInput() {
       autoHighlight
       getOptionLabel={(option) => option.label + " +" + option.phone}
       onChange={(e, value) => handleChange(e, value)}
+      defaultValue={countryDatas[120]}
       renderOption={(props, option) => (
         <Box component="li" sx={{ "& > img": { mr: 2, flexShrink: 0 } }} {...props}>
           <img
@@ -48,7 +48,7 @@ function CountryCodeSelectInput() {
           autoFocus={true}
           inputProps={{
             ...params.inputProps,
-            //autoComplete: "new-password", // disable autocomplete and autofill
+            autoComplete: "new-password", // disable autocomplete and autofill
           }}
         />
       )}
