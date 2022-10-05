@@ -763,7 +763,7 @@
 
 //download(JSON.stringify(countryDatas), "json.txt", "text/plain");
 
-interface CountryType {
+export interface CountryType {
   code: string;
   label: string;
   phone: string;
