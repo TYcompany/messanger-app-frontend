@@ -4,14 +4,14 @@ import styled from "styled-components";
 import Box from "@mui/material/Box";
 import TextField from "@mui/material/TextField";
 import Autocomplete from "@mui/material/Autocomplete";
-import { countries } from "../../metaData/CountryData";
+import { countryDatas } from "../../metaData/CountryData";
 
 function CountryCodeSelectInput() {
   return (
     <Autocomplete
       id="country-select-demo"
       sx={{ width: 300 }}
-      options={countries}
+      options={countryDatas}
       autoHighlight
       getOptionLabel={(option) => option.label}
       renderOption={(props, option) => (
@@ -23,7 +23,7 @@ function CountryCodeSelectInput() {
             srcSet={`https://flagcdn.com/w40/${option.code.toLowerCase()}.png 2x`}
             alt=""
           />
-          {option.label} ({option.code}) +{option.phone}
+          {countryDatas.label} ({countryDatas.code}) +{countryDatas.phone}
         </Box>
       )}
       renderInput={(params) => (

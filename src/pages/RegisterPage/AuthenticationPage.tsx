@@ -29,7 +29,7 @@ function AuthenticationPage() {
           phoneNumber
           <div className="phone-number-input-container">
             <CountryCodeSelectInput></CountryCodeSelectInput>
-            <input type="text" placeholder="ex)01012345678"></input>
+            <input className="phone-number" type="text" placeholder="ex) 01012345678"></input>
           </div>
           <h3 onClick={() => setAuthType("email")}>Want to authenticate with email?</h3>
         </div>
