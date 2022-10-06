@@ -4,6 +4,8 @@ import toast, { Toaster } from "react-hot-toast";
 
 import { Cookies } from "react-cookie";
 import { useRecoilState } from "recoil";
+import styled from "styled-components";
+
 import { registerInputValueState, registerStepState } from "../../store/store";
 
 const cookies = new Cookies();
@@ -46,7 +48,7 @@ function InputUserInformationPage() {
   };
 
   return (
-    <div>
+    <Container>
       {
         <form onSubmit={(e) => onSubmit(e)}>
           <div className="title">
@@ -84,8 +86,61 @@ function InputUserInformationPage() {
           </span>
         </form>
       }
-    </div>
+    </Container>
   );
 }
+
+const Container = styled.div`
+  .title {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    justify-content: center;
+  }
+
+  form {
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+    background-color: #00000076;
+    border-radius: 2rem;
+    padding: 3rem 5rem;
+    input {
+      background-color: transparent;
+      padding: 1rem;
+      border: 0.1rem solid #4e0eff;
+      border-radius: 0.4rem;
+      color: white;
+      width: 100%;
+      font-size: 1rem;
+      &:focus {
+        border: 0.1rem solid #997af0;
+        outline: none;
+      }
+    }
+
+    button {
+      background-color: #997af0;
+      color: white;
+      padding: 1rem 2rem;
+      border: none;
+      cursor: pointer;
+      border-radius: 0.4rem;
+      font-size: 1rem;
+      transition: 0.5 ease-in-out;
+      &:hover {
+        background-color: #4e0eff;
+      }
+    }
+
+    span {
+      color: white;
+      a {
+        color: #4e0eff;
+        font-weight: bold;
+      }
+    }
+  }
+`;
 
 export default InputUserInformationPage;

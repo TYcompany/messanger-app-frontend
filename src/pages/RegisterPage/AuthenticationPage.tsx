@@ -5,7 +5,9 @@ import axios from "axios";
 import { useEffect, useState } from "react";
 import CountryCodeSelectInput from "./CountryCodeSelectInput";
 import styled from "styled-components";
-import { Button } from "@mui/material";
+import { Button, TextField } from "@mui/material";
+import { isValidEmail } from "../../lib/etc/validationFunctions";
+import toast from "react-hot-toast";
 
 function AuthenticationPage() {
   const [activeStep, setActiveStep] = useRecoilState(registerStepState);
@@ -17,27 +19,44 @@ function AuthenticationPage() {
   const [selectedCountryDial, setSelectedCountryDial] = React.useState("82");
   const [phoneNumber, setPhoneNumber] = useState("");
 
-  const onSubmitPhoneNumber = () => {
-    //submit
-    console.log(selectedCountryDial + ") " + phoneNumber);
+  const onSubmitPhoneNumber = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+
+    const userPhoneNumber = selectedCountryDial + phoneNumber;
+    console.log("auth with phonenumber");
+    //auth with phone
   };
 
-  const onSubmitEmail = () => {
+  const onSubmitEmail = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+
+    console.log("auth with email", email);
+
+    if (!isValidEmail(email)) {
+      toast.error("please type valid email!");
+      return;
+    }
+
     //submit
+    //auth with email
   };
 
   return (
     <Container>
       <h1>AuthenticationPage</h1>
       {authType === "email" ? (
-        <div>
-          email
-          <input></input>
+        <form onSubmit={(e) => onSubmitEmail(e)}>
+          <TextField
+            label="Email"
+            variant="outlined"
+            onChange={(e) => setEmail(e.target.value)}
+            value={email}
+          />
           <h3 onClick={() => setAuthType("phone")}>Want to authenticate with phoneNumber?</h3>
-        </div>
+          <Button type="submit">Send</Button>
+        </form>
       ) : (
-        <div>
-          phoneNumber
+        <form onSubmit={(e) => onSubmitPhoneNumber(e)}>
           <div className="phone-number-input-container">
             <CountryCodeSelectInput
               selectedCountryDial={selectedCountryDial}
@@ -52,9 +71,9 @@ function AuthenticationPage() {
             ></input>
           </div>
           <h3 onClick={() => setAuthType("email")}>Want to authenticate with email?</h3>
-        </div>
+          <Button type="submit">Send</Button>
+        </form>
       )}
-      <Button onClick={() => onSubmitPhoneNumber()}>Send</Button>
     </Container>
   );
 }

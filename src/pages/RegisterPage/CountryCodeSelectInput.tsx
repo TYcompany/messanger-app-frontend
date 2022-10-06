@@ -28,7 +28,11 @@ function CountryCodeSelectInput({
       autoHighlight
       getOptionLabel={(option) => option.label + " +" + option.phone}
       onChange={(e, value) => handleChange(e, value)}
-      defaultValue={countryDatas[120]}
+      defaultValue={
+        selectedCountryDial
+          ? countryDatas.filter((c) => c.phone === selectedCountryDial)?.[0]
+          : countryDatas[120]
+      }
       renderOption={(props, option) => (
         <Box component="li" sx={{ "& > img": { mr: 2, flexShrink: 0 } }} {...props}>
           <img

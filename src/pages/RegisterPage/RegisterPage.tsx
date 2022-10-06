@@ -124,7 +124,6 @@ function RegisterPage() {
 
         {activeStep === 1 && <AuthenticationPage></AuthenticationPage>}
         {/* {activeStep === 2 && <SetProfilePage></SetProfilePage>} */}
-        
       </FormContainer>
     </>
   );
@@ -138,13 +137,13 @@ const FormContainer = styled.div`
   gap: 1rem;
   align-items: center;
   background-color: #131324;
-  .title {
+  /* .title {
     display: flex;
     align-items: center;
     gap: 1rem;
     justify-content: center;
-  }
-
+  } */
+  /* 
   form {
     display: flex;
     flex-direction: column;
@@ -187,7 +186,7 @@ const FormContainer = styled.div`
         font-weight: bold;
       }
     }
-  }
+  } */
 `;
 
 export default RegisterPage;
