@@ -1,4 +1,5 @@
-const host = "http://localhost:5000";
+const host = process.env.REACT_APP_HOST_URL || "http://localhost:5000";
+
 
 export const RefreshAccessTokenRoute = `${host}/auth/refreshAccessToken`;
 export const RegisterRoute = `${host}/auth/register`;
