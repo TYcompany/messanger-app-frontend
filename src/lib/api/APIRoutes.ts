@@ -2,6 +2,9 @@ const host = "http://localhost:5000";
 
 export const RefreshAccessTokenRoute = `${host}/auth/refreshAccessToken`;
 export const RegisterRoute = `${host}/auth/register`;
+export const RegisterByPhoneNumberRoute = `${host}/auth/registerByPhoneNumber`;
+export const ValidatePhoneNumberRoute = `${host}/auth/validatePhoneNumberRoute`;
+
 export const LoginRoute = `${host}/auth/login`;
 export const FetchUserContactsRoute = `${host}/auth/fetchUserContacts`;
 export const GetUserDataByEmailRoute = `${host}/auth/getUserDataByEmail`;

@@ -15,6 +15,8 @@ import {
   GetUserDataByUserIdsRoute,
   RefreshAccessTokenRoute,
   TestRoute,
+  RegisterByPhoneNumberRoute,
+  ValidatePhoneNumberRoute,
 } from "./APIRoutes";
 import { sleep } from "../etc/etcFunctions";
 import { UserType } from "../types/UserType";
@@ -66,6 +68,35 @@ export const registerRequest = async ({
     password,
     passwordConfirm,
   });
+};
+
+export const registerByPhoneNumber = async ({
+  userName,
+  password,
+  phoneNumber,
+}: {
+  userName: string;
+  password: string;
+  phoneNumber: string;
+}) => {
+  const res = await axios.post(RegisterByPhoneNumberRoute, {
+    userName,
+    password,
+    phoneNumber,
+  });
+  return res;
+};
+
+export const validatePhoneNumber = async ({
+  phoneNumber,
+  phoneNumberConfirmToken,
+}: {
+  phoneNumber: string;
+  phoneNumberConfirmToken: string;
+}) => {
+  const res = await axios.post(ValidatePhoneNumberRoute, { phoneNumber, phoneNumberConfirmToken });
+
+  return res;
 };
 
 export const addFriend = async (currentUserId: string, friendUserId: string) => {

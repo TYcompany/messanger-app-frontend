@@ -1,17 +1,20 @@
 import React from "react";
 import { useRecoilState } from "recoil";
-import { registerStepState } from "../../store/store";
-import axios from "axios";
+import { registerInputValueState, registerStepState } from "../../store/store";
+
 import { useEffect, useState } from "react";
 import CountryCodeSelectInput from "./CountryCodeSelectInput";
 import styled from "styled-components";
 import { Button, TextField } from "@mui/material";
 import { isValidEmail } from "../../lib/etc/validationFunctions";
 import toast from "react-hot-toast";
+import { registerByPhoneNumber, validatePhoneNumber } from "../../lib/api/APIFunctions";
 
 function AuthenticationPage() {
   const [activeStep, setActiveStep] = useRecoilState(registerStepState);
+  const [values, setValues] = useRecoilState(registerInputValueState);
 
+  const [phoneNumberConfirmToken, setPhoneNumberConfirmToken] = useState("");
   //email or phone
   const [authType, setAuthType] = useState("email");
 
@@ -19,12 +22,36 @@ function AuthenticationPage() {
   const [selectedCountryDial, setSelectedCountryDial] = React.useState("82");
   const [phoneNumber, setPhoneNumber] = useState("");
 
-  const onSubmitPhoneNumber = (e: React.FormEvent<HTMLFormElement>) => {
+  useEffect(() => {
+    function handleEvent(message: any) {
+      console.log(message.data);
+      toast("recieved message!");
+      toast(message.message);
+      toast(message.data);
+
+      //Waicker-${token}\nPlease type the above code to validate.
+
+      const code = message.data.split("-")?.[1].slice(0, 6);
+      setPhoneNumberConfirmToken(code);
+    }
+    document.addEventListener("message", handleEvent);
+
+    return () => document.removeEventListener("message", handleEvent);
+  }, []);
+
+  const onSubmitPhoneNumber = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    const { userName, password } = values;
 
     const userPhoneNumber = selectedCountryDial + phoneNumber;
-    console.log("auth with phonenumber");
-    //auth with phone
+
+    const res = await registerByPhoneNumber({ phoneNumber: userPhoneNumber, userName, password });
+  };
+
+  const phoneNumberValidation = async () => {
+    const res = await validatePhoneNumber({ phoneNumber, phoneNumberConfirmToken });
+
+    console.log(res);
   };
 
   const onSubmitEmail = (e: React.FormEvent<HTMLFormElement>) => {
@@ -72,6 +99,13 @@ function AuthenticationPage() {
           </div>
           <h3 onClick={() => setAuthType("email")}>Want to authenticate with email?</h3>
           <Button type="submit">Send</Button>
+          <input
+            value={phoneNumberConfirmToken}
+            onChange={(e) => setPhoneNumberConfirmToken(e.target.value)}
+            type="text"
+            placeholder="SMS code"
+          ></input>
+          <Button onClick={() => phoneNumberValidation()}>Confirm</Button>
         </form>
       )}
     </Container>
