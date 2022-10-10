@@ -44,8 +44,10 @@ function AuthenticationPage() {
     const { userName, password } = values;
 
     const userPhoneNumber = selectedCountryDial + phoneNumber;
+    toast("sent phone number");
 
     const res = await registerByPhoneNumber({ phoneNumber: userPhoneNumber, userName, password });
+    toast("type phone Number");
   };
 
   const phoneNumberValidation = async () => {
