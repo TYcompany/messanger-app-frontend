@@ -52,8 +52,6 @@ function AuthenticationPage() {
 
   const phoneNumberValidation = async () => {
     const res = await validatePhoneNumber({ phoneNumber, phoneNumberConfirmToken });
-
-    console.log(res);
   };
 
   const onSubmitEmail = (e: React.FormEvent<HTMLFormElement>) => {

@@ -17,6 +17,7 @@ import {
   TestRoute,
   RegisterByPhoneNumberRoute,
   ValidatePhoneNumberRoute,
+  HealthCheckRoute,
 } from "./APIRoutes";
 import { sleep } from "../etc/etcFunctions";
 import { UserType } from "../types/UserType";
@@ -27,6 +28,11 @@ import { NOTFOUND } from "dns";
 //if only querying data(if fails just they can return empty data), just return data ,else return response itself
 
 const cookies = new Cookies();
+
+export const healthCheck = async () => {
+  const res = await axios.get(HealthCheckRoute);
+  return res;
+};
 
 export const refreshAccessToken = async (access_token: string) => {
   const res = await axios.post(RefreshAccessTokenRoute, {
