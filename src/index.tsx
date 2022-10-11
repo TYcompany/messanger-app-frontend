@@ -16,6 +16,8 @@ const cookies = new Cookies();
 indexedDB();
 const access_token = cookies.get("access_token");
 
+axios.defaults.withCredentials = true;
+
 if (!access_token) {
   removeAuthData();
 } else {
