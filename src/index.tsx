@@ -17,6 +17,9 @@ indexedDB();
 const access_token = cookies.get("access_token");
 
 axios.defaults.withCredentials = true;
+axios.defaults.headers.post["Content-Type"] = "application/x-www-form-urlencoded";
+axios.defaults.headers.get["Content-Type"] = "application/x-www-form-urlencoded";
+
 
 if (!access_token) {
   removeAuthData();
