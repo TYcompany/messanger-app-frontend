@@ -28,6 +28,7 @@ import { NOTFOUND } from "dns";
 //if only querying data(if fails just they can return empty data), just return data ,else return response itself
 
 const cookies = new Cookies();
+axios.defaults.withCredentials = true;
 
 export const healthCheck = async () => {
   const res = await axios.get(HealthCheckRoute);
