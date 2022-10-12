@@ -9,6 +9,7 @@ import { Button, TextField } from "@mui/material";
 import { isValidEmail } from "../../lib/etc/validationFunctions";
 import toast from "react-hot-toast";
 import { registerByPhoneNumber, validatePhoneNumber } from "../../lib/api/APIFunctions";
+import { AlternateEmail } from "@mui/icons-material";
 
 function AuthenticationPage() {
   const [activeStep, setActiveStep] = useRecoilState(registerStepState);
@@ -23,17 +24,23 @@ function AuthenticationPage() {
   const [phoneNumber, setPhoneNumber] = useState("");
 
   useEffect(() => {
-    function handleEvent(message: any) {
-      console.log(message.data);
-      toast("recieved message!");
-      toast(message.message);
-      toast(message.data);
-
-      //Waicker-${token}\nPlease type the above code to validate.
-
-      const code = message.data.split("-")?.[1].slice(0, 6);
-      setPhoneNumberConfirmToken(code);
+    if (!("OTPCredential" in window)) {
+      return;
     }
+    const ac = new AbortController();
+    const smsGet = navigator.credentials.get as any;
+    smsGet({
+      otp: { transport: ["sms"] },
+      signal: ac.signal,
+    })
+      .then((otp: any) => {
+        setPhoneNumberConfirmToken(otp?.code || "");
+        ac.abort();
+      })
+      .catch((err: any) => {
+        console.error(err);
+      });
+    ///const code = message.data.split("-")?.[1].slice(0, 6);
   }, []);
 
   const onSubmitPhoneNumber = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -81,8 +88,6 @@ function AuthenticationPage() {
         </form>
       ) : (
         <form onSubmit={(e) => onSubmitPhoneNumber(e)}>
-          <input autoComplete="one-time-code" pattern="\d{6}" required />
-
           <div className="phone-number-input-container">
             <CountryCodeSelectInput
               selectedCountryDial={selectedCountryDial}
@@ -107,6 +112,7 @@ function AuthenticationPage() {
           <Button onClick={() => phoneNumberValidation()}>Confirm</Button>
         </form>
       )}
+      <input autoComplete="one-time-code" pattern="\d{6}" required />
     </Container>
   );
 }
