@@ -34,9 +34,6 @@ function AuthenticationPage() {
       const code = message.data.split("-")?.[1].slice(0, 6);
       setPhoneNumberConfirmToken(code);
     }
-    document.addEventListener("message", handleEvent);
-
-    return () => document.removeEventListener("message", handleEvent);
   }, []);
 
   const onSubmitPhoneNumber = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -84,6 +81,8 @@ function AuthenticationPage() {
         </form>
       ) : (
         <form onSubmit={(e) => onSubmitPhoneNumber(e)}>
+          <input autoComplete="one-time-code" pattern="\d{6}" required />
+
           <div className="phone-number-input-container">
             <CountryCodeSelectInput
               selectedCountryDial={selectedCountryDial}
