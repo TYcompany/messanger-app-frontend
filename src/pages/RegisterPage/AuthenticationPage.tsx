@@ -47,7 +47,7 @@ function AuthenticationPage() {
     toast("sent phone number");
 
     const res = await registerByPhoneNumber({ phoneNumber: userPhoneNumber, userName, password });
-    toast("type phone Number");
+    toast(res.data.message);
   };
 
   const phoneNumberValidation = async () => {
