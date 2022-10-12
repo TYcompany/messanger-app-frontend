@@ -27,20 +27,23 @@ function AuthenticationPage() {
     if (!("OTPCredential" in window)) {
       return;
     }
-    const ac = new AbortController();
-    const smsGet = navigator.credentials.get as any;
-    smsGet({
-      otp: { transport: ["sms"] },
-      signal: ac.signal,
-    })
-      .then((otp: any) => {
-        setPhoneNumberConfirmToken(otp?.code || "");
-        ac.abort();
+
+    window.addEventListener("DOMContentLoaded", (e) => {
+      const ac = new AbortController();
+      const smsGet = navigator.credentials.get as any;
+      smsGet({
+        otp: { transport: ["sms"] },
+        signal: ac.signal,
       })
-      .catch((err: any) => {
-        console.error(err);
-      });
-    ///const code = message.data.split("-")?.[1].slice(0, 6);
+        .then((otp: any) => {
+          toast("got sms" + otp.code);
+          setPhoneNumberConfirmToken(otp?.code || "");
+          ac.abort();
+        })
+        .catch((err: any) => {
+          console.error(err);
+        });
+    });
   }, []);
 
   const onSubmitPhoneNumber = async (e: React.FormEvent<HTMLFormElement>) => {
