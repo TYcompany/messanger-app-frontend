@@ -8,7 +8,11 @@ import styled from "styled-components";
 import { Button, TextField } from "@mui/material";
 import { isValidEmail } from "../../lib/etc/validationFunctions";
 import toast from "react-hot-toast";
-import { registerByPhoneNumber, validatePhoneNumber } from "../../lib/api/APIFunctions";
+import {
+  registerByEmail,
+  registerByPhoneNumber,
+  validatePhoneNumber,
+} from "../../lib/api/APIFunctions";
 import { AlternateEmail } from "@mui/icons-material";
 
 function AuthenticationPage() {
@@ -61,9 +65,9 @@ function AuthenticationPage() {
     const res = await validatePhoneNumber({ phoneNumber, phoneNumberConfirmToken });
   };
 
-  const onSubmitEmail = (e: React.FormEvent<HTMLFormElement>) => {
+  const onSubmitEmail = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-
+    const { userName, password } = values;
     console.log("auth with email", email);
 
     if (!isValidEmail(email)) {
@@ -71,8 +75,8 @@ function AuthenticationPage() {
       return;
     }
 
-    //submit
-    //auth with email
+    const res = await registerByEmail({ userName, password, email });
+    console.log(res);
   };
 
   return (
@@ -110,12 +114,11 @@ function AuthenticationPage() {
             value={phoneNumberConfirmToken}
             onChange={(e) => setPhoneNumberConfirmToken(e.target.value)}
             type="text"
-            placeholder="SMS code"
+            placeholder="ex) 123456"
           ></input>
           <Button onClick={() => phoneNumberValidation()}>Confirm</Button>
         </form>
       )}
-      <input autoComplete="one-time-code" pattern="\d{6}" required />
     </Container>
   );
 }

@@ -18,6 +18,7 @@ import {
   RegisterByPhoneNumberRoute,
   ValidatePhoneNumberRoute,
   HealthCheckRoute,
+  RegisterByEmailRoute,
 } from "./APIRoutes";
 import { sleep } from "../etc/etcFunctions";
 import { UserType } from "../types/UserType";
@@ -74,6 +75,23 @@ export const registerRequest = async ({
     password,
     passwordConfirm,
   });
+};
+
+export const registerByEmail = async ({
+  userName,
+  password,
+  email,
+}: {
+  userName: string;
+  password: string;
+  email: string;
+}) => {
+  const res = await axios.post(RegisterByEmailRoute, {
+    userName,
+    password,
+    email,
+  });
+  return res;
 };
 
 export const registerByPhoneNumber = async ({

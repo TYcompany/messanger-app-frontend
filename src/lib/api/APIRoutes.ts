@@ -5,7 +5,8 @@ export const HealthCheckRoute = `${host}`;
 export const RefreshAccessTokenRoute = `${host}/auth/refreshAccessToken`;
 export const RegisterRoute = `${host}/auth/register`;
 export const RegisterByPhoneNumberRoute = `${host}/auth/registerByPhoneNumber`;
-export const ValidatePhoneNumberRoute = `${host}/auth/validatePhoneNumberRoute`;
+export const ValidatePhoneNumberRoute = `${host}/auth/validatePhoneNumber`;
+export const RegisterByEmailRoute = `${host}/auth/registerByEmail`;
 
 export const LoginRoute = `${host}/auth/login`;
 export const FetchUserContactsRoute = `${host}/auth/fetchUserContacts`;
