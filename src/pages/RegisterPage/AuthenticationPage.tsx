@@ -14,18 +14,6 @@ import {
   validatePhoneNumber,
 } from "../../lib/api/APIFunctions";
 
-window.addEventListener("DOMContentLoaded", async (e) => {
-  const ac = new AbortController();
-  const smsGet = navigator.credentials.get as any;
-  const otp = await smsGet({
-    otp: { transport: ["sms"] },
-    signal: ac.signal,
-  });
-  toast("got sms" + otp.code);
-  alert("your code is" + otp.code);
-  ac.abort();
-});
-
 function AuthenticationPage() {
   const [activeStep, setActiveStep] = useRecoilState(registerStepState);
   const [values, setValues] = useRecoilState(registerInputValueState);
@@ -37,29 +25,6 @@ function AuthenticationPage() {
   const [email, setEmail] = useState("");
   const [selectedCountryDial, setSelectedCountryDial] = React.useState("82");
   const [phoneNumber, setPhoneNumber] = useState("");
-
-  useEffect(() => {
-    if (!("OTPCredential" in window)) {
-      return;
-    }
-    toast("otp available!");
-    // window.addEventListener("DOMContentLoaded", (e) => {
-    //   const ac = new AbortController();
-    //   const smsGet = navigator.credentials.get as any;
-    //   smsGet({
-    //     otp: { transport: ["sms"] },
-    //     signal: ac.signal,
-    //   })
-    //     .then((otp: any) => {
-    //       toast("got sms" + otp.code);
-    //       setPhoneNumberConfirmToken(otp?.code || "");
-    //       ac.abort();
-    //     })
-    //     .catch((err: any) => {
-    //       console.error(err);
-    //     });
-    // });
-  }, []);
 
   const onSubmitPhoneNumber = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
