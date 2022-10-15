@@ -21,48 +21,44 @@ function CountryCodeSelectInput({
   };
 
   return (
-    <Autocomplete
-      id="country-select-demo"
-      sx={{ width: 300 }}
-      options={countryDatas}
-      autoHighlight
-      getOptionLabel={(option) => option.label + " +" + option.phone}
-      onChange={(e, value) => handleChange(e, value)}
-      defaultValue={
-        selectedCountryDial
-          ? countryDatas.filter((c) => c.phone === selectedCountryDial)?.[0]
-          : countryDatas[120]
-      }
-      renderOption={(props, option) => (
-        <Box component="li" sx={{ "& > img": { mr: 2, flexShrink: 0 } }} {...props}>
-          <img
-            loading="lazy"
-            width="20"
-            src={`https://flagcdn.com/w20/${option.code.toLowerCase()}.png`}
-            srcSet={`https://flagcdn.com/w40/${option.code.toLowerCase()}.png 2x`}
-            alt=""
+    <Container>
+      <Autocomplete
+        id="country-select-demo"
+        sx={{ width: 300 }}
+        options={countryDatas}
+        autoHighlight
+        getOptionLabel={(option) => option.label + " +" + option.phone}
+        onChange={(e, value) => handleChange(e, value)}
+        defaultValue={countryDatas[120]}
+        renderOption={(props, option) => (
+          <Box component="li" sx={{ "& > img": { mr: 2, flexShrink: 0 } }} {...props}>
+            <img
+              loading="lazy"
+              width="20"
+              src={`https://flagcdn.com/w20/${option.code.toLowerCase()}.png`}
+              srcSet={`https://flagcdn.com/w40/${option.code.toLowerCase()}.png 2x`}
+              alt=""
+            />
+            {option.label} ({option.code}) +{option.phone}
+          </Box>
+        )}
+        renderInput={(params) => (
+          <TextField
+            {...params}
+            label="Country Code"
+            autoFocus={true}
+            inputProps={{
+              ...params.inputProps,
+              autoComplete: "new-password", // disable autocomplete and autofill
+            }}
           />
-          {option.label} ({option.code}) +{option.phone}
-        </Box>
-      )}
-      renderInput={(params) => (
-        <TextField
-          {...params}
-          label="Choose your country"
-          autoFocus={true}
-          inputProps={{
-            ...params.inputProps,
-            autoComplete: "new-password", // disable autocomplete and autofill
-          }}
-        />
-      )}
-    />
+        )}
+      />
+    </Container>
   );
 }
 
 const Container = styled.div`
-  width: 10rem;
-
   .form-control {
     .select {
       text-align: left;

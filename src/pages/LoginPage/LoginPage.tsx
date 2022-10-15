@@ -5,8 +5,8 @@ import toast from "react-hot-toast";
 import axios, { Axios, AxiosError } from "axios";
 import { Cookies } from "react-cookie";
 
-import { loginRequest, refreshAccessTokenCookies } from "../lib/api/APIFunctions";
-import { setAuthData } from "../lib/etc/etcFunctions";
+import { loginRequest, refreshAccessTokenCookies } from "../../lib/api/APIFunctions";
+import { setAuthData } from "../../lib/etc/etcFunctions";
 
 // toast.promise(
 //   saveSettings(settings),
@@ -111,8 +111,16 @@ function LoginPage() {
             <img src="" alt="" />
             <h1>Login Page</h1>
           </div>
-
-          <input type="text" placeholder="Username" name="userName" onChange={(e) => onChange(e)} />
+          {false ? (
+            <input type="text" placeholder="Email" name="email" onChange={(e) => onChange(e)} />
+          ) : (
+            <input
+              type="text"
+              placeholder="PhonNumber"
+              name="phoneNumber"
+              onChange={(e) => onChange(e)}
+            />
+          )}
           <input
             type="password"
             placeholder="Password"
@@ -124,6 +132,7 @@ function LoginPage() {
             Don't have an account? <Link to="/register">Register</Link>{" "}
           </span>
         </form>
+      
       </FormContainer>
     </>
   );

@@ -26,8 +26,11 @@ function AuthenticationPage() {
   const [selectedCountryDial, setSelectedCountryDial] = React.useState("82");
   const [phoneNumber, setPhoneNumber] = useState("");
 
+  const [pendingValidationCode, setPendingValidationCode] = useState(true);
+
   const onSubmitPhoneNumber = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+
     const { userName, password } = values;
 
     const userPhoneNumber = selectedCountryDial + phoneNumber;
@@ -35,6 +38,7 @@ function AuthenticationPage() {
 
     const res = await registerByPhoneNumber({ phoneNumber: userPhoneNumber, userName, password });
     toast(res.data.message);
+    setPendingValidationCode(true);
   };
 
   const phoneNumberValidation = async () => {
@@ -57,17 +61,23 @@ function AuthenticationPage() {
 
   return (
     <Container>
-      <h1>AuthenticationPage</h1>
+      <h1>Authentication</h1>
       {authType === "email" ? (
         <form onSubmit={(e) => onSubmitEmail(e)}>
-          <TextField
-            label="Email"
-            variant="outlined"
-            onChange={(e) => setEmail(e.target.value)}
-            value={email}
-          />
+          <div className="email-input-container">
+            <TextField
+              label="Email"
+              variant="outlined"
+              onChange={(e) => setEmail(e.target.value)}
+              value={email}
+              className="email-input"
+              placeholder="ex) your-email@waicker.com"
+            />
+            <Button type="submit" className="send-email-button">
+              Send
+            </Button>
+          </div>
           <h3 onClick={() => setAuthType("phone")}>Want to authenticate with phoneNumber?</h3>
-          <Button type="submit">Send</Button>
         </form>
       ) : (
         <form onSubmit={(e) => onSubmitPhoneNumber(e)}>
@@ -76,23 +86,32 @@ function AuthenticationPage() {
               selectedCountryDial={selectedCountryDial}
               setSelectedCountryDial={setSelectedCountryDial}
             />
-            <input
+            <TextField
               value={phoneNumber}
               onChange={(e) => setPhoneNumber(e.target.value)}
               className="phone-number"
               type="text"
               placeholder="ex) 01012345678"
-            ></input>
+            ></TextField>
+            <Button className="send-validation-code-button" type="submit">
+              Send
+            </Button>
           </div>
+
+          {pendingValidationCode && (
+            <div className="validation-code-input-container">
+              <TextField
+                value={phoneNumberConfirmToken}
+                onChange={(e) => setPhoneNumberConfirmToken(e.target.value)}
+                placeholder="ex) 673451"
+                className="validation-code-input"
+              ></TextField>
+              <Button 
+              className="validation-code-confirm-button"
+              onClick={() => phoneNumberValidation()}>Confirm</Button>
+            </div>
+          )}
           <h3 onClick={() => setAuthType("email")}>Want to authenticate with email?</h3>
-          <Button type="submit">Send</Button>
-          <input
-            value={phoneNumberConfirmToken}
-            onChange={(e) => setPhoneNumberConfirmToken(e.target.value)}
-            type="text"
-            placeholder="ex) 123456"
-          ></input>
-          <Button onClick={() => phoneNumberValidation()}>Confirm</Button>
         </form>
       )}
     </Container>
@@ -108,9 +127,49 @@ const Container = styled.div`
 
   background-color: white;
 
+  .email-input-container {
+    gap: 0.5rem;
+    display: flex;
+    flex-direction: row;
+    .email-input {
+      font-size: 1.3rem;
+      width: 300px;
+    }
+    .send-email-button {
+      font-size: 1.3rem;
+    }
+  }
+
   .phone-number-input-container {
     display: flex;
     flex-direction: row;
+    margin-bottom: 2rem;
+    align-items: center;
+    justify-content: flex-start;
+    margin: 1rem;
+    gap: 0.5rem;
+    .phone-number {
+      width: 300px;
+    }
+    .send-validation-code-button {
+      font-size: 1.3rem;
+    }
+    @media screen and (max-width: 760px) {
+      flex-direction: column;
+    }
+  }
+  .validation-code-input-container {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: flex-start;
+    gap: 1rem;
+    margin: 1rem;
+    .validation-code-input {
+    }
+    .validation-code-confirm-button{
+      
+    }
   }
   h3 {
     color: #1976d2;
