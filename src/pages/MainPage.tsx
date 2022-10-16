@@ -1,8 +1,34 @@
 import { useEffect, useState } from "react";
-import { healthCheck } from "../lib/api/APIFunctions";
+import { useNavigate } from "react-router-dom";
+import { healthCheck, refreshAccessTokenCookies } from "../lib/api/APIFunctions";
+import { Cookies } from "react-cookie";
+
+const cookies = new Cookies();
 
 function MainPage() {
   const [healthCheckResult, setHealthCheckResult] = useState("");
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    if (healthCheckResult !== "Hello World!") {
+      return;
+    }
+
+    const moveToChat = async () => {
+      await refreshAccessTokenCookies();
+      navigate("/chat");
+    };
+
+    const moveToLogin = async () => {
+      navigate("/login");
+    };
+
+    if (cookies.get("access_token")) {
+      moveToChat();
+    } else {
+      moveToLogin();
+    }
+  }, [healthCheckResult]);
 
   useEffect(() => {
     const init = async () => {
@@ -20,7 +46,9 @@ function MainPage() {
     <div>
       <h1> Waicker</h1>
       What an interesting communication!
-      <div>{healthCheckResult}</div>
+      <br />
+      <div></div>
+      <div>{healthCheckResult !== "health check failed" ? "Now available" : healthCheckResult}</div>
     </div>
   );
 }

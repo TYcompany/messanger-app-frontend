@@ -8,7 +8,6 @@ import { Cookies } from "react-cookie";
 import {
   loginByEmail,
   loginByPhoneNumber,
-  loginRequest,
   refreshAccessTokenCookies,
 } from "../../lib/api/APIFunctions";
 import { setAuthData } from "../../lib/etc/etcFunctions";
@@ -229,8 +228,6 @@ const FormContainer = styled.div`
   .login-form {
     display: flex;
     flex-direction: column;
-    gap: 1rem;
-
     border-radius: 2rem;
     padding: 3rem 5rem;
 
@@ -243,6 +240,8 @@ const FormContainer = styled.div`
     h3 {
       color: #1976d2;
       cursor: pointer;
+      text-align: left;
+      padding-left: 1rem;
     }
   }
 `;
