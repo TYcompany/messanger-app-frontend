@@ -4,7 +4,7 @@ import styled from "styled-components";
 import Box from "@mui/material/Box";
 import TextField from "@mui/material/TextField";
 import Autocomplete from "@mui/material/Autocomplete";
-import { countryDatas, CountryType } from "../../metaData/CountryData";
+import { countryDatas, CountryType } from "../metaData/CountryData";
 
 function CountryCodeSelectInput({
   selectedCountryDial,

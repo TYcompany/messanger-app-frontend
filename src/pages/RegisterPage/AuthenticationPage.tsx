@@ -3,7 +3,7 @@ import { useRecoilState } from "recoil";
 import { registerInputValueState, registerStepState } from "../../store/store";
 
 import { useEffect, useState } from "react";
-import CountryCodeSelectInput from "./CountryCodeSelectInput";
+import CountryCodeSelectInput from "../../components/CountryCodeSelectInput";
 import styled from "styled-components";
 import { Button, TextField } from "@mui/material";
 import { isValidEmail } from "../../lib/etc/validationFunctions";
@@ -106,9 +106,12 @@ function AuthenticationPage() {
                 placeholder="ex) 673451"
                 className="validation-code-input"
               ></TextField>
-              <Button 
-              className="validation-code-confirm-button"
-              onClick={() => phoneNumberValidation()}>Confirm</Button>
+              <Button
+                className="validation-code-confirm-button"
+                onClick={() => phoneNumberValidation()}
+              >
+                Confirm
+              </Button>
             </div>
           )}
           <h3 onClick={() => setAuthType("email")}>Want to authenticate with email?</h3>
@@ -167,8 +170,7 @@ const Container = styled.div`
     margin: 1rem;
     .validation-code-input {
     }
-    .validation-code-confirm-button{
-      
+    .validation-code-confirm-button {
     }
   }
   h3 {

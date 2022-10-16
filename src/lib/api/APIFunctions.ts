@@ -19,6 +19,8 @@ import {
   ValidatePhoneNumberRoute,
   HealthCheckRoute,
   RegisterByEmailRoute,
+  LoginByEmailRoute,
+  LoginByPhoneNumberRoute,
 } from "./APIRoutes";
 import { sleep } from "../etc/etcFunctions";
 import { UserType } from "../types/UserType";
@@ -50,6 +52,19 @@ export const refreshAccessTokenCookies = async () => {
 export const loginRequest = async (userName: string, password: string) => {
   return await axios.post(LoginRoute, {
     userName,
+    password,
+  });
+};
+
+export const loginByEmail = async (email: string, password: string) => {
+  return await axios.post(LoginByEmailRoute, {
+    email,
+    password,
+  });
+};
+export const loginByPhoneNumber = async (phoneNumber: string, password: string) => {
+  return await axios.post(LoginByPhoneNumberRoute, {
+    phoneNumber,
     password,
   });
 };

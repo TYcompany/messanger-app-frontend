@@ -5,8 +5,16 @@ import toast from "react-hot-toast";
 import axios, { Axios, AxiosError } from "axios";
 import { Cookies } from "react-cookie";
 
-import { loginRequest, refreshAccessTokenCookies } from "../../lib/api/APIFunctions";
+import {
+  loginByEmail,
+  loginByPhoneNumber,
+  loginRequest,
+  refreshAccessTokenCookies,
+} from "../../lib/api/APIFunctions";
 import { setAuthData } from "../../lib/etc/etcFunctions";
+import { Button, TextField } from "@mui/material";
+import CountryCodeSelectInput from "../../components/CountryCodeSelectInput";
+import { isValidEmail, isValidPhoneNumber } from "../../lib/etc/validationFunctions";
 
 // toast.promise(
 //   saveSettings(settings),
@@ -30,12 +38,22 @@ function LoginPage() {
   const navigate = useNavigate();
   const cookies = new Cookies();
 
+  const [loginType, setLoginType] = useState("email");
+  const [selectedCountryDial, setSelectedCountryDial] = useState("82");
+
   const [values, setValues] = useState({
-    userName: "",
     password: "",
+    phoneNumber: "",
+    email: "",
   });
 
   useEffect(() => {
+    setValues({
+      password: "",
+      phoneNumber: "",
+      email: "",
+    });
+
     const init = async () => {
       await refreshAccessTokenCookies();
       navigate("/chat");
@@ -45,25 +63,50 @@ function LoginPage() {
     }
   }, [navigate]);
 
-  const onSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-
-    if (!validateInputValue()) {
-      return;
-    }
-    const { password, userName } = values;
-    let res;
+  const submitLoginByEmail = async () => {
+    const { password, email } = values;
     try {
-      res = await loginRequest(userName, password);
+      const res = await loginByEmail(email, password);
+      return res;
     } catch (e) {
       if (e instanceof AxiosError) {
         toast.error(e.response?.data?.message);
         return;
       }
     }
+  };
+  const submitLoginByPhoneNumber = async () => {
+    const { password, phoneNumber } = values;
 
-    if (!res?.data) {
-      toast.error("No data recieved from server");
+    try {
+      const res = await loginByPhoneNumber(selectedCountryDial + phoneNumber, password);
+      return res;
+    } catch (e) {
+      if (e instanceof AxiosError) {
+        toast.error(e.response?.data?.message);
+        return;
+      }
+    }
+  };
+
+  const onSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+
+    if (!validateInputValue()) {
+      toast.error("invalid input value!");
+      return;
+    }
+
+    let res;
+
+    if (loginType === "email") {
+      res = await submitLoginByEmail();
+    } else if (loginType === "phoneNumber") {
+      res = await submitLoginByPhoneNumber();
+    }
+
+    if (!res) {
+      toast.error("no data from server!");
       return;
     }
 
@@ -84,17 +127,22 @@ function LoginPage() {
     navigate("/chat");
   };
 
-  const onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const onChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     setValues({ ...values, [e.target.name]: e.target.value });
   };
 
   const validateInputValue = () => {
-    const { userName, password } = values;
+    const { phoneNumber, email, password } = values;
 
-    if (userName.length < 5) {
-      toast.error("userName should longer than 5 characters!");
+    if (loginType === "email" && !isValidEmail(email)) {
+      //set email error
       return false;
     }
+    if (loginType === "phoneNumber" && isValidPhoneNumber(selectedCountryDial + phoneNumber)) {
+      // set phoneNumberError
+      return false;
+    }
+
     if (password.length < 8) {
       toast.error("password should longer than 8 cahracters!");
       return false;
@@ -106,33 +154,60 @@ function LoginPage() {
   return (
     <>
       <FormContainer>
-        <form onSubmit={(e) => onSubmit(e)}>
+        <form className="login-form" onSubmit={(e) => onSubmit(e)}>
           <div className="title">
             <img src="" alt="" />
-            <h1>Login Page</h1>
+            <h1>Login</h1>
           </div>
-          {false ? (
-            <input type="text" placeholder="Email" name="email" onChange={(e) => onChange(e)} />
-          ) : (
-            <input
+          {loginType === "email" ? (
+            <TextField
+              className="email-input"
               type="text"
-              placeholder="PhonNumber"
-              name="phoneNumber"
+              value={values?.email}
+              variant="outlined"
+              placeholder="ex) your-email@waicker.com"
+              label="Email"
+              name="email"
               onChange={(e) => onChange(e)}
             />
+          ) : (
+            <>
+              <CountryCodeSelectInput
+                selectedCountryDial={selectedCountryDial}
+                setSelectedCountryDial={setSelectedCountryDial}
+              />
+              <TextField
+                type="tel"
+                className="phone-number-input"
+                label="PhoneNumber"
+                variant="outlined"
+                value={values?.phoneNumber}
+                placeholder="ex) 01039421023"
+                name="phoneNumber"
+                onChange={(e) => onChange(e)}
+              />
+            </>
           )}
-          <input
+
+          {loginType === "email" ? (
+            <h3 onClick={() => setLoginType("phoneNumber")}>Login with PhoneNumber</h3>
+          ) : (
+            <h3 onClick={() => setLoginType("email")}>Login with Email</h3>
+          )}
+          <TextField
             type="password"
-            placeholder="Password"
+            label="Password"
+            placeholder="type-your-password"
             name="password"
+            value={values?.password}
+            variant="outlined"
             onChange={(e) => onChange(e)}
           />
-          <button type="submit">Login</button>
+          <Button type="submit">Login</Button>
           <span>
             Don't have an account? <Link to="/register">Register</Link>{" "}
           </span>
         </form>
-      
       </FormContainer>
     </>
   );
@@ -143,57 +218,31 @@ const FormContainer = styled.div`
   width: 100vw;
   display: flex;
   flex-direction: column;
-  gap: 1rem;
+
   align-items: center;
-  background-color: #131324;
+  //background-color: #131324;
   .title {
     display: flex;
     align-items: center;
-    gap: 1rem;
     justify-content: center;
   }
-
-  form {
+  .login-form {
     display: flex;
     flex-direction: column;
-    gap: 2rem;
-    background-color: #00000076;
+    gap: 1rem;
+
     border-radius: 2rem;
     padding: 3rem 5rem;
-    input {
-      background-color: transparent;
-      padding: 1rem;
-      border: 0.1rem solid #4e0eff;
-      border-radius: 0.4rem;
-      color: white;
-      width: 100%;
-      font-size: 1rem;
-      &:focus {
-        border: 0.1rem solid #997af0;
-        outline: none;
-      }
-    }
 
-    button {
-      background-color: #997af0;
-      color: white;
-      padding: 1rem 2rem;
-      border: none;
+    .phone-number-input {
+      width: 300px;
+    }
+    .email-input {
+      width: 300px;
+    }
+    h3 {
+      color: #1976d2;
       cursor: pointer;
-      border-radius: 0.4rem;
-      font-size: 1rem;
-      transition: 0.5 ease-in-out;
-      &:hover {
-        background-color: #4e0eff;
-      }
-    }
-
-    span {
-      color: white;
-      a {
-        color: #4e0eff;
-        font-weight: bold;
-      }
     }
   }
 `;

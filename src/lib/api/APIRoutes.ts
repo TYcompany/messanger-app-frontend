@@ -9,6 +9,9 @@ export const ValidatePhoneNumberRoute = `${host}/auth/validatePhoneNumber`;
 export const RegisterByEmailRoute = `${host}/auth/registerByEmail`;
 
 export const LoginRoute = `${host}/auth/login`;
+export const LoginByEmailRoute = `${host}/auth/loginByEmail`;
+export const LoginByPhoneNumberRoute = `${host}/auth/loginByPhoneNumber`;
+
 export const FetchUserContactsRoute = `${host}/auth/fetchUserContacts`;
 export const GetUserDataByEmailRoute = `${host}/auth/getUserDataByEmail`;
 export const GetUserDataByUserIdsRoute = `${host}/auth/getUserDataByUserIds`;
