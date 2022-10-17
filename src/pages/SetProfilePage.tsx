@@ -17,6 +17,8 @@ import { Cookies } from "react-cookie";
 import { currentUserState } from "../store/store";
 import { useRecoilState } from "recoil";
 
+import AccountCircleIcon from "@mui/icons-material/AccountCircle";
+
 const cookies = new Cookies();
 
 function SetProfilePage() {
@@ -24,7 +26,11 @@ function SetProfilePage() {
   const [currentUser, setCurrentUser] = useRecoilState(currentUserState);
 
   const [isLoading, setIsLoading] = useState(true);
+
+  const [customImageString, setCustomImageString] = useState<string>("");
+
   const [selectedProfileImage, setSelectedProfileImage] = useState(0);
+
   const [profileImages, setProfileImages] = useState<string[]>([]);
 
   useEffect(() => {
@@ -40,8 +46,8 @@ function SetProfilePage() {
   useEffect(() => {
     const init = async () => {
       setIsLoading(true);
-      const results = await fetchProfileImages(4);
-      setProfileImages(results);
+      const results = await fetchProfileImages(3);
+      setProfileImages(["default iamge", ...results]);
       setIsLoading(false);
     };
 
@@ -75,8 +81,11 @@ function SetProfilePage() {
 
   return (
     <>
-      <div>SetProfilePage</div>
-      <SetProfileImageWithUpload />
+      <div>SetProfile</div>
+      <SetProfileImageWithUpload
+        customImageString={customImageString}
+        setCustomImageString={setCustomImageString}
+      />
       {isLoading ? (
         <Container>
           {" "}
@@ -89,20 +98,43 @@ function SetProfilePage() {
           </div>
 
           <div className="profile-images">
-            {profileImages.map((profileImage, index) => (
+            {customImageString ? (
               <div
-                key={"profile-image" + index}
-                className={`profile-image ${selectedProfileImage === index && "selected"}`}
+                key={"profile-image" + 0}
+                className={`profile-image ${selectedProfileImage === 0 && "selected"}`}
               >
                 <img
-                  src={`data:image/svg+xml;base64,${Buffer.from(profileImage || "").toString(
-                    "base64"
-                  )}`}
-                  alt={"profile" + index}
-                  onClick={() => setSelectedProfileImage(index)}
+                  className={"profile-image-icon"}
+                  src={customImageString}
+                  alt={"profile" + 0}
+                  onClick={() => setSelectedProfileImage(0)}
                 />
               </div>
-            ))}
+            ) : (
+              <div className={`profile-image ${selectedProfileImage === 0 && "selected"}`}>
+                <AccountCircleIcon
+                  onClick={() => setSelectedProfileImage(0)}
+                  className={"profile-image-icon"}
+                />
+              </div>
+            )}
+            {profileImages.map(
+              (profileImage, index) =>
+                index !== 0 && (
+                  <div
+                    key={"profile-image" + index}
+                    className={`profile-image ${selectedProfileImage === index && "selected"}`}
+                  >
+                    <img
+                      src={`data:image/svg+xml;base64,${Buffer.from(profileImage || "").toString(
+                        "base64"
+                      )}`}
+                      alt={"profile" + index}
+                      onClick={() => setSelectedProfileImage(index)}
+                    />
+                  </div>
+                )
+            )}
           </div>
           <button className={"submit-button"} onClick={() => submitSetProfileImage()}>
             Select
@@ -119,14 +151,14 @@ const Container = styled.div`
   align-items: center;
   flex-direction: column;
   gap: 3rem;
-  background-color: #131324;
+  // background-color: #131324;
   height: 100vh;
   width: 100vw;
-  .title-container {
+  /* .title-container {
     h1 {
       color: white;
     }
-  }
+  } */
   .profile-images {
     display: flex;
     gap: 2rem;
@@ -138,9 +170,17 @@ const Container = styled.div`
       justify-content: center;
       align-items: center;
       transition: 0.5s ease-in-out;
-
-      img {
+      border-radius: 50%;
+      overflow: hidden;
+      .profile-image-icon {
+        width: 6rem;
         height: 6rem;
+        border-radius: 50%;
+      }
+      img {
+        width: 6rem;
+        height: 6rem;
+        border-radius: 50%;
       }
     }
     .selected {

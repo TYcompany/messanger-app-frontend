@@ -7,6 +7,7 @@ import { useRecoilState } from "recoil";
 import styled from "styled-components";
 
 import { registerInputValueState, registerStepState } from "../../store/store";
+import { TextField, Button } from "@mui/material";
 
 const cookies = new Cookies();
 
@@ -15,7 +16,7 @@ function InputUserInformationPage() {
 
   const [values, setValues] = useRecoilState(registerInputValueState);
 
-  const onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const onChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     setValues({ ...values, [e.target.name]: e.target.value });
   };
 
@@ -36,7 +37,7 @@ function InputUserInformationPage() {
     }
 
     if (userName.length < 5) {
-      toast.error("userName should longer than 5 characters!");
+      toast.error("Name should longer than 5 characters!");
       return false;
     }
     if (password.length < 8) {
@@ -56,9 +57,10 @@ function InputUserInformationPage() {
             <h1>Register</h1>
           </div>
 
-          <input
+          <TextField
             type="text"
-            placeholder="Username"
+            label="Name"
+            placeholder="your name"
             name="userName"
             value={values.userName}
             onChange={(e) => onChange(e)}
@@ -66,21 +68,23 @@ function InputUserInformationPage() {
 
           {/* <input type="text" placeholder="Email" name="email" onChange={(e) => onChange(e)} /> */}
 
-          <input
+          <TextField
+            label="password"
             type="password"
             placeholder="Password"
             name="password"
             value={values.password}
             onChange={(e) => onChange(e)}
           />
-          <input
+          <TextField
+            label="Password Confirm"
             type="password"
             placeholder="Password confirm"
             name="passwordConfirm"
             value={values.passwordConfirm}
             onChange={(e) => onChange(e)}
           />
-          <button type="submit">Next</button>
+          <Button type="submit">Next</Button>
           <span>
             Already have an account? <Link to="/login">Login</Link>{" "}
           </span>
@@ -102,10 +106,10 @@ const Container = styled.div`
     display: flex;
     flex-direction: column;
     gap: 2rem;
-    background-color: #00000076;
+    //background-color: #00000076;
     border-radius: 2rem;
     padding: 3rem 5rem;
-    input {
+    /* input {
       background-color: transparent;
       padding: 1rem;
       border: 0.1rem solid #4e0eff;
@@ -117,9 +121,9 @@ const Container = styled.div`
         border: 0.1rem solid #997af0;
         outline: none;
       }
-    }
+    } */
 
-    button {
+    /* button {
       background-color: #997af0;
       color: white;
       padding: 1rem 2rem;
@@ -139,7 +143,7 @@ const Container = styled.div`
         color: #4e0eff;
         font-weight: bold;
       }
-    }
+    }*/
   }
 `;
 

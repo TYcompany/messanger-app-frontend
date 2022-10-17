@@ -13,6 +13,7 @@ import {
   registerByPhoneNumber,
   validatePhoneNumber,
 } from "../../lib/api/APIFunctions";
+import { setAuthData } from "../../lib/etc/etcFunctions";
 
 function AuthenticationPage() {
   const [activeStep, setActiveStep] = useRecoilState(registerStepState);
@@ -42,7 +43,28 @@ function AuthenticationPage() {
   };
 
   const phoneNumberValidation = async () => {
-    const res = await validatePhoneNumber({ phoneNumber, phoneNumberConfirmToken });
+    const userPhoneNumber = selectedCountryDial + phoneNumber;
+    try {
+      const res = await validatePhoneNumber({
+        phoneNumber: userPhoneNumber,
+        phoneNumberConfirmToken,
+      });
+
+      if (res.data.message) {
+        toast.success(res.data.message);
+      }
+
+      const userData = res.data.user;
+
+      const access_token = res.data.access_token;
+
+      await setAuthData(userData, access_token);
+
+      setActiveStep(activeStep + 1);
+    } catch (e) {
+      console.log(e);
+      toast.error("PhoneNumber validation failed!");
+    }
   };
 
   const onSubmitEmail = async (e: React.FormEvent<HTMLFormElement>) => {

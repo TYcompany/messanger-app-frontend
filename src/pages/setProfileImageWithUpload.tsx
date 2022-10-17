@@ -6,10 +6,14 @@ import { setProfileImage, testRequest } from "../lib/api/APIFunctions";
 import { removeAuthData } from "../lib/etc/etcFunctions";
 import { currentUserState } from "../store/store";
 
-function SetProfileImageWithUpload() {
+function SetProfileImageWithUpload({
+  customImageString,
+  setCustomImageString,
+}: {
+  customImageString: string;
+  setCustomImageString: Function;
+}) {
   const navigate = useNavigate();
-
-  const [imageString, setImageString] = useState<string>("");
 
   const currentUser = useRecoilValue(currentUserState);
 
@@ -35,7 +39,7 @@ function SetProfileImageWithUpload() {
 
       const filecontent = evt.target.result;
 
-      setImageString(filecontent);
+      setCustomImageString(filecontent);
     };
     reader.readAsDataURL(e.target.files[0]);
   };
@@ -69,9 +73,7 @@ function SetProfileImageWithUpload() {
 
   return (
     <div>
-      {imageString && <img width="200px" alt="sample" src={imageString}></img>}
       <input type="file" accept="image/*" onChange={(e) => onChange(e)}></input>
-      <button onClick={(e) => submitUpload(e, imageString)}>upload</button>
     </div>
   );
 }

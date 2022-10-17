@@ -123,7 +123,7 @@ function RegisterPage() {
         {activeStep === 0 && <InputUserInformationPage></InputUserInformationPage>}
 
         {activeStep === 1 && <AuthenticationPage></AuthenticationPage>}
-        {/* {activeStep === 2 && <SetProfilePage></SetProfilePage>} */}
+        {activeStep === 2 && <SetProfilePage></SetProfilePage>}
       </FormContainer>
     </>
   );
@@ -136,7 +136,7 @@ const FormContainer = styled.div`
   flex-direction: column;
   gap: 1rem;
   align-items: center;
-  background-color: #131324;
+  // background-color: #131324;
   /* .title {
     display: flex;
     align-items: center;
