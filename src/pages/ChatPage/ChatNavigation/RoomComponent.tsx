@@ -100,8 +100,10 @@ const Container = styled.div`
       display: flex;
       flex-direction: column;
       overflow: scroll;
-     // background-color: #080420;
+      // background-color: #080420;
       height: 60vh;
+      align-items: center;
+
       .room {
         margin-bottom: 0.5rem;
         color: white;
@@ -130,8 +132,8 @@ const Container = styled.div`
     }
     .create-room-button {
       font-size: 1.2rem;
-      width:100% ;
-      margin-top:1rem;
+      width: 100%;
+      margin-top: 1rem;
       height: 3rem;
     }
   }

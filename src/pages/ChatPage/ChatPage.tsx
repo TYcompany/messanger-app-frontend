@@ -137,7 +137,6 @@ function ChatPage() {
       <AppBar
         sx={{
           width: { sm: `calc(100% - ${drawerWidth}px)` },
-
           display: { sm: "none" },
         }}
       >
@@ -198,15 +197,15 @@ const Container = styled.div`
 
   .skip-to-chat-screen {
     position: fixed;
-    display: hidden;
-
+    transform: translateY(-100%);
+    top: 0;
+    left: 0;
+    right: 0;
+    background: gray;
+    width: 100vw;
+    font-size: 2rem;
     &:focus {
-      display: block;
-
-      background: gray;
-      width: 100vw;
-      top: 0;
-      font-size: 2rem;
+      transform: translateY(0);
     }
   }
 
