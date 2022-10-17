@@ -14,6 +14,8 @@ export const LoginByPhoneNumberRoute = `${host}/auth/loginByPhoneNumber`;
 
 export const FetchUserContactsRoute = `${host}/auth/fetchUserContacts`;
 export const GetUserDataByEmailRoute = `${host}/auth/getUserDataByEmail`;
+export const GetUserDataByPhoneNumberRoute = `${host}/auth/getUserDataByPhoneNumber`;
+
 export const GetUserDataByUserIdsRoute = `${host}/auth/getUserDataByUserIds`;
 export const TestRoute = `${host}/auth/test`;
 

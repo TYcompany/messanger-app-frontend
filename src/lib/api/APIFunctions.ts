@@ -21,6 +21,7 @@ import {
   RegisterByEmailRoute,
   LoginByEmailRoute,
   LoginByPhoneNumberRoute,
+  GetUserDataByPhoneNumberRoute,
 } from "./APIRoutes";
 import { sleep } from "../etc/etcFunctions";
 import { UserType } from "../types/UserType";
@@ -183,6 +184,19 @@ export const fetchUserContacts = async (id: string) => {
 
 export const getUserDataByEmail = async (email: string) => {
   const res = await axios.get(`${GetUserDataByEmailRoute}?email=${email}`);
+
+  const data = res?.data;
+
+  if (data.error) {
+    return data;
+  }
+
+  const result = await getUserDataWithProfileImage(data);
+  return result;
+};
+
+export const getUserDataByPhoneNumber = async (phoneNumber: string) => {
+  const res = await axios.get(`${GetUserDataByPhoneNumberRoute}?phoneNumber=${phoneNumber}`);
 
   const data = res?.data;
 

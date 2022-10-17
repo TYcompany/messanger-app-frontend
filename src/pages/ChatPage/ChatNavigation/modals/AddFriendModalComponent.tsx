@@ -4,7 +4,7 @@ import TextField from "@mui/material/TextField";
 
 import Box from "@mui/material/Box";
 
-import { addFriend, fetchUserContacts, getUserDataByEmail } from "../../../../lib/api/APIFunctions";
+import { addFriend, fetchUserContacts, getUserDataByEmail, getUserDataByPhoneNumber } from "../../../../lib/api/APIFunctions";
 import { UserMapType, UserType } from "../../../../lib/types/UserType";
 import { activeModalNameState, contactsMapState, currentUserState } from "../../../../store/store";
 import { useRecoilState, useRecoilValue } from "recoil";
@@ -31,28 +31,63 @@ function AddFriendModalComponent() {
     return /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/.test(email);
   }
 
+  const getTrimmedPhoneNumber = (phoneNumber: string) => {
+    const trimmedPhoneNumber = phoneNumber
+      .split("")
+      .map((pn) => {
+        if ("0" <= pn && pn <= "9") {
+          return pn;
+        } else {
+          return "";
+        }
+      })
+      .join("");
+    return trimmedPhoneNumber;
+  };
+  function isValidPhoneNumber(phoneNumber: string) {
+    return phoneNumber.length >= 8;
+  }
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     const formData = new FormData(event.currentTarget);
-    const email = formData?.get("email")?.toString() || "";
+    const emailOrPhoneNumber = formData?.get("emailOrPhoneNumber")?.toString() || "";
 
-    if (!isValidEmail(email)) {
-      toast.error("Please type the valid email");
+    const email = emailOrPhoneNumber;
+    const phoneNumber = getTrimmedPhoneNumber(emailOrPhoneNumber);
+
+    if (!isValidEmail(email) && !isValidPhoneNumber(phoneNumber)) {
+      toast.error("Please type the valid email or phoneNumber");
       return;
     }
 
-    try {
-      const data = await getUserDataByEmail(formData.get("email") as string);
-      if (data?.error) {
-        toast.error(data.error);
+    if (isValidEmail(email)) {
+      try {
+        const data = await getUserDataByEmail(email);
+        if (data?.error) {
+          toast.error(data.error);
+          return;
+        }
+
+        setUserData(data);
+        return;
+      } catch (e) {
+        toast.error("Search with such email failed!");
         return;
       }
-      console.log(data)
-      
-      
-      setUserData(data);
-    } catch (e) {
-      toast.error("Search with such email failed!");
+    }
+
+    if (isValidPhoneNumber(phoneNumber)) {
+      try {
+        const data = await getUserDataByPhoneNumber(phoneNumber);
+        if (data?.error) {
+          toast.error(data.error);
+          return;
+        }
+
+        setUserData(data);
+      } catch (e) {
+        toast.error("Search with such email failed!");
+      }
     }
   };
 
@@ -72,14 +107,14 @@ function AddFriendModalComponent() {
 
   return (
     <Box component="form" onSubmit={handleSubmit} noValidate sx={{ mt: 1 }}>
-      <div>Search With Email address</div>
+      <div>Search by Email or PhoneNumber</div>
       <TextField
         margin="normal"
         required
         fullWidth
         id="email"
-        label="Email Address"
-        name="email"
+        label="Email or PhoneNumber"
+        name="emailOrPhoneNumber"
         autoComplete="email"
         autoFocus
       />
