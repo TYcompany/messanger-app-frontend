@@ -56,16 +56,19 @@ function SetProfilePage() {
 
   const submitSetProfileImage = async () => {
     const user = JSON.parse(localStorage.getItem("chat-app-user") || "");
+    console.log(user);
     if (!user) {
       toast.error("fail to get userData please login again!");
       removeAuthData();
       navigate("/login");
       return;
     }
-
-    const imageString = `data:image/svg+xml;base64,${Buffer.from(
+    let imageString = `data:image/svg+xml;base64,${Buffer.from(
       profileImages[selectedProfileImage] || ""
     ).toString("base64")}`;
+    if (selectedProfileImage === 0) {
+      imageString = customImageString || "";
+    }
 
     const res = await setProfileImage(user._id, imageString);
 

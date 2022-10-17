@@ -79,6 +79,7 @@ function LoginPage() {
 
     try {
       const res = await loginByPhoneNumber(selectedCountryDial + phoneNumber, password);
+
       return res;
     } catch (e) {
       if (e instanceof AxiosError) {
@@ -104,6 +105,7 @@ function LoginPage() {
       res = await submitLoginByPhoneNumber();
     }
 
+    setAuthData(res?.data?.user, res?.data?.access_token);
     if (!res) {
       toast.error("no data from server!");
       return;
