@@ -219,7 +219,7 @@ function ChatScreen({
 }
 
 const Container = styled.div`
-  color: white;
+  //color: white;
   padding-top: 1rem;
   height: 90vh;
   width: 100%;
@@ -242,7 +242,7 @@ const Container = styled.div`
       }
       .username {
         h3 {
-          color: white;
+          // color: white;
         }
       }
     }

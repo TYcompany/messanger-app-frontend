@@ -169,7 +169,7 @@ function ChatPage() {
             "& .MuiDrawer-paper": {
               boxSizing: "border-box",
               minWidth: `${isMobile ? "80%" : "20%"}`,
-              backgroundColor: `${themes[themeName]?.background[0]}`,
+              // backgroundColor: `${themes[themeName]?.background[0]}`,
             },
           }}
         >
@@ -193,8 +193,8 @@ const Container = styled.div`
 
   align-items: center;
 
-  background-color: #131324;
-  background-color: ${({ theme }) => theme.background[0]};
+  // background-color: #131324;
+  //background-color: ${({ theme }) => theme.background[0]};
 
   .skip-to-chat-screen {
     position: fixed;

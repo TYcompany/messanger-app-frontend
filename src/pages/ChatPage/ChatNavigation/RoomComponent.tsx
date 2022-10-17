@@ -100,7 +100,7 @@ const Container = styled.div`
       display: flex;
       flex-direction: column;
       overflow: scroll;
-      background-color: #080420;
+     // background-color: #080420;
       height: 60vh;
       .room {
         margin-bottom: 0.5rem;

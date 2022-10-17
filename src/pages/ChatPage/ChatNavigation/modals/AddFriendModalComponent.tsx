@@ -47,7 +47,9 @@ function AddFriendModalComponent() {
         toast.error(data.error);
         return;
       }
-
+      console.log(data)
+      
+      
       setUserData(data);
     } catch (e) {
       toast.error("Search with such email failed!");

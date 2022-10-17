@@ -117,7 +117,7 @@ const Container = styled.div`
         }
         .username {
           h3 {
-            color: white;
+         //   color: white;
           }
         }
       }
@@ -125,7 +125,7 @@ const Container = styled.div`
         background-color: #9186f3;
       }
       .currently-chatting-user {
-        background-color: #0d0d30;
+        //background-color: #0d0d30;
         display: flex;
         justify-content: center;
         align-items: center;
@@ -154,8 +154,8 @@ const Container = styled.div`
     }
     .add-friend-button {
       font-size: 1.2rem;
-      width:100% ;
-      margin-top:1rem;
+      width: 100%;
+      margin-top: 1rem;
       height: 3rem;
     }
   }

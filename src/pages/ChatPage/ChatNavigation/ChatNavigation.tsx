@@ -104,10 +104,10 @@ const Container = styled.div`
   }
 
   .chat-navigation-contents {
-    background: white;
+    //background: white;
 
     overflow-y: scroll;
-    background-color: #080420;
+    //background-color: #080420;
     height: 80vh;
     width: 100%;
 
@@ -127,7 +127,7 @@ const Container = styled.div`
         border-radius: 50%;
       }
       h3 {
-        color: white;
+        // color: white;
       }
     }
   }
