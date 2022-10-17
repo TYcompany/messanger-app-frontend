@@ -56,15 +56,18 @@ function ChatInput({
 const Container = styled.div`
   display: grid;
   grid-template-columns: 5% 95%;
-  align-items: center;
+
   background-color: #080420;
+
   gap: 1rem;
-  padding: 0 2rem;
-  padding-bottom: 0.3rem;
-  padding-top: 1rem;
+  padding: 0.5rem 2rem;
+
+  justify-content: center;
+  align-items: center;
+
   @media screen and (max-width: 760px) {
     width: 100vw;
-    padding: 0 0.5rem;
+    padding: 0.5rem 0.5rem;
   }
 
   .button-container {
@@ -79,10 +82,11 @@ const Container = styled.div`
         color: #ffff00c8;
         cursor: pointer;
       }
+
       .emoji-picker-react {
         position: absolute;
         top: -350px;
-        background-color: #080420;
+        //background-color: #080420;
         box-shadow: 0 5px 10px #9a86f3;
         border-color: #9186f3;
 
@@ -101,10 +105,10 @@ const Container = styled.div`
           border-color: #9186f3;
         }
         .emoji-group::before {
-          background-color: #080420;
+          //  background-color: #080420;
         }
         .emoji-scroll-wrapper::-webkit-scrollbar {
-          background-color: #080420;
+          //  background-color: #080420;
           width: 5px;
           &-thumb {
             background-color: #9186f3;
