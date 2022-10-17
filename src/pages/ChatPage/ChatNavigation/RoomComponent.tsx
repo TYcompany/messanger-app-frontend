@@ -106,7 +106,7 @@ const Container = styled.div`
 
       .room {
         margin-bottom: 0.5rem;
-        color: white;
+
         overflow: ellipsis;
         &::-webkit-scrollbar {
           background-color: #ffffff39;
@@ -114,7 +114,7 @@ const Container = styled.div`
           border-radius: 1rem;
         }
 
-        background-color: #ffffff39;
+        background-color: #b4aeeb;
         min-height: 5rem;
         width: 90%;
         cursor: pointer;

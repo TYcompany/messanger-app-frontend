@@ -10,6 +10,8 @@ import { Buffer } from "buffer";
 import styled from "styled-components";
 import { removeAuthData } from "../../../lib/etc/etcFunctions";
 
+import AccountCircleIcon from "@mui/icons-material/AccountCircle";
+
 const tabsInfo: { [key: number]: string } = {
   0: "contacts-tab-button",
   1: "chatting-tab-button",
@@ -59,11 +61,15 @@ function ChatNavigation() {
         <div className="chat-navigation-contents">
           <div className="my-profile">
             <div className="profile-image">
-              <img
-                src={currentUser?.profileImage || ""}
-                alt={"profile-currentUser"}
-                onClick={() => onClickProfileImage()}
-              />
+              {currentUser?.profileImage ? (
+                <img
+                  src={currentUser?.profileImage || ""}
+                  alt={"profile-currentUser"}
+                  onClick={() => onClickProfileImage()}
+                />
+              ) : (
+                <AccountCircleIcon />
+              )}
             </div>
             <div className="username">
               <h3>{currentUser?.userName}</h3>
