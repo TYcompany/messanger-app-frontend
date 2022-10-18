@@ -1,6 +1,6 @@
 import io from "socket.io-client";
 
-const PORT = "ws://localhost:5000/";
+const PORT = process.env.REACT_APP_SOCKET_HOST_URL || "ws://localhost:5000/";
 
 export default class Socket {
   static instance: Socket | undefined;
