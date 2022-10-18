@@ -26,7 +26,6 @@ import { getRoomsWithUserData, removeAuthData } from "../../lib/etc/etcFunctions
 
 import ChatNavigation from "./ChatNavigation";
 
-import toast from "react-hot-toast";
 import { AppBar, Box, Drawer, IconButton, Toolbar, Typography } from "@mui/material";
 
 import MenuIcon from "@mui/icons-material/Menu";
@@ -85,6 +84,11 @@ function ChatPage() {
       const user = JSON.parse(localStorage.getItem("chat-app-user") || "");
 
       setCurrentUser(user);
+
+      if (!user?.profileImage) {
+        navigate("/setProfile");
+      }
+
       socket.emit("add-user", { userId: user._id, userName: user.userName });
     };
 

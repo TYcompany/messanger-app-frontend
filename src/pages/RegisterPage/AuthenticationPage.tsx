@@ -1,5 +1,7 @@
 import React from "react";
 import { useRecoilState } from "recoil";
+import { useNavigate } from "react-router-dom";
+
 import { registerInputValueState, registerStepState } from "../../store/store";
 
 import { useEffect, useState } from "react";
@@ -16,6 +18,8 @@ import {
 import { setAuthData } from "../../lib/etc/etcFunctions";
 
 function AuthenticationPage() {
+  const navigate = useNavigate();
+
   const [activeStep, setActiveStep] = useRecoilState(registerStepState);
   const [values, setValues] = useRecoilState(registerInputValueState);
 
@@ -70,7 +74,6 @@ function AuthenticationPage() {
   const onSubmitEmail = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const { userName, password } = values;
-    console.log("auth with email", email);
 
     if (!isValidEmail(email)) {
       toast.error("please type valid email!");
@@ -78,7 +81,7 @@ function AuthenticationPage() {
     }
 
     const res = await registerByEmail({ userName, password, email });
-    console.log(res);
+    toast.success("Sent you an validation code. Please check your email");
   };
 
   return (
