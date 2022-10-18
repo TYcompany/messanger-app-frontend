@@ -7,7 +7,7 @@ import {
   FetchProfileImagesRoute,
   SetProfileImageRoute,
   GetRoomDataOfPersonalRoute,
-  GetRoomDatasOfUser,
+  GetRoomDatasOfUserRoute,
   GetUserDataByEmailRoute,
   AddFriendRoute,
   DeleteFriendRoute,
@@ -22,6 +22,8 @@ import {
   LoginByEmailRoute,
   LoginByPhoneNumberRoute,
   GetUserDataByPhoneNumberRoute,
+  AddUsersToGroupRoomRoute,
+  DeleteUserFromGroupRoomRoute,
 } from "./APIRoutes";
 import { sleep } from "../etc/etcFunctions";
 import { UserType } from "../types/UserType";
@@ -238,7 +240,7 @@ export const fetchRoomDatasOfUser = async (userId: string) => {
     console.log("user id is invalid should be 24");
     return { data: {} };
   }
-  const uri = `${GetRoomDatasOfUser}?userId=${userId}`;
+  const uri = `${GetRoomDatasOfUserRoute}?userId=${userId}`;
   const res = await axios.get(uri);
 
   return res.data;
@@ -251,6 +253,39 @@ export const createGroupRoom = async (roomTitle: string, users: string[], roomHo
     roomHost,
   };
   const res = await axios.post(CreateGroupRoomRoute, dto);
+  return res;
+};
+
+// export const addUserToGroupRoom = async ({
+//   userId,
+//   roomId,
+// }: {
+//   userId: string;
+//   roomId: string;
+// }) => {
+//   const res = await axios.post(AddUserToGroupRoomRoute, { userId, roomId });
+//   return res;
+// };
+
+export const addUsersToGroupRoom = async ({
+  userIds,
+  roomId,
+}: {
+  userIds: string[];
+  roomId: string;
+}) => {
+  const res = await axios.post(AddUsersToGroupRoomRoute, { userIds, roomId });
+  return res;
+};
+
+export const deleteUserFromGroupRoom = async ({
+  userId,
+  roomId,
+}: {
+  userId: string;
+  roomId: string;
+}) => {
+  const res = await axios.post(DeleteUserFromGroupRoomRoute, { userId, roomId });
   return res;
 };
 

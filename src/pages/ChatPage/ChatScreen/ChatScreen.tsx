@@ -1,22 +1,27 @@
-import React, { useEffect, useState, useRef, Suspense } from "react";
-import { Buffer } from "buffer";
+import React, { useEffect, useState, useRef } from "react";
+
 import styled from "styled-components";
-import { useRecoilValue } from "recoil";
+import { useRecoilState, useRecoilValue } from "recoil";
 
 import { MessageType } from "../../../lib/types/MessageType";
 
 import ChatMessagesContainer from "./ChatMessagesContainer";
 import ChatInput from "./ChatInput";
 
-import { fetchMessagesInRange } from "../../../lib/api/APIFunctions";
+import { deleteUserFromGroupRoom, fetchMessagesInRange } from "../../../lib/api/APIFunctions";
 
 import Socket from "../../../socket/socket";
 
 import {
+  activeModalNameState,
   currentlyChattingRoomState,
   currentlyChattingUserState,
   currentUserState,
 } from "../../../store/store";
+import { Button } from "@mui/material";
+import BasicModal from "../../../components/modals/BasicModal";
+import AddFriendModalComponent from "../ChatNavigation/modals/AddFriendModalComponent";
+import InviteFriendModalComponent from "./modals/InviteFriendModalComponent";
 
 const socket = new Socket().getSocketInstance();
 
@@ -43,6 +48,8 @@ function ChatScreen({
 
   const [text, setText] = useState("");
   const scrollRef = useRef<HTMLDivElement>(null);
+
+  const [activeModalName, setActiveModalName] = useRecoilState(activeModalNameState);
 
   useEffect(() => {
     setMessageSequenceRef(messages?.[0]?.messageSequence || 0);
@@ -176,6 +183,22 @@ function ChatScreen({
     setText("");
   };
 
+  const onClickInvite = async (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
+    e.preventDefault();
+    setActiveModalName("inviteFriend");
+  };
+  const onClickLeave = async () => {
+    if (!window.confirm("Do you want to leave this room?")) {
+      return;
+    }
+    const res = await deleteUserFromGroupRoom({
+      userId: currentUser._id,
+      roomId: currentlyChattingRoom._id,
+    });
+
+    window.location.reload();
+  };
+
   return (
     <Container id="chat-screen">
       {!currentlyChattingUser?._id && (
@@ -184,7 +207,17 @@ function ChatScreen({
       {currentlyChattingUser?._id && (
         <>
           {currentlyChattingRoom?.roomTitle ? (
-            <div>{currentlyChattingRoom?.roomTitle}</div>
+            <div className="room-title-header">
+              <div className="room-title-text">{currentlyChattingRoom?.roomTitle} </div>
+              <div className="room-title-button-wrapper">
+                <Button className="invite-friend-button" onClick={onClickInvite}>
+                  Invite
+                </Button>
+                <Button onClick={onClickLeave} color="warning" className="leave-room-button">
+                  Leave
+                </Button>
+              </div>
+            </div>
           ) : (
             <div className="chat-header">
               <div className="profile">
@@ -214,6 +247,8 @@ function ChatScreen({
           />
         </>
       )}
+
+      <BasicModal modalName="inviteFriend" ModalComponent={InviteFriendModalComponent}></BasicModal>
     </Container>
   );
 }
@@ -223,6 +258,34 @@ const Container = styled.div`
   padding-top: 1rem;
   height: 90vh;
   width: 100%;
+
+  .room-title-header {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: space-between;
+    padding-left: 1rem;
+    padding-right: 1rem;
+
+    .room-title-text {
+      font-size: 2rem;
+    }
+
+    .room-title-button-wrapper {
+      display: flex;
+      flex-direction: row;
+      gap: 0.5rem;
+    }
+
+    @media screen and (max-width: 760px) {
+      width: calc(100vw - 2rem);
+    }
+
+    .invite-friend-button {
+    }
+    .leave-room-button {
+    }
+  }
 
   .chat-header {
     display: flex;
