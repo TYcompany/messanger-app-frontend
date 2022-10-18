@@ -24,11 +24,16 @@ axios.defaults.headers.common = {
   "Access-Control-Allow-Credentials": true,
 };
 
+const initialize = async (accessToken: string) => {
+  const newToken = await refreshAccessToken(accessToken);
+
+  axios.defaults.headers.common["Authorization"] = "Bearer " + newToken;
+};
+
 if (!access_token) {
   removeAuthData();
 } else {
-  refreshAccessToken(access_token);
-  axios.defaults.headers.common["Authorization"] = "Bearer " + access_token;
+  initialize(access_token);
 }
 
 const root = ReactDOM.createRoot(document.getElementById("root") as HTMLElement);
