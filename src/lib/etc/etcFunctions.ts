@@ -33,6 +33,6 @@ export const setAuthData = (userData: UserType, access_token: string) => {
 
 export const removeAuthData = () => {
   cookies.remove("access_token");
-  axios.defaults.headers.common["Authorization"] = "";
+  //axios.defaults.headers.common["Authorization"] = "";
   localStorage.removeItem("chat-app-user");
 };
