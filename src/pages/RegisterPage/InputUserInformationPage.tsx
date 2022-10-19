@@ -36,8 +36,8 @@ function InputUserInformationPage() {
       return false;
     }
 
-    if (userName.length < 5) {
-      toast.error("Name should longer than 5 characters!");
+    if (userName.length < 3) {
+      toast.error("Name should longer than 3 characters!");
       return false;
     }
     if (password.length < 8) {
