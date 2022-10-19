@@ -4,7 +4,7 @@ const PORT = process.env.REACT_APP_SOCKET_HOST_URL || "ws://localhost:5000/";
 
 export default class Socket {
   static instance: Socket | undefined;
-  socket = io(PORT, { secure: true });
+  socket = io(PORT, { secure: true }).connect();
   constructor() {
     if (Socket.instance) {
       return Socket.instance;
