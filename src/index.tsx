@@ -27,7 +27,7 @@ axios.defaults.headers.common = {
 const initialize = async (accessToken: string) => {
   const newToken = await refreshAccessToken(accessToken);
 
-  axios.defaults.headers.common["Authorization"] = "Bearer " + newToken;
+  axios.defaults.headers.common["Authorization"] = "bearer " + newToken;
 };
 
 if (!access_token) {

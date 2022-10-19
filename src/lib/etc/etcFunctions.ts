@@ -27,7 +27,7 @@ export const getRoomsWithUserData = (
 
 export const setAuthData = (userData: UserType, access_token: string) => {
   cookies.set("access_token", access_token);
-  axios.defaults.headers.common["Authorization"] = "Bearer " + access_token;
+  axios.defaults.headers.common["Authorization"] = "bearer " + access_token;
   localStorage.setItem("chat-app-user", JSON.stringify(userData));
 };
 
