@@ -13,7 +13,6 @@ import {
   refreshAccessTokenCookies,
 } from "../../lib/api/APIFunctions";
 
-import Socket from "../../socket/socket";
 import { useRecoilState, useRecoilValue } from "recoil";
 import {
   contactsMapState,
