@@ -6,6 +6,7 @@ export default class Socket {
   static instance: Socket | undefined;
   socket = io(PORT, {
     withCredentials: true,
+    transports: ["websocket", "polling"],
   });
   constructor() {
     if (Socket.instance) {
