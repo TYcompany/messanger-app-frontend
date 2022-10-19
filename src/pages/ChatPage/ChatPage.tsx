@@ -90,6 +90,7 @@ function ChatPage() {
       }
 
       socket.emit("add-user", { userId: user._id, userName: user.userName });
+      socket.emit("check-current-room-state");
     };
 
     if (cookies.get("access_token")) {
