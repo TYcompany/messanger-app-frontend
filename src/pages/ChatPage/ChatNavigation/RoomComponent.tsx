@@ -28,8 +28,7 @@ function RoomComponent({ selectedTab }: { selectedTab: string }) {
     let isEmptyValueContained = false;
 
     const UserIdsWithData = new Set(roomData?.userData?.map((userDt) => userDt?._id));
-    console.log(roomData)
-    
+
     for (const userId of roomData.users) {
       if (!UserIdsWithData.has(userId)) {
         isEmptyValueContained = true;

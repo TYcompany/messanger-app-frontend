@@ -31,10 +31,11 @@ import MenuIcon from "@mui/icons-material/Menu";
 import themes, { ThemeType } from "../../styles/themes";
 
 import { Cookies } from "react-cookie";
+import Socket from "../../socket/socket";
 
 const cookies = new Cookies();
 
-//const socket = new Socket().getSocketInstance();
+const socket = new Socket().getSocketInstance();
 
 const drawerWidth = 240;
 
@@ -88,7 +89,7 @@ function ChatPage() {
         navigate("/setProfile");
       }
 
-      //socket.emit("add-user", { userId: user._id, userName: user.userName });
+      socket.emit("add-user", { userId: user._id, userName: user.userName });
     };
 
     if (cookies.get("access_token")) {
