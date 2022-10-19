@@ -159,11 +159,7 @@ export const deleteFriend = async (currentUserId: string, friendUserId: string) 
 
 const getUserDataWithProfileImage = async (dt: UserType) => {
   try {
-    const profileImage = await axios.get(dt.profileImageLink, {
-      headers: {
-        Authorization: "",
-      },
-    });
+    const profileImage = await axios.get(dt.profileImageLink);
     return { ...dt, profileImage: profileImage?.data || "" };
   } catch (e) {
     console.log(e);

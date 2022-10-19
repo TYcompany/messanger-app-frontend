@@ -114,11 +114,7 @@ function LoginPage() {
 
     const userData = res.data.user;
     try {
-      const profileImage = await axios.get(userData.profileImageLink, {
-        headers: {
-          Authorization: "",
-        },
-      });
+      const profileImage = await axios.get(userData.profileImageLink);
       userData.profileImage = profileImage.data;
     } catch (e) {
       console.log(e);
