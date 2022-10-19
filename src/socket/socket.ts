@@ -4,7 +4,7 @@ const PORT = process.env.REACT_APP_SOCKET_HOST_URL || "ws://localhost:5000/";
 
 export default class Socket {
   static instance: Socket | undefined;
-  socket = io(PORT, { secure: true }).connect();
+  socket = io(PORT);
   constructor() {
     if (Socket.instance) {
       return Socket.instance;
@@ -26,6 +26,12 @@ export default class Socket {
     });
     socket.on("disconnect", () => {
       console.log("disconnected");
+    });
+    socket.on("connection_error", (err: any) => {
+      console.log(err);
+    });
+    socket.on("error", (err: any) => {
+      console.log("Error: " + err);
     });
   }
   getSocketInstance() {
