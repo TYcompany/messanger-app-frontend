@@ -240,7 +240,7 @@ export const fetchRoomDatasOfUser = async (userId: string) => {
     console.log("user id is invalid should be 24");
     return { data: {} };
   }
-  const uri = `${GetRoomDatasOfUserRoute}?userId=${userId}`;
+  const uri = `${GetRoomDatasOfUserRoute}/${userId}`;
   const res = await axios.get(uri);
 
   return res.data;
