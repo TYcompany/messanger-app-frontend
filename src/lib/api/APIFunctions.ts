@@ -185,7 +185,7 @@ export const fetchUserContacts = async (id: string) => {
 };
 
 export const getUserDataByEmail = async (email: string) => {
-  const res = await axios.get(`${GetUserDataByEmailRoute}?email=${email}`);
+  const res = await axios.get(`${GetUserDataByEmailRoute}/${email}`);
 
   const data = res?.data;
 
@@ -198,7 +198,7 @@ export const getUserDataByEmail = async (email: string) => {
 };
 
 export const getUserDataByPhoneNumber = async (phoneNumber: string) => {
-  const res = await axios.get(`${GetUserDataByPhoneNumberRoute}?phoneNumber=${phoneNumber}`);
+  const res = await axios.get(`${GetUserDataByPhoneNumberRoute}/${phoneNumber}`);
 
   const data = res?.data;
 
