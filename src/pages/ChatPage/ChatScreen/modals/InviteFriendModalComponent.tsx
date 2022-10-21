@@ -14,7 +14,6 @@ import { addUsersToGroupRoom } from "../../../../lib/api/APIFunctions";
 import { Box, Button, TextField } from "@mui/material";
 import toast from "react-hot-toast";
 import { RoomWithUserDataType } from "../../../../lib/types/RoomType";
-import { getRoomsWithUserData } from "../../../../lib/etc/etcFunctions";
 
 function InviteFriendModalComponent() {
   const contactsMap = useRecoilValue(contactsMapState);
