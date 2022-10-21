@@ -110,10 +110,9 @@ function ChatPage() {
     }
 
     setContactsMap(nextContacts);
-    let tempRooms;
-
-    tempRooms = await fetchRoomDatasOfUser(currentUser._id);
-    console.log("temprooms", tempRooms);
+   
+    const tempRooms = await fetchRoomDatasOfUser(currentUser._id);
+    
     setRooms(tempRooms);
   };
 

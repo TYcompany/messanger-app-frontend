@@ -58,7 +58,7 @@ function CreateRoomModalComponent() {
       toast.success("Successfully created a room!");
 
       const tempRooms = await fetchRoomDatasOfUser(currentUser._id);
-
+        
       setRoomsWithUserData(getRoomsWithUserData(currentUser._id, contactsMap, tempRooms));
 
       setActiveModalName("");

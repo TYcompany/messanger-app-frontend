@@ -241,10 +241,11 @@ export const fetchRoomData = async (user1: string, user2: string) => {
 export const fetchRoomDatasOfUser = async (userId: string) => {
   if (userId.length !== 24) {
     console.log("user id is invalid should be 24");
-    return { data: {} };
+    return [];
   }
   const uri = `${GetRoomDatasOfUserRoute}/${userId}`;
   const res = await axios.get(uri);
+  console.log("fetch room datas of user result", res);
 
   return res.data;
 };
