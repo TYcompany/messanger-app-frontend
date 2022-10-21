@@ -4,11 +4,17 @@ import TextField from "@mui/material/TextField";
 
 import Box from "@mui/material/Box";
 
-import { addFriend, fetchUserContacts, getUserDataByEmail, getUserDataByPhoneNumber } from "../../../../lib/api/APIFunctions";
+import {
+  addFriend,
+  fetchUserContacts,
+  getUserDataByEmail,
+  getUserDataByPhoneNumber,
+} from "../../../../lib/api/APIFunctions";
 import { UserMapType, UserType } from "../../../../lib/types/UserType";
 import { activeModalNameState, contactsMapState, currentUserState } from "../../../../store/store";
 import { useRecoilState, useRecoilValue } from "recoil";
 import toast from "react-hot-toast";
+import { defaultProfileImageSVGString } from "../../../../lib/images/defaultProfileImageData";
 
 function AddFriendModalComponent() {
   const [userData, setUserData] = useState<UserType | undefined>();
@@ -132,7 +138,7 @@ function AddFriendModalComponent() {
             <div className="profile-image">
               <img
                 style={{ width: "100%", borderRadius: "50%" }}
-                src={`${userData?.profileImage || ""}`}
+                src={`${userData?.profileImage || defaultProfileImageSVGString}`}
                 alt={"profile" + userData?._id}
               />
             </div>

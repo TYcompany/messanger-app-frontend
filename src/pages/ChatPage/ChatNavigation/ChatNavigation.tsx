@@ -10,7 +10,7 @@ import { Buffer } from "buffer";
 import styled from "styled-components";
 import { removeAuthData } from "../../../lib/etc/etcFunctions";
 
-import AccountCircleIcon from "@mui/icons-material/AccountCircle";
+import { defaultProfileImageSVGString } from "../../../lib/images/defaultProfileImageData";
 
 const tabsInfo: { [key: number]: string } = {
   0: "contacts-tab-button",
@@ -61,24 +61,21 @@ function ChatNavigation() {
         <div className="chat-navigation-contents">
           <div className="my-profile">
             <div className="profile-image">
-              {currentUser?.profileImage ? (
+              {
                 <img
-                  src={currentUser?.profileImage || ""}
+                  src={currentUser?.profileImage || defaultProfileImageSVGString}
                   alt={"profile-currentUser"}
                   onClick={() => onClickProfileImage()}
                 />
-              ) : (
-                <AccountCircleIcon />
-              )}
+              }
             </div>
             <div className="username">
               <h3>{currentUser?.userName}</h3>
             </div>
-            <Button onClick={() => onLogout()} variant="contained" color="secondary">
-              Logout
-            </Button>
           </div>
-
+          <Button onClick={() => onLogout()} variant="contained" color="secondary">
+            Logout
+          </Button>
           <ContactComponent selectedTab={selectedTab} />
           <RoomComponent selectedTab={selectedTab} />
         </div>
@@ -123,13 +120,16 @@ const Container = styled.div`
       display: flex;
       align-items: center;
       justify-content: center;
-      gap: 1rem;
+      gap: 0.5rem;
       height: 3rem;
       font-size: 1.33rem;
+
+      margin-top: 0.5rem;
+      margin-bottom: 0.5rem;
       img {
         cursor: pointer;
-        width: 2rem;
-        height: 2rem;
+        width: 3rem;
+        height: 3rem;
         border-radius: 50%;
       }
       h3 {

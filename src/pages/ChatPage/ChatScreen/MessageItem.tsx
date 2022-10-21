@@ -4,6 +4,7 @@ import styled from "styled-components";
 import { MessageType } from "../../../lib/types/MessageType";
 import { contactsMapState, currentUserState } from "../../../store/store";
 import { Buffer } from "buffer";
+import { defaultProfileImageSVGString } from "../../../lib/images/defaultProfileImageData";
 
 function MessageItem({
   message,
@@ -23,7 +24,9 @@ function MessageItem({
             <div className="profile">
               <div className="profile-image">
                 <img
-                  src={`${contactsMap[message.senderId]?.profileImage || ""}`}
+                  src={`${
+                    contactsMap[message.senderId]?.profileImage || defaultProfileImageSVGString
+                  }`}
                   alt={"profile" + contactsMap[message.senderId]?._id}
                 />
               </div>

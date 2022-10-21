@@ -14,6 +14,7 @@ import { addUsersToGroupRoom } from "../../../../lib/api/APIFunctions";
 import { Box, Button, TextField } from "@mui/material";
 import toast from "react-hot-toast";
 import { RoomWithUserDataType } from "../../../../lib/types/RoomType";
+import { defaultProfileImageSVGString } from "../../../../lib/images/defaultProfileImageData";
 
 function InviteFriendModalComponent() {
   const contactsMap = useRecoilValue(contactsMapState);
@@ -91,7 +92,10 @@ function InviteFriendModalComponent() {
               className={`contact`}
             >
               <div className="profile-image">
-                <img src={`${contact.profileImage || ""}`} alt={"profile" + contact._id} />
+                <img
+                  src={`${contact.profileImage || defaultProfileImageSVGString}`}
+                  alt={"profile" + contact._id}
+                />
               </div>
               <div className="username">
                 <h3>{contact.userName}</h3>

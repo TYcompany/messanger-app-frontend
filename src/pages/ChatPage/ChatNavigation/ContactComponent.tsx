@@ -17,6 +17,7 @@ import BasicModal from "../../../components/modals/BasicModal";
 import AddFriendModalComponent from "./modals/AddFriendModalComponent";
 import { Button } from "@mui/material";
 import { removeAuthData } from "../../../lib/etc/etcFunctions";
+import { defaultProfileImageSVGString } from "../../../lib/images/defaultProfileImageData";
 
 function ContactComponent({ selectedTab }: { selectedTab: string }) {
   const navigate = useNavigate();
@@ -64,7 +65,10 @@ function ContactComponent({ selectedTab }: { selectedTab: string }) {
               onClick={() => onClickUserContact(contact)}
             >
               <div className="profile-image">
-                <img src={`${contact.profileImage || ""}`} alt={"profile" + contact._id} />
+                <img
+                  src={`${contact.profileImage || defaultProfileImageSVGString}`}
+                  alt={"profile" + contact._id}
+                />
               </div>
               <div className="username">
                 <h3>{contact.userName}</h3>

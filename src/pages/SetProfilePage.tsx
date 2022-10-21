@@ -29,7 +29,7 @@ function SetProfilePage() {
 
   const [customImageString, setCustomImageString] = useState<string>("");
 
-  const [selectedProfileImage, setSelectedProfileImage] = useState(0);
+  const [selectedProfileImageIndex, setselectedProfileImageIndex] = useState(0);
 
   const [profileImages, setProfileImages] = useState<string[]>([]);
 
@@ -47,7 +47,7 @@ function SetProfilePage() {
     const init = async () => {
       setIsLoading(true);
       const results = await fetchProfileImages(3);
-      setProfileImages(["default iamge", ...results]);
+      setProfileImages(["", ...results]);
       setIsLoading(false);
     };
 
@@ -63,11 +63,13 @@ function SetProfilePage() {
       navigate("/login");
       return;
     }
+
     let imageString = `data:image/svg+xml;base64,${Buffer.from(
-      profileImages[selectedProfileImage] || ""
+      profileImages[selectedProfileImageIndex] || ""
     ).toString("base64")}`;
-    if (selectedProfileImage === 0) {
-      imageString = customImageString || "";
+
+    if (selectedProfileImageIndex === 0) {
+      imageString = customImageString;
     }
 
     const res = await setProfileImage(user._id, imageString);
@@ -104,19 +106,19 @@ function SetProfilePage() {
             {customImageString ? (
               <div
                 key={"profile-image" + 0}
-                className={`profile-image ${selectedProfileImage === 0 && "selected"}`}
+                className={`profile-image ${selectedProfileImageIndex === 0 && "selected"}`}
               >
                 <img
                   className={"profile-image-icon"}
                   src={customImageString}
                   alt={"profile" + 0}
-                  onClick={() => setSelectedProfileImage(0)}
+                  onClick={() => setselectedProfileImageIndex(0)}
                 />
               </div>
             ) : (
-              <div className={`profile-image ${selectedProfileImage === 0 && "selected"}`}>
+              <div className={`profile-image ${selectedProfileImageIndex === 0 && "selected"}`}>
                 <AccountCircleIcon
-                  onClick={() => setSelectedProfileImage(0)}
+                  onClick={() => setselectedProfileImageIndex(0)}
                   className={"profile-image-icon"}
                 />
               </div>
@@ -126,14 +128,14 @@ function SetProfilePage() {
                 index !== 0 && (
                   <div
                     key={"profile-image" + index}
-                    className={`profile-image ${selectedProfileImage === index && "selected"}`}
+                    className={`profile-image ${selectedProfileImageIndex === index && "selected"}`}
                   >
                     <img
                       src={`data:image/svg+xml;base64,${Buffer.from(profileImage || "").toString(
                         "base64"
                       )}`}
                       alt={"profile" + index}
-                      onClick={() => setSelectedProfileImage(index)}
+                      onClick={() => setselectedProfileImageIndex(index)}
                     />
                   </div>
                 )

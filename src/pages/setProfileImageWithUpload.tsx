@@ -31,7 +31,7 @@ function SetProfileImageWithUpload({
 
     const reader = new FileReader();
     reader.onloadend = async function (evt: any) {
-      if (evt.target.readyState != 2) return;
+      if (evt.target.readyState !== 2) return;
       if (evt.target.error) {
         alert("Error while reading file!");
         return;
