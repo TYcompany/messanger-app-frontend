@@ -4,7 +4,7 @@ const PORT = process.env.REACT_APP_SOCKET_HOST_URL || "ws://localhost:5000/";
 
 export default class Socket {
   static instance: Socket | undefined;
-  socket = io(PORT+'/chatting');
+  socket = io(PORT + "/chatting");
   constructor() {
     if (Socket.instance) {
       return Socket.instance;
@@ -19,7 +19,7 @@ export default class Socket {
     console.log("inititd");
 
     socket.on("connect", () => {
-      console.log("connected");
+      console.log("connected socket server");
     });
     socket.on("exception", (msg) => {
       console.log(msg);
