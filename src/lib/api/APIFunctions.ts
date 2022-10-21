@@ -231,8 +231,11 @@ export const fetchRoomData = async (user1: string, user2: string) => {
     return { data: {} };
   }
   const users = [user1, user2].sort();
-  const uri = `${GetRoomDataOfPersonalRoute}?user1=${users[0]}&user2=${users[1]}`;
-  return await axios.get(uri);
+  
+  return await axios.post(GetRoomDataOfPersonalRoute, {
+    user1: users[0],
+    user2: users[1],
+  });
 };
 
 export const fetchRoomDatasOfUser = async (userId: string) => {
@@ -297,10 +300,12 @@ export const fetchMessagesInRange = async (
 ) => {
   await sleep(500);
 
-  const res = await axios.get(
-    `${GetMessagesInRangeRoute}?roomId=${roomId}&senderId=${senderId}
-      &left=${left}&right=${right}`
-  );
+  const res = await axios.post(GetMessagesInRangeRoute, {
+    roomId,
+    left,
+    right,
+  });
+
   return res.data;
 };
 
