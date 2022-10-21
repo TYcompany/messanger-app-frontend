@@ -102,12 +102,16 @@ function ChatPage() {
   }, [navigate]);
 
   const initUserContactsAndRooms = async () => {
+    console.log("currentuser in init contacts and room", currentUser._id);
+
     const tempContacts = await fetchUserContacts(currentUser._id);
     const nextContacts: UserMapType = {};
 
     for (const tempContact of tempContacts) {
       nextContacts[tempContact._id] = tempContact;
     }
+
+    console.log("tempContacts", tempContacts);
 
     setContactsMap(nextContacts);
     let tempRooms;
