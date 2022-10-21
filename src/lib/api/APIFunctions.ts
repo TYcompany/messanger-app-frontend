@@ -231,7 +231,7 @@ export const fetchRoomData = async (user1: string, user2: string) => {
     return { data: {} };
   }
   const users = [user1, user2].sort();
-  
+
   return await axios.post(GetRoomDataOfPersonalRoute, {
     user1: users[0],
     user2: users[1],
