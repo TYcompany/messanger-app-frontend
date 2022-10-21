@@ -28,10 +28,6 @@ function ContactComponent({ selectedTab }: { selectedTab: string }) {
   const currentUser = useRecoilValue(currentUserState);
   const contactsMap = useRecoilValue(contactsMapState);
 
-  useEffect(() => {
-    console.log("contactsMap ", contactsMap);
-  }, [contactsMap]);
-
   const [currentlyChattingRoom, setCurrentlyChattingRoom] = useRecoilState(
     currentlyChattingRoomState
   );
