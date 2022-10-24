@@ -245,7 +245,6 @@ export const fetchRoomDatasOfUser = async (userId: string) => {
   }
   const uri = `${GetRoomDatasOfUserRoute}/${userId}`;
   const res = await axios.get(uri);
-  console.log("fetch room datas of user result", res);
 
   return res.data;
 };

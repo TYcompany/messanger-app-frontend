@@ -104,7 +104,6 @@ function LoginPage() {
     } else if (loginType === "phoneNumber") {
       res = await submitLoginByPhoneNumber();
     }
-    console.log(res);
 
     setAuthData(res?.data?.user, res?.data?.access_token);
     if (!res) {

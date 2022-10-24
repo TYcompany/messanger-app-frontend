@@ -18,6 +18,7 @@ import { currentUserState } from "../store/store";
 import { useRecoilState } from "recoil";
 
 import AccountCircleIcon from "@mui/icons-material/AccountCircle";
+import { AxiosError } from "axios";
 
 const cookies = new Cookies();
 
@@ -46,8 +47,22 @@ function SetProfilePage() {
   useEffect(() => {
     const init = async () => {
       setIsLoading(true);
-      const results = await fetchProfileImages(3);
-      setProfileImages(["", ...results]);
+
+      try {
+        const fetchedProfileImages = await fetchProfileImages(3);
+        setProfileImages(["", ...fetchedProfileImages]);
+      } catch (e) {
+        console.log(e);
+        toast.error("Error fetching profile images!");
+        if (e instanceof AxiosError) {
+          if (e.response?.data?.statusCode === 401) {
+            toast.error("unauthorized error, please login again!");
+            setIsLoading(false);
+            navigate("/login");
+            return;
+          }
+        }
+      }
       setIsLoading(false);
     };
 
@@ -56,7 +71,7 @@ function SetProfilePage() {
 
   const submitSetProfileImage = async () => {
     const user = JSON.parse(localStorage.getItem("chat-app-user") || "");
-    console.log(user);
+
     if (!user) {
       toast.error("fail to get userData please login again!");
       removeAuthData();

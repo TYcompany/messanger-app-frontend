@@ -16,6 +16,7 @@ import {
   validatePhoneNumber,
 } from "../../lib/api/APIFunctions";
 import { setAuthData } from "../../lib/etc/etcFunctions";
+import { AxiosError } from "axios";
 
 function AuthenticationPage() {
   const navigate = useNavigate();
@@ -39,10 +40,20 @@ function AuthenticationPage() {
     const { userName, password } = values;
 
     const userPhoneNumber = selectedCountryDial + phoneNumber;
-    toast("sent phone number");
 
-    const res = await registerByPhoneNumber({ phoneNumber: userPhoneNumber, userName, password });
-    toast(res.data.message);
+    try {
+      const res = await registerByPhoneNumber({ phoneNumber: userPhoneNumber, userName, password });
+      toast(res.data.message);
+    } catch (e) {
+      console.log(e);
+      if (e instanceof AxiosError) {
+        if (e?.response?.data.statusCode === 409) {
+          toast.error("Account already exists with such phoneNumber!");
+        }
+      }
+      return;
+    }
+    toast.success("Sent a varification code message");
     setPendingValidationCode(true);
   };
 
@@ -80,7 +91,17 @@ function AuthenticationPage() {
       return;
     }
 
-    const res = await registerByEmail({ userName, password, email });
+    try {
+      await registerByEmail({ userName, password, email });
+    } catch (e) {
+      console.log(e);
+      if (e instanceof AxiosError) {
+        if (e?.response?.data.statusCode === 409) {
+          toast.error("Account already exists with such email!");
+        }
+      }
+      return;
+    }
     toast.success("Sent you an validation code. Please check your email");
   };
 
