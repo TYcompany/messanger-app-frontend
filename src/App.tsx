@@ -36,6 +36,11 @@ const routes = [
     exact: true,
     element: lazy(() => import("./pages/ChatPage")),
   },
+  {
+    path: "/error",
+    exact: true,
+    element: lazy(() => import("./pages/ErrorPage")),
+  },
 ];
 
 function App() {

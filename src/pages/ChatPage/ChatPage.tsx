@@ -84,6 +84,7 @@ function ChatPage() {
       const user = JSON.parse(localStorage.getItem("chat-app-user") || "");
 
       setCurrentUser(user);
+      console.log(user);
 
       if (!user?.profileImage) {
         navigate("/setProfile");
@@ -110,9 +111,9 @@ function ChatPage() {
     }
 
     setContactsMap(nextContacts);
-   
+
     const tempRooms = await fetchRoomDatasOfUser(currentUser._id);
-    
+
     setRooms(tempRooms);
   };
 
