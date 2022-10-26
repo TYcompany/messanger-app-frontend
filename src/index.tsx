@@ -25,9 +25,14 @@ axios.defaults.headers.common = {
 };
 
 const initialize = async (accessToken: string) => {
-  const newToken = await refreshAccessToken(accessToken);
+  try {
+    const newToken = await refreshAccessToken(accessToken);
 
-  axios.defaults.headers.common["Authorization"] = "bearer " + newToken;
+    axios.defaults.headers.common["Authorization"] = "bearer " + newToken;
+  } catch (e) {
+    console.log(e);
+    removeAuthData();
+  }
 };
 
 if (!access_token) {
