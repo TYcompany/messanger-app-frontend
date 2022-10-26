@@ -112,16 +112,22 @@ function LoginPage() {
     }
 
     const userData = res.data.user;
-    try {
-      const profileImage = await axios.get(userData.profileImageLink, {
-        headers: {
-          Authorization: "",
-        },
-      });
-      userData.profileImage = profileImage.data;
-    } catch (e) {
-      console.log(e);
+    if (userData?.profileImageLink) {
+      try {
+        const profileImage = await axios.get(userData.profileImageLink, {
+          headers: {
+            Authorization: "",
+          },
+        });
+        userData.profileImage = profileImage.data;
+      } catch (e) {
+        userData.profileImage = "";
+        console.log(e);
+      }
+    } else {
+      userData.profileImage = "";
     }
+    
     const access_token = res.data.access_token;
 
     setAuthData(userData, access_token);
