@@ -19,6 +19,7 @@ import { useRecoilState } from "recoil";
 
 import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 import { AxiosError } from "axios";
+import { defaultProfileImageSVGString } from "../lib/images/defaultProfileImageData";
 
 const cookies = new Cookies();
 
@@ -50,7 +51,7 @@ function SetProfilePage() {
 
       try {
         const fetchedProfileImages = await fetchProfileImages(3);
-        setProfileImages(["", ...fetchedProfileImages]);
+        setProfileImages([defaultProfileImageSVGString, ...fetchedProfileImages]);
       } catch (e) {
         console.log(e);
         toast.error("Error fetching profile images!");
@@ -84,7 +85,7 @@ function SetProfilePage() {
     ).toString("base64")}`;
 
     if (selectedProfileImageIndex === 0) {
-      imageString = customImageString;
+      imageString = customImageString || profileImages[0];
     }
 
     const res = await setProfileImage(user._id, imageString);
@@ -118,26 +119,19 @@ function SetProfilePage() {
           </div>
 
           <div className="profile-images">
-            {customImageString ? (
+            {
               <div
                 key={"profile-image" + 0}
                 className={`profile-image ${selectedProfileImageIndex === 0 && "selected"}`}
               >
                 <img
                   className={"profile-image-icon"}
-                  src={customImageString}
+                  src={customImageString || profileImages[0]}
                   alt={"profile" + 0}
                   onClick={() => setselectedProfileImageIndex(0)}
                 />
               </div>
-            ) : (
-              <div className={`profile-image ${selectedProfileImageIndex === 0 && "selected"}`}>
-                <AccountCircleIcon
-                  onClick={() => setselectedProfileImageIndex(0)}
-                  className={"profile-image-icon"}
-                />
-              </div>
-            )}
+            }
             {profileImages.map(
               (profileImage, index) =>
                 index !== 0 && (
