@@ -32,6 +32,7 @@ function ChatInput({
   return (
     <Container>
       <div className="button-container">
+        <div className="new-message-notice">you have new message!</div>
         <div className="emoji">
           <BsEmojiSmileFill onClick={() => setIsPickerActive(!isPickerActive)} />
           {isPickerActive && <Picker onEmojiClick={(e, emoji) => setText(text + emoji.emoji)} />}
@@ -64,7 +65,7 @@ const Container = styled.div`
 
   justify-content: center;
   align-items: center;
-
+  position: relative;
   @media screen and (max-width: 760px) {
     width: 100vw;
     padding: 0.5rem 0.5rem;
@@ -75,6 +76,17 @@ const Container = styled.div`
     align-items: center;
     color: white;
     gap: 1rem;
+
+    .new-message-notice {
+      position: absolute;
+      background-color: gray;
+      border-radius: 30px;
+      padding: 7px 20px;
+      left: 50%;
+      top: -50px;
+      transform:translateX(-50%) ;
+    }
+
     .emoji {
       position: relative;
       svg {

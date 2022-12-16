@@ -17,6 +17,7 @@ function RoomComponent({ selectedTab }: { selectedTab: string }) {
   const [currentlyChattingRoom, setCurrentlyChattingRoom] = useRecoilState(
     currentlyChattingRoomState
   );
+
   const [currentChattingUser, setCurrentlyChattingUser] = useRecoilState(
     currentlyChattingUserState
   );

@@ -53,6 +53,15 @@ function ChatScreen({
 
   useEffect(() => {
     setMessageSequenceRef(messages?.[0]?.messageSequence || 0);
+    const messageContainerRef = scrollRef.current;
+    if (!messageContainerRef) {
+      return;
+    }
+    const MESSAGE_HEIGHT = 200;
+    //if user is watching last message, scroll to bottom when recieved message;
+    if (messageContainerRef.scrollTop >= messageContainerRef.clientHeight - MESSAGE_HEIGHT) {
+      messageContainerRef.scrollTo({ top: 20000, behavior: "smooth" });
+    }
   }, [messages]);
 
   const onScrollChatMessages = async () => {
@@ -88,16 +97,20 @@ function ChatScreen({
 
     return data;
   };
-
+  const onRecieveNewMessage = (receivedMessage: MessageType) => {
+    setRecievedMessage(receivedMessage);
+  };
   useEffect(() => {
     const initSocket = async () => {
       socket.removeAllListeners("message");
       socket.on("message", async (receivedMessage: MessageType) => {
-        setRecievedMessage(receivedMessage);
+        onRecieveNewMessage(receivedMessage);
       });
     };
     initSocket();
-    scrollRef.current?.scrollIntoView({ behavior: "smooth" });
+
+    scrollRef.current?.scrollTo({ top: 20000, behavior: "smooth" });
+    document.querySelector(".App")?.scrollTo({ top: 20000, behavior: "smooth" });
   }, []);
 
   useEffect(() => {
