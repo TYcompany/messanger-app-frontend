@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef } from "react";
+import React, { useEffect, useState, useRef, useCallback } from "react";
 
 import styled from "styled-components";
 import { useRecoilState, useRecoilValue } from "recoil";
@@ -59,7 +59,14 @@ function ChatScreen({
     }
     const MESSAGE_HEIGHT = 200;
     //if user is watching last message, scroll to bottom when recieved message;
-    if (messageContainerRef.scrollTop >= messageContainerRef.clientHeight - MESSAGE_HEIGHT) {
+
+    if (
+      Math.abs(
+        messageContainerRef.scrollHeight -
+          messageContainerRef.clientHeight -
+          messageContainerRef.scrollTop
+      ) < MESSAGE_HEIGHT
+    ) {
       messageContainerRef.scrollTo({ top: 20000, behavior: "smooth" });
     }
   }, [messages]);
@@ -110,7 +117,6 @@ function ChatScreen({
     initSocket();
 
     scrollRef.current?.scrollTo({ top: 20000, behavior: "smooth" });
-    document.querySelector(".App")?.scrollTo({ top: 20000, behavior: "smooth" });
   }, []);
 
   useEffect(() => {
