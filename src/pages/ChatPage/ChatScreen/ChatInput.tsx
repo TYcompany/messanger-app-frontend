@@ -4,7 +4,9 @@ import { IoMdSend } from "react-icons/io";
 import { BsEmojiSmileFill } from "react-icons/bs";
 
 import Picker from "emoji-picker-react";
-import { UserType } from "../../../lib/types/UserType";
+import { isScrollNearBottom } from "./common/scrollRefLib";
+import { useRecoilState } from "recoil";
+import { newMessageVisibleState } from "../../../store/store";
 
 function ChatInput({
   sendMessage,
@@ -12,14 +14,16 @@ function ChatInput({
   text,
   isPickerActive,
   setIsPickerActive,
+  scrollRef,
 }: {
   sendMessage: Function;
   setText: Function;
   text: string;
   isPickerActive: Boolean;
   setIsPickerActive: Function;
+  scrollRef: React.RefObject<HTMLDivElement>;
 }) {
-  useEffect(() => {}, []);
+  const [newMessageVisible, setNewMessageVisible] = useRecoilState(newMessageVisibleState);
 
   const onSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -32,7 +36,14 @@ function ChatInput({
   return (
     <Container>
       <div className="button-container">
-        <div className="new-message-notice">you have new message!</div>
+        {newMessageVisible && (
+          <div
+            className="new-message-notice"
+            onClick={() => scrollRef?.current?.scrollTo({ top: 20000, behavior: "smooth" })}
+          >
+            you have new message!
+          </div>
+        )}
         <div className="emoji">
           <BsEmojiSmileFill onClick={() => setIsPickerActive(!isPickerActive)} />
           {isPickerActive && <Picker onEmojiClick={(e, emoji) => setText(text + emoji.emoji)} />}
@@ -84,7 +95,7 @@ const Container = styled.div`
       padding: 7px 20px;
       left: 50%;
       top: -50px;
-      transform:translateX(-50%) ;
+      transform: translateX(-50%);
     }
 
     .emoji {

@@ -17,11 +17,13 @@ import {
   currentlyChattingRoomState,
   currentlyChattingUserState,
   currentUserState,
+  newMessageVisibleState,
 } from "../../../store/store";
 import { Button } from "@mui/material";
 import BasicModal from "../../../components/modals/BasicModal";
 import AddFriendModalComponent from "../ChatNavigation/modals/AddFriendModalComponent";
 import InviteFriendModalComponent from "./modals/InviteFriendModalComponent";
+import { isScrollNearBottom } from "./common/scrollRefLib";
 
 const socket = new Socket().getSocketInstance();
 
@@ -37,6 +39,8 @@ function ChatScreen({
   const currentUser = useRecoilValue(currentUserState);
   const currentlyChattingUser = useRecoilValue(currentlyChattingUserState);
   const currentlyChattingRoom = useRecoilValue(currentlyChattingRoomState);
+  const [newMessageVisible, setNewMessageVisible] = useRecoilState(newMessageVisibleState);
+
   const [isLoadingInitialMessages, setIsLoadingInitialMessages] = useState(false);
   const [messages, setMessages] = useState<MessageType[]>([]);
   const [receivedMessage, setRecievedMessage] = useState<MessageType | undefined>();
@@ -57,23 +61,20 @@ function ChatScreen({
     if (!messageContainerRef) {
       return;
     }
-    const MESSAGE_HEIGHT = 200;
-    //if user is watching last message, scroll to bottom when recieved message;
-
-    if (
-      Math.abs(
-        messageContainerRef.scrollHeight -
-          messageContainerRef.clientHeight -
-          messageContainerRef.scrollTop
-      ) < MESSAGE_HEIGHT
-    ) {
+    if (isScrollNearBottom(messageContainerRef)) {
       messageContainerRef.scrollTo({ top: 20000, behavior: "smooth" });
+    } else {
+      setNewMessageVisible(true);
     }
   }, [messages]);
 
   const onScrollChatMessages = async () => {
     if (isLoadingPastMessages) {
       return;
+    }
+
+    if (scrollRef.current && isScrollNearBottom(scrollRef.current)) {
+      setNewMessageVisible(false);
     }
 
     const currentScroll = scrollRef.current?.scrollTop || 0;
@@ -263,6 +264,7 @@ function ChatScreen({
             sendMessage={sendMessage}
             isPickerActive={isPickerActive}
             setIsPickerActive={setIsPickerActive}
+            scrollRef={scrollRef}
           />
         </>
       )}

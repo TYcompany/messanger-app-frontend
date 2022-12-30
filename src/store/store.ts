@@ -92,3 +92,7 @@ export const activeModalNameState = atom<string>({
 });
 
 // store messages for while
+export const newMessageVisibleState = atom<boolean>({
+  key: "newMessageVisible" + uuid(),
+  default: false,
+});

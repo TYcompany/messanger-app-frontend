@@ -84,7 +84,6 @@ function ChatPage() {
       const user = JSON.parse(localStorage.getItem("chat-app-user") || "");
 
       setCurrentUser(user);
-      console.log(user);
 
       if (!user?.profileImage) {
         navigate("/setProfile");
