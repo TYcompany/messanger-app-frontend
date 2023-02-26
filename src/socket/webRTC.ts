@@ -1,7 +1,10 @@
+import Socket from "./socket";
+
 export class WebRTC {
   static instance: WebRTC | undefined;
   localStream: MediaStream | undefined;
   localVideo: HTMLVideoElement = document.createElement("video");
+  socket = new Socket().socket;
 
   constructor() {
     if (WebRTC.instance) {
@@ -18,11 +21,12 @@ export class WebRTC {
 
       this.localVideo.srcObject = stream;
       this.localStream = stream;
+      this.socket.emit("get-media-stream", "got media stream~!");
     } catch (e) {
       alert(`getUserMedia() error: ${e}`);
     }
   }
-  
+
   setLocalVideo(localVideo: HTMLVideoElement) {
     this.localVideo = localVideo;
   }
@@ -50,28 +54,10 @@ export class WebRTC {
     console.log("Cameras found:", videoCameras);
   }
 
-  updateCameraList(cameras: MediaDeviceInfo[]) {
-    const listElement = document.querySelector("select#availableCameras") as HTMLSelectElement;
-
-    if (!listElement) {
-      return;
-    }
-    listElement.innerHTML = "";
-
-    cameras
-      .map((camera: MediaDeviceInfo) => {
-        const cameraOption = document.createElement("option");
-        cameraOption.label = camera.label;
-        cameraOption.value = camera.deviceId;
-        return cameraOption;
-      })
-      .forEach((cameraOption) => listElement.add(cameraOption));
-  }
-
   addEventListenerOfUserDeviceChange() {
     navigator.mediaDevices.addEventListener("devicechange", async (event) => {
       const newCameraList = await this.getConnectedDevices("video");
-      this.updateCameraList(newCameraList);
+      console.log(newCameraList);
     });
   }
 
@@ -109,44 +95,45 @@ export class WebRTC {
     }
   }
 
-  async makeCall() {
-    const localStream = this.localStream;
-    if (!localStream) {
-      return;
+  async createOffer() {
+    const iceConfiguration = {
+      iceServers: [
+        {
+          urls: [
+            "stun:stun1.l.google.com:19302",
+            "stun:stun2.l.google.com:19302",
+            "turn:my-turn-server.mycompany.com:19403",
+          ],
+          username: "optional-username",
+          credentials: "auth-token",
+        },
+      ],
+    };
+    const pc1 = new RTCPeerConnection(iceConfiguration);
+    const localStream = await navigator.mediaDevices.getUserMedia({});
+    const remoteStream=new MediaStream();
+
+    const tracks = localStream.getTracks();
+    tracks.forEach((track) => pc1.addTrack(track, localStream));
+    pc1.ontrack=event=>{
+        event.streams[0].getTracks().forEach(track=>remoteStream.addTrack(track))
     }
 
-    const videoTracks = localStream.getVideoTracks();
-    const audioTracks = localStream.getAudioTracks();
-    if (videoTracks.length > 0) {
-      console.log(`Using video device: ${videoTracks[0].label}`);
+    pc1.onicecandidate=async(event)=>{
+        if(event.candidate){
+            console.log('icecandidate',event.candidate)
+        }
     }
-    if (audioTracks.length > 0) {
-      console.log(`Using audio device: ${audioTracks[0].label}`);
-    }
-    const configuration = {};
 
-    pc1 = new RTCPeerConnection(configuration);
 
-    pc1.addEventListener("icecandidate", (e) => onIceCandidate(pc1, e));
-    pc2 = new RTCPeerConnection(configuration);
-    console.log("Created remote peer connection object pc2");
+    const offer = await pc1.createOffer();
 
-    pc2.addEventListener("icecandidate", (e) => onIceCandidate(pc2, e));
-    pc1.addEventListener("iceconnectionstatechange", (e) => onIceStateChange(pc1, e));
-    pc2.addEventListener("iceconnectionstatechange", (e) => onIceStateChange(pc2, e));
-    pc2.addEventListener("track", gotRemoteStream);
+    await pc1.setLocalDescription(offer);
 
-    localStream.getTracks().forEach((track) => pc1.addTrack(track, localStream));
-    console.log("Added local stream to pc1");
 
-    try {
-      console.log("pc1 createOffer start");
-      const offer = await pc1.createOffer(offerOptions);
-      await onCreateOfferSuccess(offer);
-    } catch (e) {
-      onCreateSessionDescriptionError(e);
-    }
+    //send message to uid
   }
+
   requestVideoCall() {}
 
   answerVideoCall() {}
