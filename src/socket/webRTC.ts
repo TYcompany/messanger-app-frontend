@@ -1,11 +1,20 @@
 import Socket from "./socket";
 
+interface MessageSignalType {
+  type: string;
+  message: {
+    offer?: RTCSessionDescriptionInit;
+    answer?: RTCSessionDescriptionInit;
+    candidate?: RTCIceCandidate;
+  };
+}
+
 export class WebRTC {
   static instance: WebRTC | undefined;
   localStream: MediaStream | undefined;
   localVideo: HTMLVideoElement = document.createElement("video");
   socket = new Socket().socket;
-
+  peerConnection = new RTCPeerConnection();
   constructor() {
     if (WebRTC.instance) {
       return WebRTC.instance;
@@ -95,7 +104,7 @@ export class WebRTC {
     }
   }
 
-  async createOffer() {
+  async createPeerConnection() {
     const iceConfiguration = {
       iceServers: [
         {
@@ -109,29 +118,61 @@ export class WebRTC {
         },
       ],
     };
-    const pc1 = new RTCPeerConnection(iceConfiguration);
+    this.peerConnection = new RTCPeerConnection(iceConfiguration);
     const localStream = await navigator.mediaDevices.getUserMedia({});
-    const remoteStream=new MediaStream();
+    const remoteStream = new MediaStream();
+    const peerConnection = this.peerConnection;
 
     const tracks = localStream.getTracks();
-    tracks.forEach((track) => pc1.addTrack(track, localStream));
-    pc1.ontrack=event=>{
-        event.streams[0].getTracks().forEach(track=>remoteStream.addTrack(track))
-    }
+    tracks.forEach((track) => peerConnection.addTrack(track, localStream));
+    peerConnection.ontrack = (event) => {
+      event.streams[0].getTracks().forEach((track) => remoteStream.addTrack(track));
+    };  
 
-    pc1.onicecandidate=async(event)=>{
-        if(event.candidate){
-            console.log('icecandidate',event.candidate)
-        }
-    }
+    peerConnection.onicecandidate = async (event) => {
+      if (event.candidate) {
+        console.log("icecandidate", event.candidate);
+      }
+    };
+    return peerConnection;
+  }
 
+  async createOffer() {
+    const peerConnection = await this.createPeerConnection();
 
-    const offer = await pc1.createOffer();
-
-    await pc1.setLocalDescription(offer);
-
+    const offer = await peerConnection.createOffer();
+    await peerConnection.setLocalDescription(offer);
 
     //send message to uid
+  }
+
+  async createAnswer(offer: RTCSessionDescriptionInit) {
+    const peerConnection = await this.createPeerConnection();
+    await peerConnection.setRemoteDescription(offer);
+    const answer = await peerConnection.createAnswer();
+    await peerConnection.setLocalDescription(answer);
+
+    //return answer to signal server
+  }
+  async addAnswer(answer: RTCSessionDescriptionInit) {
+    const peerConnection = this.peerConnection;
+    if (!peerConnection.currentRemoteDescription) {
+      peerConnection.setRemoteDescription(answer);
+    }
+  }
+
+  async handleMessageFromPeer(messageSignal: MessageSignalType, memberId: string) {
+    const { type, message } = messageSignal;
+
+    if (type === "offer" && message.offer) {
+      this.createAnswer(message.offer);
+    }
+    if (type === "answer" && message.answer) {
+      this.addAnswer(message.answer);
+    }
+    if (type === "candidate" && this.peerConnection) {
+      this.peerConnection.addIceCandidate(message.candidate);
+    }
   }
 
   requestVideoCall() {}
