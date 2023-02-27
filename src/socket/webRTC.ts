@@ -1,13 +1,23 @@
 import Socket from "./socket";
 
+enum SignalMessageEnum {
+  READY = "ready",
+  OFFER = "offer",
+  ANSWER = "answer",
+  CANDIDATE = "candidate",
+  JOIN = "join",
+}
+
 interface SignalMessageType {
-  type: string;
+  type: SignalMessageEnum;
+  roomId: string;
   message: {
     offer?: RTCSessionDescriptionInit;
     answer?: RTCSessionDescriptionInit;
     candidate?: RTCIceCandidate;
   };
 }
+
 const RTC_SIGNALNAME = "rtc-signal";
 const iceConfiguration = {
   iceServers: [
