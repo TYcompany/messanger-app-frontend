@@ -1,6 +1,6 @@
 import Socket from "./socket";
 
-interface MessageSignalType {
+interface SignalMessageType {
   type: string;
   message: {
     offer?: RTCSessionDescriptionInit;
@@ -8,6 +8,20 @@ interface MessageSignalType {
     candidate?: RTCIceCandidate;
   };
 }
+const RTC_SIGNALNAME = "rtc-signal";
+const iceConfiguration = {
+  iceServers: [
+    {
+      urls: [
+        "stun:stun1.l.google.com:19302",
+        "stun:stun2.l.google.com:19302",
+        "turn:my-turn-server.mycompany.com:19403",
+      ],
+      username: "optional-username",
+      credentials: "auth-token",
+    },
+  ],
+};
 
 export class WebRTC {
   static instance: WebRTC | undefined;
@@ -30,7 +44,31 @@ export class WebRTC {
 
       this.localVideo.srcObject = stream;
       this.localStream = stream;
-      this.socket.emit("get-media-stream", "got media stream~!");
+      this.socket.emit(RTC_SIGNALNAME, "get-media-stream");
+
+      //init socket listener
+      this.socket.on("answer", (answer) => {
+        this.peerConnection.setRemoteDescription(answer);
+      });
+
+      this.socket.on("offer", async (offer) => {
+        if (!this.peerConnection) {
+          this.peerConnection = new RTCPeerConnection(iceConfiguration);
+        }
+
+        // accept or decline;
+
+        // const peerConnection = this.peerConnection;
+        // peerConnection.onicecandidate = OnIceCandidateFunction;
+        // peerConnection.ontrack = OnTrackFunction;
+        // peerConnection.addTrack(userStream.getTracks()[0], userStream);
+        // peerConnection.addTrack(userStream.getTracks()[1], userStream);
+        // peerConnection.setRemoteDescription(offer);
+        // const answer = await peerConnection.createAnswer();
+
+        // peerConnection.setLocalDescription(answer);
+        // this.socket.emit("answer", answer, roomName);
+      });
     } catch (e) {
       alert(`getUserMedia() error: ${e}`);
     }
@@ -105,19 +143,6 @@ export class WebRTC {
   }
 
   async createPeerConnection() {
-    const iceConfiguration = {
-      iceServers: [
-        {
-          urls: [
-            "stun:stun1.l.google.com:19302",
-            "stun:stun2.l.google.com:19302",
-            "turn:my-turn-server.mycompany.com:19403",
-          ],
-          username: "optional-username",
-          credentials: "auth-token",
-        },
-      ],
-    };
     this.peerConnection = new RTCPeerConnection(iceConfiguration);
     const localStream = await navigator.mediaDevices.getUserMedia({});
     const remoteStream = new MediaStream();
@@ -127,7 +152,7 @@ export class WebRTC {
     tracks.forEach((track) => peerConnection.addTrack(track, localStream));
     peerConnection.ontrack = (event) => {
       event.streams[0].getTracks().forEach((track) => remoteStream.addTrack(track));
-    };  
+    };
 
     peerConnection.onicecandidate = async (event) => {
       if (event.candidate) {
@@ -144,6 +169,7 @@ export class WebRTC {
     await peerConnection.setLocalDescription(offer);
 
     //send message to uid
+    this.socket.emit(RTC_SIGNALNAME, { type: "answer", message: { offer } });
   }
 
   async createAnswer(offer: RTCSessionDescriptionInit) {
@@ -152,7 +178,7 @@ export class WebRTC {
     const answer = await peerConnection.createAnswer();
     await peerConnection.setLocalDescription(answer);
 
-    //return answer to signal server
+    this.socket.emit(RTC_SIGNALNAME, { type: "answer", message: { answer } });
   }
   async addAnswer(answer: RTCSessionDescriptionInit) {
     const peerConnection = this.peerConnection;
@@ -161,8 +187,8 @@ export class WebRTC {
     }
   }
 
-  async handleMessageFromPeer(messageSignal: MessageSignalType, memberId: string) {
-    const { type, message } = messageSignal;
+  async handleMessageFromPeer(signalMessage: SignalMessageType, memberId: string) {
+    const { type, message } = signalMessage;
 
     if (type === "offer" && message.offer) {
       this.createAnswer(message.offer);
