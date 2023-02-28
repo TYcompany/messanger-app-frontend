@@ -42,6 +42,9 @@ export class WebRTC {
 
   socket = new Socket().socket;
   peerConnection = new RTCPeerConnection();
+
+  setIsOpened: Function = () => {};
+
   constructor() {
     if (WebRTC.instance) {
       return WebRTC.instance;
@@ -53,6 +56,7 @@ export class WebRTC {
 
   async init() {
     try {
+      this.setIsOpened(true);
       const stream = await navigator.mediaDevices.getUserMedia({ audio: true, video: true });
       this.localStream = stream;
 
@@ -63,8 +67,13 @@ export class WebRTC {
         this.peerConnection.setRemoteDescription(answer);
       });
 
+      this.socket.on(RTC_SIGNALNAME, (signalMessage: SignalMessageType, roomId: string) =>
+        this.handleSignalMessage(roomId, signalMessage)
+      );
+
       this.socket.on("offer", async (offer) => {
         // await accept or decline;
+        this.setIsOpened(true);
         // return reject event
 
         if (!this.peerConnection) {
@@ -86,6 +95,23 @@ export class WebRTC {
       alert(`getUserMedia() error: ${e}`);
     }
   }
+
+  async handleSignalMessage(roomId: string, signalMessage: SignalMessageType) {
+    const { type, message } = signalMessage;
+
+    if (type === "offer" && message.offer) {
+      //check if yes or no;
+      await this.createAndSendAnswer(roomId, message.offer);
+    }
+
+    if (type === "answer" && message.answer) {
+      this.addAnswer(message.answer);
+    }
+    if (type === "candidate" && this.peerConnection) {
+      this.peerConnection.addIceCandidate(message.candidate);
+    }
+  }
+
   setLocalVideoElement = (localVideo: HTMLVideoElement) => {
     this.localVideo = localVideo;
 
@@ -181,42 +207,28 @@ export class WebRTC {
     return peerConnection;
   }
 
-  async createOffer() {
+  async createOffer(roomId: string) {
     const peerConnection = await this.createPeerConnection();
 
     const offer = await peerConnection.createOffer();
     await peerConnection.setLocalDescription(offer);
 
-    //send message to uid
-    this.socket.emit(RTC_SIGNALNAME, { type: "answer", message: { offer } });
+    this.socket.emit(RTC_SIGNALNAME, { roomId, type: "offer", message: { offer } });
   }
 
-  async createAnswer(offer: RTCSessionDescriptionInit) {
+  async createAndSendAnswer(roomId: string, offer: RTCSessionDescriptionInit) {
     const peerConnection = await this.createPeerConnection();
     await peerConnection.setRemoteDescription(offer);
     const answer = await peerConnection.createAnswer();
     await peerConnection.setLocalDescription(answer);
 
-    this.socket.emit(RTC_SIGNALNAME, { type: "answer", message: { answer } });
+    this.socket.emit(RTC_SIGNALNAME, { roomId, type: "answer", message: { answer } });
   }
+
   async addAnswer(answer: RTCSessionDescriptionInit) {
     const peerConnection = this.peerConnection;
     if (!peerConnection.currentRemoteDescription) {
       peerConnection.setRemoteDescription(answer);
-    }
-  }
-
-  async handleMessageFromPeer(signalMessage: SignalMessageType, memberId: string) {
-    const { type, message } = signalMessage;
-
-    if (type === "offer" && message.offer) {
-      this.createAnswer(message.offer);
-    }
-    if (type === "answer" && message.answer) {
-      this.addAnswer(message.answer);
-    }
-    if (type === "candidate" && this.peerConnection) {
-      this.peerConnection.addIceCandidate(message.candidate);
     }
   }
 
