@@ -37,6 +37,9 @@ export class WebRTC {
   static instance: WebRTC | undefined;
   localStream: MediaStream | undefined;
   localVideo: HTMLVideoElement = document.createElement("video");
+  remoteStream: MediaStream | undefined;
+  remoteVideo: HTMLVideoElement = document.createElement("video");
+
   socket = new Socket().socket;
   peerConnection = new RTCPeerConnection();
   constructor() {
@@ -54,6 +57,10 @@ export class WebRTC {
 
       this.localVideo.srcObject = stream;
       this.localStream = stream;
+      this.localVideo.onloadedmetadata = () => {
+        this.localVideo.play();
+      };
+
       this.socket.emit(RTC_SIGNALNAME, "get-media-stream");
 
       //init socket listener
@@ -62,11 +69,12 @@ export class WebRTC {
       });
 
       this.socket.on("offer", async (offer) => {
+        // await accept or decline;
+        // return reject event
+
         if (!this.peerConnection) {
           this.peerConnection = new RTCPeerConnection(iceConfiguration);
         }
-
-        // accept or decline;
 
         // const peerConnection = this.peerConnection;
         // peerConnection.onicecandidate = OnIceCandidateFunction;
