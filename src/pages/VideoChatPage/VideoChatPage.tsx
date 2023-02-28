@@ -1,10 +1,23 @@
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import { WebRTC } from "../../socket/webRTC";
 
 const VideoChatPage = () => {
+  const videoRef = useRef(null);
+
   useEffect(() => {
     const webRtc = new WebRTC();
-  }, []);
-  return <div></div>;
+
+    const initFunction = async () => {
+      await webRtc.init();
+      if (videoRef.current) webRtc.setLocalVideoElement(videoRef.current);
+    };
+    initFunction();
+  }, [videoRef]);
+
+  return (
+    <div>
+      <video ref={videoRef}></video>
+    </div>
+  );
 };
 export default VideoChatPage;

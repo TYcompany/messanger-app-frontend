@@ -35,9 +35,9 @@ const iceConfiguration = {
 
 export class WebRTC {
   static instance: WebRTC | undefined;
-  localStream: MediaStream | undefined;
+  localStream: MediaStream = new MediaStream();
   localVideo: HTMLVideoElement = document.createElement("video");
-  remoteStream: MediaStream | undefined;
+  remoteStream: MediaStream = new MediaStream();
   remoteVideo: HTMLVideoElement = document.createElement("video");
 
   socket = new Socket().socket;
@@ -54,12 +54,7 @@ export class WebRTC {
   async init() {
     try {
       const stream = await navigator.mediaDevices.getUserMedia({ audio: true, video: true });
-
-      this.localVideo.srcObject = stream;
       this.localStream = stream;
-      this.localVideo.onloadedmetadata = () => {
-        this.localVideo.play();
-      };
 
       this.socket.emit(RTC_SIGNALNAME, "get-media-stream");
 
@@ -91,10 +86,16 @@ export class WebRTC {
       alert(`getUserMedia() error: ${e}`);
     }
   }
-
-  setLocalVideo(localVideo: HTMLVideoElement) {
+  setLocalVideoElement = (localVideo: HTMLVideoElement) => {
     this.localVideo = localVideo;
-  }
+
+    this.localVideo.srcObject = this.localStream;
+    this.localVideo.onloadedmetadata = () => {
+      this.localVideo.play();
+    };
+  };
+
+  setRemoteVideoElement = () => {};
 
   getUserMediaApproval() {
     const openMediaDevices = async (constraints: { video: boolean; audio: boolean }) => {
