@@ -1,14 +1,15 @@
 import Socket from "./socket";
 
-enum SignalMessageEnum {
+export enum SignalMessageEnum {
   READY = "ready",
   OFFER = "offer",
+  REJECT = "reject",
   ANSWER = "answer",
   CANDIDATE = "candidate",
   JOIN = "join",
 }
 
-interface SignalMessageType {
+export interface SignalMessageType {
   type: SignalMessageEnum;
   roomId: string;
   message: {
@@ -44,6 +45,10 @@ export class WebRTC {
   peerConnection = new RTCPeerConnection();
 
   setIsOpened: Function = () => {};
+  roomId: string = "";
+  currentRoomId: string = "";
+
+  setSignalMessage?: React.Dispatch<React.SetStateAction<SignalMessageType>>;
 
   constructor() {
     if (WebRTC.instance) {
@@ -53,6 +58,21 @@ export class WebRTC {
     WebRTC.instance = this;
     this.init();
   }
+  onIceCandidateFunction(event: RTCPeerConnectionIceEvent) {
+    this.socket.emit(RTC_SIGNALNAME, {
+      type: "candidate",
+      roomId: this.roomId,
+      message: { candidate: event.candidate },
+    });
+  }
+  onTrackFunction(event: RTCTrackEvent) {
+    const remoteVideo = this.remoteVideo;
+
+    remoteVideo.srcObject = event.streams[0];
+    remoteVideo.onloadedmetadata = () => {
+      remoteVideo.play();
+    };
+  }
 
   async init() {
     try {
@@ -61,6 +81,23 @@ export class WebRTC {
       this.localStream = stream;
 
       this.socket.emit(RTC_SIGNALNAME, "get-media-stream");
+
+      this.socket.on("ready", async () => {
+        await this.createPeerConnection();
+
+        const peerConnection = this.peerConnection;
+        peerConnection.onicecandidate = this.onIceCandidateFunction;
+        peerConnection.ontrack = this.onTrackFunction;
+
+        const localStream = this.localStream;
+        peerConnection.addTrack(localStream.getTracks()[0], localStream);
+        peerConnection.addTrack(localStream.getTracks()[1], localStream);
+        // peerConnection.setRemoteDescription(offer);
+        // const answer = await peerConnection.createAnswer();
+
+        // peerConnection.setLocalDescription(answer);
+        // this.socket.emit("answer", answer, roomName);
+      });
 
       //init socket listener
       this.socket.on("answer", (answer) => {
@@ -76,20 +113,7 @@ export class WebRTC {
         this.setIsOpened(true);
         // return reject event
 
-        if (!this.peerConnection) {
-          this.peerConnection = new RTCPeerConnection(iceConfiguration);
-        }
-
-        // const peerConnection = this.peerConnection;
-        // peerConnection.onicecandidate = OnIceCandidateFunction;
-        // peerConnection.ontrack = OnTrackFunction;
-        // peerConnection.addTrack(userStream.getTracks()[0], userStream);
-        // peerConnection.addTrack(userStream.getTracks()[1], userStream);
-        // peerConnection.setRemoteDescription(offer);
-        // const answer = await peerConnection.createAnswer();
-
-        // peerConnection.setLocalDescription(answer);
-        // this.socket.emit("answer", answer, roomName);
+        await this.createAndSendAnswer(this.roomId, offer);
       });
     } catch (e) {
       alert(`getUserMedia() error: ${e}`);
@@ -112,6 +136,20 @@ export class WebRTC {
     }
   }
 
+  onLeaveRoomButtonClick = () => {
+    this.socket.emit("leave", this.roomId);
+    (this.localVideo.srcObject as MediaStream)?.getTracks().map((track) => track.stop());
+    (this.remoteVideo.srcObject as MediaStream)?.getTracks().map((track) => track.stop());
+
+    const peerConnection = this.peerConnection;
+    if (peerConnection) {
+      peerConnection.ontrack = null;
+      peerConnection.onicecandidate = null;
+      peerConnection.close();
+      this.peerConnection = new RTCPeerConnection();
+    }
+  };
+
   setLocalVideoElement = (localVideo: HTMLVideoElement) => {
     this.localVideo = localVideo;
 
@@ -121,7 +159,14 @@ export class WebRTC {
     };
   };
 
-  setRemoteVideoElement = () => {};
+  setRemoteVideoElement = (remoteVideo: HTMLVideoElement) => {
+    this.remoteVideo = remoteVideo;
+
+    this.remoteVideo.srcObject = this.remoteStream;
+    this.remoteVideo.onloadedmetadata = () => {
+      this.remoteVideo.play();
+    };
+  };
 
   getUserMediaApproval() {
     const openMediaDevices = async (constraints: { video: boolean; audio: boolean }) => {
@@ -195,6 +240,7 @@ export class WebRTC {
 
     const tracks = localStream.getTracks();
     tracks.forEach((track) => peerConnection.addTrack(track, localStream));
+
     peerConnection.ontrack = (event) => {
       event.streams[0].getTracks().forEach((track) => remoteStream.addTrack(track));
     };
@@ -207,18 +253,24 @@ export class WebRTC {
     return peerConnection;
   }
 
-  async createOffer(roomId: string) {
-    const peerConnection = await this.createPeerConnection();
-
+  async createAndSendOffer(roomId: string) {
+    const peerConnection = this.peerConnection;
     const offer = await peerConnection.createOffer();
+
     await peerConnection.setLocalDescription(offer);
 
     this.socket.emit(RTC_SIGNALNAME, { roomId, type: "offer", message: { offer } });
   }
 
+  async rejectOffer(roomId: string) {
+    this.socket.emit(RTC_SIGNALNAME, { roomId, type: "reject", message: { roomId } });
+  }
+
   async createAndSendAnswer(roomId: string, offer: RTCSessionDescriptionInit) {
-    const peerConnection = await this.createPeerConnection();
+    const peerConnection = this.peerConnection;
+
     await peerConnection.setRemoteDescription(offer);
+
     const answer = await peerConnection.createAnswer();
     await peerConnection.setLocalDescription(answer);
 
