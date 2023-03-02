@@ -7,6 +7,7 @@ export enum SignalMessageEnum {
   ANSWER = "answer",
   CANDIDATE = "candidate",
   JOIN = "join",
+  LEAVE = "leave",
 }
 
 export interface SignalMessageType {
@@ -23,13 +24,7 @@ const RTC_SIGNALNAME = "rtc-signal";
 const iceConfiguration = {
   iceServers: [
     {
-      urls: [
-        "stun:stun1.l.google.com:19302",
-        "stun:stun2.l.google.com:19302",
-        "turn:my-turn-server.mycompany.com:19403",
-      ],
-      username: "optional-username",
-      credentials: "auth-token",
+      urls: ["stun:stun1.l.google.com:19302", "stun:stun2.l.google.com:19302"],
     },
   ],
 };
@@ -49,6 +44,7 @@ export class WebRTC {
   currentRoomId: string = "";
 
   setSignalMessage?: React.Dispatch<React.SetStateAction<SignalMessageType>>;
+  setOnCall?: React.Dispatch<React.SetStateAction<boolean>>;
 
   constructor() {
     if (WebRTC.instance) {
@@ -59,6 +55,9 @@ export class WebRTC {
     this.init();
   }
   onIceCandidateFunction(event: RTCPeerConnectionIceEvent) {
+    if (event.candidate) {
+      this.peerConnection.addIceCandidate(event.candidate);
+    }
     this.socket.emit(RTC_SIGNALNAME, {
       type: "candidate",
       roomId: this.roomId,
@@ -77,26 +76,13 @@ export class WebRTC {
   async init() {
     try {
       this.setIsOpened(true);
-      const stream = await navigator.mediaDevices.getUserMedia({ audio: true, video: true });
-      this.localStream = stream;
+      const peerConnection = await this.createPeerConnection();
+      this.peerConnection = peerConnection;
 
       this.socket.emit(RTC_SIGNALNAME, "get-media-stream");
 
       this.socket.on("ready", async () => {
-        await this.createPeerConnection();
-
-        const peerConnection = this.peerConnection;
-        peerConnection.onicecandidate = this.onIceCandidateFunction;
-        peerConnection.ontrack = this.onTrackFunction;
-
-        const localStream = this.localStream;
-        peerConnection.addTrack(localStream.getTracks()[0], localStream);
-        peerConnection.addTrack(localStream.getTracks()[1], localStream);
-        // peerConnection.setRemoteDescription(offer);
-        // const answer = await peerConnection.createAnswer();
-
-        // peerConnection.setLocalDescription(answer);
-        // this.socket.emit("answer", answer, roomName);
+        await this.setRemoteStream();
       });
 
       //init socket listener
@@ -104,39 +90,61 @@ export class WebRTC {
         this.peerConnection.setRemoteDescription(answer);
       });
 
-      this.socket.on(RTC_SIGNALNAME, (signalMessage: SignalMessageType, roomId: string) =>
-        this.handleSignalMessage(roomId, signalMessage)
-      );
-
-      this.socket.on("offer", async (offer) => {
-        // await accept or decline;
-        this.setIsOpened(true);
-        // return reject event
-
-        await this.createAndSendAnswer(this.roomId, offer);
+      this.socket.on(RTC_SIGNALNAME, (signalMessage: SignalMessageType) => {
+        console.log(signalMessage);
+        this.handleSignalMessage(signalMessage);
       });
+
+      this.joinRoom();
     } catch (e) {
       alert(`getUserMedia() error: ${e}`);
     }
   }
+  async joinRoom(roomId: string = "mock-roomId") {
+    this.socket.emit(RTC_SIGNALNAME, { type: SignalMessageEnum.JOIN, roomId });
+  }
+  async setRemoteStream() {
+    const peerConnection = this.peerConnection;
 
-  async handleSignalMessage(roomId: string, signalMessage: SignalMessageType) {
-    const { type, message } = signalMessage;
+    peerConnection.onicecandidate = this.onIceCandidateFunction;
+    peerConnection.ontrack = this.onTrackFunction;
 
-    if (type === "offer" && message.offer) {
+    const localStream = this.localStream;
+    peerConnection.addTrack(localStream.getTracks()[0], localStream);
+    peerConnection.addTrack(localStream.getTracks()[1], localStream);
+  }
+
+  async handleSignalMessage(signalMessage: SignalMessageType) {
+    const { type, message, roomId } = signalMessage;
+
+    if (type === SignalMessageEnum.CANDIDATE && this.peerConnection) {
+      this.peerConnection.addIceCandidate(message.candidate);
+    }
+    if (type === SignalMessageEnum.OFFER && message.offer) {
       //check if yes or no;
+      // await accept or decline;
+      //this.setIsOpened(true);
+      // return reject event
+
       await this.createAndSendAnswer(roomId, message.offer);
     }
 
-    if (type === "answer" && message.answer) {
+    if (type === SignalMessageEnum.ANSWER && message.answer) {
       this.addAnswer(message.answer);
+      //startVideoChat;
     }
-    if (type === "candidate" && this.peerConnection) {
-      this.peerConnection.addIceCandidate(message.candidate);
+    if (type === SignalMessageEnum.REJECT) {
+      alert("rejected!");
+    }
+
+    if (type === SignalMessageEnum.LEAVE) {
+      this.onLeaveRoomButtonClick(roomId);
+    }
+    if (type === SignalMessageEnum.JOIN) {
     }
   }
 
-  onLeaveRoomButtonClick = () => {
+  onLeaveRoomButtonClick = (roomId: string) => {
     this.socket.emit("leave", this.roomId);
     (this.localVideo.srcObject as MediaStream)?.getTracks().map((track) => track.stop());
     (this.remoteVideo.srcObject as MediaStream)?.getTracks().map((track) => track.stop());
@@ -234,8 +242,13 @@ export class WebRTC {
 
   async createPeerConnection() {
     this.peerConnection = new RTCPeerConnection(iceConfiguration);
-    const localStream = await navigator.mediaDevices.getUserMedia({});
+    const localStream = await navigator.mediaDevices.getUserMedia({ video: true, audio: true });
+    this.localStream = localStream;
+    this.localVideo.srcObject = this.localStream;
+
     const remoteStream = new MediaStream();
+    this.remoteVideo.srcObject = this.remoteStream;
+
     const peerConnection = this.peerConnection;
 
     const tracks = localStream.getTracks();
@@ -250,6 +263,7 @@ export class WebRTC {
         console.log("icecandidate", event.candidate);
       }
     };
+
     return peerConnection;
   }
 
@@ -259,32 +273,44 @@ export class WebRTC {
 
     await peerConnection.setLocalDescription(offer);
 
-    this.socket.emit(RTC_SIGNALNAME, { roomId, type: "offer", message: { offer } });
+    this.socket.emit(RTC_SIGNALNAME, { roomId, type: SignalMessageEnum.OFFER, message: { offer } });
   }
 
   async rejectOffer(roomId: string) {
-    this.socket.emit(RTC_SIGNALNAME, { roomId, type: "reject", message: { roomId } });
+    this.socket.emit(RTC_SIGNALNAME, {
+      roomId,
+      type: SignalMessageEnum.REJECT,
+      message: { roomId },
+    });
   }
 
   async createAndSendAnswer(roomId: string, offer: RTCSessionDescriptionInit) {
+    if (!window.confirm("got video chat request!")) {
+      return;
+    } else {
+      this.rejectOffer(roomId);
+    }
+
     const peerConnection = this.peerConnection;
 
     await peerConnection.setRemoteDescription(offer);
 
     const answer = await peerConnection.createAnswer();
+
     await peerConnection.setLocalDescription(answer);
 
-    this.socket.emit(RTC_SIGNALNAME, { roomId, type: "answer", message: { answer } });
+    this.socket.emit(RTC_SIGNALNAME, {
+      roomId,
+      type: SignalMessageEnum.ANSWER,
+      message: { answer },
+    });
   }
 
   async addAnswer(answer: RTCSessionDescriptionInit) {
-    const peerConnection = this.peerConnection;
-    if (!peerConnection.currentRemoteDescription) {
-      peerConnection.setRemoteDescription(answer);
+    try {
+      this.peerConnection.setRemoteDescription(answer);
+    } catch (e) {
+      console.log(e);
     }
   }
-
-  requestVideoCall() {}
-
-  answerVideoCall() {}
 }

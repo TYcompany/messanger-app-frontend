@@ -1,8 +1,8 @@
 import { useEffect, useRef, useState } from "react";
 import useWebRTC from "../../socket/useWebRTC";
 import { WebRTC } from "../../socket/webRTC";
-
-const VideoChatPage = ({ roomId }: { roomId: string }) => {
+//{ roomId }: { roomId: string }
+const VideoChatPage = () => {
   const {
     localVideoRef,
     remoteVideoRef,
@@ -11,12 +11,23 @@ const VideoChatPage = ({ roomId }: { roomId: string }) => {
     onClickReject,
     isWaitingResponse,
   } = useWebRTC();
-  
+
+  const [roomId, setRoomId] = useState("");
+
   return (
     <div>
       <video ref={localVideoRef}></video>
       <video ref={remoteVideoRef}></video>
-    
+      <button onClick={() => !isWaitingResponse.offer && onClickOffer("mock-roomId")}>
+        sendOffer
+      </button>
+      <button
+        onClick={() => {
+          !isWaitingResponse.answer && onClickConfirm("mock-roomId");
+        }}
+      >
+        sendAnswer
+      </button>
     </div>
   );
 };

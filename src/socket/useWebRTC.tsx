@@ -3,6 +3,8 @@ import { SignalMessageEnum, SignalMessageType, WebRTC } from "./webRTC";
 
 function useWebRTC() {
   const [webRtc, setWebRtc] = useState(new WebRTC());
+  const [onCall, setOnCall] = useState(false);
+
   const [signalMessage, setSignalMessage] = useState<SignalMessageType>({
     type: SignalMessageEnum.READY,
     roomId: "",
@@ -23,13 +25,14 @@ function useWebRTC() {
     const initFunction = async () => {
       webRtc.setIsOpened = setIsOpened;
       webRtc.setSignalMessage = setSignalMessage;
+      webRtc.setOnCall = setOnCall;
       await webRtc.init();
       if (localVideoRef.current) webRtc.setLocalVideoElement(localVideoRef.current);
       if (remoteVideoRef.current) webRtc.setLocalVideoElement(remoteVideoRef.current);
     };
     initFunction();
 
-    return () => webRtc.onLeaveRoomButtonClick();
+    return () => webRtc.onLeaveRoomButtonClick(webRtc.roomId);
   }, [localVideoRef, remoteVideoRef, webRtc]);
 
   const handleSignalMessage = async () => {};
@@ -55,7 +58,7 @@ function useWebRTC() {
   };
 
   const onLeaveButtonClick = () => {
-    webRtc.onLeaveRoomButtonClick();
+    webRtc.onLeaveRoomButtonClick(webRtc.roomId);
   };
 
   return {
@@ -65,6 +68,8 @@ function useWebRTC() {
     onClickConfirm,
     onClickReject,
     isWaitingResponse,
+    onLeaveButtonClick,
+    onCall,
   };
 }
 
