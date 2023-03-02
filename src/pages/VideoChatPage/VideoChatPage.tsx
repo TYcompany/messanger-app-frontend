@@ -16,8 +16,8 @@ const VideoChatPage = () => {
 
   return (
     <div>
-      <video ref={localVideoRef}></video>
-      <video ref={remoteVideoRef}></video>
+      <video ref={localVideoRef} style={{ width: "500", height: "500",background:'yellow' }}></video>
+      <video ref={remoteVideoRef} style={{ width: "500", height: "500",background:'black' }}></video>
       <button onClick={() => !isWaitingResponse.offer && onClickOffer("mock-roomId")}>
         sendOffer
       </button>

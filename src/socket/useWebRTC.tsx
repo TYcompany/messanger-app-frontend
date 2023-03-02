@@ -28,7 +28,7 @@ function useWebRTC() {
       webRtc.setOnCall = setOnCall;
 
       if (localVideoRef.current) webRtc.setLocalVideoElement(localVideoRef.current);
-      if (remoteVideoRef.current) webRtc.setLocalVideoElement(remoteVideoRef.current);
+      if (remoteVideoRef.current) webRtc.setRemoteVideoElement(remoteVideoRef.current);
     };
     initFunction();
 
