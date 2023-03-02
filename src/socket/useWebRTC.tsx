@@ -26,7 +26,7 @@ function useWebRTC() {
       webRtc.setIsOpened = setIsOpened;
       webRtc.setSignalMessage = setSignalMessage;
       webRtc.setOnCall = setOnCall;
-      await webRtc.init();
+
       if (localVideoRef.current) webRtc.setLocalVideoElement(localVideoRef.current);
       if (remoteVideoRef.current) webRtc.setLocalVideoElement(remoteVideoRef.current);
     };

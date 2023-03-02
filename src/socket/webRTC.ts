@@ -81,14 +81,9 @@ export class WebRTC {
 
       this.socket.emit(RTC_SIGNALNAME, "get-media-stream");
 
-      this.socket.on("ready", async () => {
-        await this.setRemoteStream();
-      });
-
-      //init socket listener
-      this.socket.on("answer", (answer) => {
-        this.peerConnection.setRemoteDescription(answer);
-      });
+      // this.socket.on("ready", async () => {
+      //   await this.setRemoteStream();
+      // });
 
       this.socket.on(RTC_SIGNALNAME, (signalMessage: SignalMessageType) => {
         console.log(signalMessage);

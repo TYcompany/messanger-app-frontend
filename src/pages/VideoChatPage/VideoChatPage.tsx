@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import useWebRTC from "../../socket/useWebRTC";
-import { WebRTC } from "../../socket/webRTC";
+
 //{ roomId }: { roomId: string }
 const VideoChatPage = () => {
   const {
