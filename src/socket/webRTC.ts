@@ -56,35 +56,28 @@ export class WebRTC {
     WebRTC.instance = this;
     this.init();
   }
-  onIceCandidateFunction(event: RTCPeerConnectionIceEvent) {
-    if (event.candidate) {
-      this.peerConnection.addIceCandidate(event.candidate);
-    }
-    this.socket.emit(RTC_SIGNALNAME, {
-      type: "candidate",
-      roomId: this.roomId,
-      message: { candidate: event.candidate },
-    });
-  }
+
   onTrackFunction(event: RTCTrackEvent) {
     const remoteVideo = this.remoteVideo;
-    console.log(event);
-    console.log(remoteVideo);
 
-    if (!remoteVideo) {
-      return;
-    }
+    // event.streams[0].getTracks().forEach((track) => this.remoteStream.addTrack(track));
+
     remoteVideo.srcObject = event.streams[0];
-    remoteVideo.onloadedmetadata = () => {
-      remoteVideo.play();
-    };
+  }
+
+  async initLocalStream() {
+    const localStream = await navigator.mediaDevices.getUserMedia({ video: true, audio: true });
+
+    this.localStream = localStream;
+    this.localVideo.srcObject = this.localStream;
   }
 
   async init() {
     try {
       this.setIsOpened(true);
-      const peerConnection = await this.createPeerConnection();
-      this.peerConnection = peerConnection;
+      await this.initLocalStream();
+
+      this.peerConnection = await this.createPeerConnection();
 
       this.socket.emit(RTC_SIGNALNAME, "get-media-stream");
 
@@ -97,7 +90,10 @@ export class WebRTC {
         this.handleSignalMessage(signalMessage);
       });
 
-      this.joinRoom();
+      await this.joinRoom();
+
+      // const peerConnection = await this.createPeerConnection();
+      // this.peerConnection = peerConnection;
     } catch (e) {
       alert(`getUserMedia() error: ${e}`);
     }
@@ -111,6 +107,7 @@ export class WebRTC {
     if (type === SignalMessageEnum.CANDIDATE && this.peerConnection) {
       this.peerConnection.addIceCandidate(message.candidate);
     }
+
     if (type === SignalMessageEnum.OFFER && message.offer) {
       //check if yes or no;
       // await accept or decline;
@@ -118,10 +115,12 @@ export class WebRTC {
       // return reject event
 
       await this.createAndSendAnswer(roomId, message.offer);
+      console.log("createand send answer completed");
     }
 
     if (type === SignalMessageEnum.ANSWER && message.answer) {
       this.addAnswer(message.answer);
+      console.log("add answer completed");
       //startVideoChat;
     }
     if (type === SignalMessageEnum.REJECT) {
@@ -165,7 +164,6 @@ export class WebRTC {
     this.remoteVideo.onloadedmetadata = () => {
       this.remoteVideo.play();
     };
-   
   };
 
   getUserMediaApproval() {
@@ -234,31 +232,59 @@ export class WebRTC {
 
   async createPeerConnection() {
     this.peerConnection = new RTCPeerConnection(iceConfiguration);
-    const localStream = await navigator.mediaDevices.getUserMedia({ video: true, audio: true });
-
-    this.localStream = localStream;
-    this.localVideo.srcObject = this.localStream;
-
     const peerConnection = this.peerConnection;
+    peerConnection.ontrack = (event) => this.onTrackFunction(event);
 
-    const tracks = localStream.getTracks();
-    tracks.forEach((track) => peerConnection.addTrack(track, localStream));
+    this.localStream
+      .getTracks()
+      .forEach((track) => peerConnection.addTrack(track, this.localStream));
 
-    peerConnection.ontrack = this.onTrackFunction;
     // {
     //   event.streams[0].getTracks().forEach((track) => remoteStream.addTrack(track));
     // };
 
-    peerConnection.onicecandidate = async (event) => {
-      if (event.candidate) {
-      }
+    peerConnection.onicecandidate = (event) => {
+      this.socket.emit(RTC_SIGNALNAME, {
+        type: SignalMessageEnum.CANDIDATE,
+        roomId: this.roomId,
+        message: { candidate: event.candidate },
+      });
     };
 
     return peerConnection;
   }
 
+  // async setPeerConnectionFromIceCandidate() {
+  //   this.peerConnection = new RTCPeerConnection(iceConfiguration);
+  //   const localStream = await navigator.mediaDevices.getUserMedia({ video: true, audio: true });
+
+  //   this.localStream = localStream;
+  //   this.localVideo.srcObject = this.localStream;
+
+  //   const peerConnection = this.peerConnection;
+
+  //   const tracks = localStream.getTracks();
+  //   tracks.forEach((track) => peerConnection.addTrack(track, localStream));
+
+  //   peerConnection.ontrack = (event) => this.onTrackFunction(event);
+
+  //   peerConnection.onicecandidate = async (event) => {
+  //     if (!event.candidate) {
+  //       return;
+  //     }
+  //     this.socket.emit(RTC_SIGNALNAME, {
+  //       type: SignalMessageEnum.CANDIDATE,
+  //       roomId: this.roomId,
+  //       message: { candidate: event.candidate },
+  //     });
+  //   };
+
+  //   return peerConnection;
+  // }
+
   async createAndSendOffer(roomId: string) {
-    const peerConnection = this.peerConnection;
+    const peerConnection=this.peerConnection;
+    
     const offer = await peerConnection.createOffer();
 
     await peerConnection.setLocalDescription(offer);
@@ -277,10 +303,8 @@ export class WebRTC {
   async createAndSendAnswer(roomId: string, offer: RTCSessionDescriptionInit) {
     if (!window.confirm("got video chat request!")) {
       this.rejectOffer(roomId);
-
       return;
     }
-
     const peerConnection = this.peerConnection;
 
     await peerConnection.setRemoteDescription(offer);
@@ -298,7 +322,7 @@ export class WebRTC {
 
   async addAnswer(answer: RTCSessionDescriptionInit) {
     try {
-      this.peerConnection.setRemoteDescription(answer);
+      await this.peerConnection.setRemoteDescription(answer);
     } catch (e) {
       console.log(e);
     }
