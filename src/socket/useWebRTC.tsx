@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { SignalMessageEnum, SignalMessageType, WebRTC } from "./webRTC";
 
-function useWebRTC({roomId}:{roomId:string}) {
+function useWebRTC({ roomId }: { roomId: string }) {
   const [webRtc, setWebRtc] = useState(new WebRTC(roomId));
   const [onCall, setOnCall] = useState(false);
 

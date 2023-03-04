@@ -39,7 +39,7 @@ export class WebRTC {
   remoteStream: MediaStream = new MediaStream();
   remoteVideo: HTMLVideoElement = document.createElement("video");
 
-  socket = new Socket().socket;
+  socket = new Socket().getSocketInstance();
   peerConnection = new RTCPeerConnection();
 
   setIsOpened: Function = () => {};
