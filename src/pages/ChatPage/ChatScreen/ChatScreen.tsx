@@ -24,7 +24,8 @@ import BasicModal from "../../../components/modals/BasicModal";
 import AddFriendModalComponent from "../ChatNavigation/modals/AddFriendModalComponent";
 import InviteFriendModalComponent from "./modals/InviteFriendModalComponent";
 import { isScrollNearBottom } from "./common/scrollRefLib";
-import VideoCallModalComponent from "./modals/VideoCallModalComponent";
+import { WebRTC } from "../../../socket/webRTC";
+import { useNavigate } from "react-router-dom";
 
 const socket = new Socket().getSocketInstance();
 
@@ -53,6 +54,8 @@ function ChatScreen({
 
   const [text, setText] = useState("");
   const scrollRef = useRef<HTMLDivElement>(null);
+
+  const navigate = useNavigate();
 
   const [activeModalName, setActiveModalName] = useRecoilState(activeModalNameState);
 
@@ -185,6 +188,10 @@ function ChatScreen({
     setIsLoadingPastMessages(false);
   }, [pastMessages]);
 
+  useEffect(() => {
+    //set WebRTC alert Listener
+  }, []);
+
   const sendMessage = async () => {
     if (!currentlyChattingRoom) {
       return;
@@ -223,7 +230,7 @@ function ChatScreen({
 
   const onClickVideoCall = async (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
     e.preventDefault();
-    setActiveModalName("videoCall");
+    navigate(`/video-chat`);
   };
 
   return (
@@ -278,7 +285,6 @@ function ChatScreen({
       )}
 
       <BasicModal modalName="inviteFriend" ModalComponent={InviteFriendModalComponent}></BasicModal>
-      <BasicModal modalName="videoCall" ModalComponent={VideoCallModalComponent}></BasicModal>
     </Container>
   );
 }

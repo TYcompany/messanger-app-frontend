@@ -51,13 +51,13 @@ export class WebRTC {
 
   offer: any;
   answer: any;
-  constructor() {
+  constructor(roomId:string) {
     if (WebRTC.instance) {
       return WebRTC.instance;
     }
 
     WebRTC.instance = this;
-    this.init();
+    this.init(roomId);
   }
 
   onTrackFunction(event: RTCTrackEvent) {
@@ -76,7 +76,7 @@ export class WebRTC {
     this.localVideo.srcObject = this.localStream;
   }
 
-  async init() {
+  async init(roomId:string) {
     try {
       this.setIsOpened(true);
       await this.initLocalStream();
@@ -90,11 +90,10 @@ export class WebRTC {
       // });
 
       this.socket.on(RTC_SIGNALNAME, (signalMessage: SignalMessageType) => {
-        console.log(signalMessage);
         this.handleSignalMessage(signalMessage);
       });
 
-      await this.joinRoom();
+      await this.joinRoom(roomId);
 
       // const peerConnection = await this.createPeerConnection();
       // this.peerConnection = peerConnection;
@@ -102,6 +101,7 @@ export class WebRTC {
       alert(`getUserMedia() error: ${e}`);
     }
   }
+
   async joinRoom(roomId: string = "mock-roomId") {
     this.socket.emit(RTC_SIGNALNAME, { type: SignalMessageEnum.JOIN, roomId });
   }
@@ -289,9 +289,8 @@ export class WebRTC {
     await peerConnection.setRemoteDescription(offer);
 
     const answer = await peerConnection.createAnswer();
-    this.answer=answer;
+    this.answer = answer;
     await peerConnection.setLocalDescription(answer);
-    
 
     this.socket.emit(RTC_SIGNALNAME, {
       roomId,
