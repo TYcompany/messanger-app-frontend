@@ -24,6 +24,7 @@ import BasicModal from "../../../components/modals/BasicModal";
 import AddFriendModalComponent from "../ChatNavigation/modals/AddFriendModalComponent";
 import InviteFriendModalComponent from "./modals/InviteFriendModalComponent";
 import { isScrollNearBottom } from "./common/scrollRefLib";
+import VideoCallModalComponent from "./modals/VideoCallModalComponent";
 
 const socket = new Socket().getSocketInstance();
 
@@ -207,6 +208,7 @@ function ChatScreen({
     e.preventDefault();
     setActiveModalName("inviteFriend");
   };
+
   const onClickLeave = async () => {
     if (!window.confirm("Do you want to leave this room?")) {
       return;
@@ -217,6 +219,11 @@ function ChatScreen({
     });
 
     window.location.reload();
+  };
+
+  const onClickVideoCall = async (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
+    e.preventDefault();
+    setActiveModalName("videoCall");
   };
 
   return (
@@ -246,6 +253,7 @@ function ChatScreen({
                   <h3>{currentlyChattingUser?.userName}</h3>
                 </div>
               </div>
+              <Button onClick={onClickVideoCall}>Video call</Button>
             </div>
           )}
 
@@ -270,6 +278,7 @@ function ChatScreen({
       )}
 
       <BasicModal modalName="inviteFriend" ModalComponent={InviteFriendModalComponent}></BasicModal>
+      <BasicModal modalName="videoCall" ModalComponent={VideoCallModalComponent}></BasicModal>
     </Container>
   );
 }
