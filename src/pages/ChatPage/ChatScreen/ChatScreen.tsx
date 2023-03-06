@@ -24,11 +24,10 @@ import BasicModal from "../../../components/modals/BasicModal";
 import AddFriendModalComponent from "../ChatNavigation/modals/AddFriendModalComponent";
 import InviteFriendModalComponent from "./modals/InviteFriendModalComponent";
 import { isScrollNearBottom } from "./common/scrollRefLib";
-import { SignalMessageEnum, WebRTC } from "../../../socket/webRTC";
+
 import { useNavigate } from "react-router-dom";
 
 const socket = new Socket().getSocketInstance();
-
 function ChatScreen({
   isPickerActive,
   setIsPickerActive,
@@ -119,14 +118,6 @@ function ChatScreen({
         onRecieveNewMessage(receivedMessage);
       });
       //init for webRTC
-      socket.on(SignalMessageEnum.OFFER, async ()=>{
-        console.log('got offer~!')
-        if(!window.confirm('got video request!')){
-          return;
-        }
-        navigate('/video-chat')
-      })
-
     };
     initSocket();
 
@@ -239,7 +230,8 @@ function ChatScreen({
 
   const onClickVideoCall = async (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
     e.preventDefault();
-    navigate(`/video-chat`);
+
+    navigate(`/video-chat?roomID=${currentlyChattingRoom._id}`);
   };
 
   return (

@@ -1,9 +1,11 @@
 import { useEffect, useRef, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { SignalMessageEnum, SignalMessageType, WebRTC } from "./webRTC";
 
 function useWebRTC({ roomId }: { roomId: string }) {
   const [webRtc, setWebRtc] = useState(new WebRTC(roomId));
   const [onCall, setOnCall] = useState(false);
+  const navigate = useNavigate();
 
   const [signalMessage, setSignalMessage] = useState<SignalMessageType>({
     type: SignalMessageEnum.READY,
@@ -26,6 +28,7 @@ function useWebRTC({ roomId }: { roomId: string }) {
       webRtc.setIsOpened = setIsOpened;
       webRtc.setSignalMessage = setSignalMessage;
       webRtc.setOnCall = setOnCall;
+      webRtc.navigate = navigate;
 
       if (localVideoRef.current) webRtc.setLocalVideoElement(localVideoRef.current);
       if (remoteVideoRef.current) webRtc.setRemoteVideoElement(remoteVideoRef.current);
@@ -38,12 +41,18 @@ function useWebRTC({ roomId }: { roomId: string }) {
   const handleSignalMessage = async () => {};
 
   const onClickOffer = async (roomId: string) => {
+    if (isWaitingResponse.offer) {
+      return;
+    }
     setIsWaitingResponse({ ...isWaitingResponse, offer: true });
     await webRtc.createAndSendOffer(roomId);
     setIsWaitingResponse({ ...isWaitingResponse, offer: false });
   };
 
   const onClickConfirm = async (roomId: string) => {
+    if (isWaitingResponse.answer) {
+      return;
+    }
     setIsWaitingResponse({ ...isWaitingResponse, answer: true });
     if (webRtc.peerConnection.localDescription) {
       await webRtc.createAndSendAnswer(roomId, webRtc.peerConnection.localDescription);

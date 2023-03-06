@@ -9,7 +9,6 @@ import { UserMapType } from "../../lib/types/UserType";
 import {
   fetchUserContacts,
   fetchRoomDatasOfUser,
-  refreshAccessToken,
   refreshAccessTokenCookies,
 } from "../../lib/api/APIFunctions";
 

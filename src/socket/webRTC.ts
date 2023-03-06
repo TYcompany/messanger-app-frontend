@@ -1,5 +1,7 @@
+import { NavigateFunction } from "react-router-dom";
 import Socket from "./socket";
 
+export const RTC_SIGNALNAME = "rtc-signal";
 export enum SignalMessageEnum {
   READY = "ready",
   OFFER = "offer",
@@ -21,7 +23,6 @@ export interface SignalMessageType {
   };
 }
 
-const RTC_SIGNALNAME = "rtc-signal";
 const iceConfiguration = {
   iceServers: [
     { urls: "stun:stun.services.mozilla.com" },
@@ -48,10 +49,11 @@ export class WebRTC {
 
   setSignalMessage?: React.Dispatch<React.SetStateAction<SignalMessageType>>;
   setOnCall?: React.Dispatch<React.SetStateAction<boolean>>;
+  navigate?: NavigateFunction;
 
   offer: any;
   answer: any;
-  constructor(roomId:string) {
+  constructor(roomId: string) {
     if (WebRTC.instance) {
       return WebRTC.instance;
     }
@@ -70,13 +72,13 @@ export class WebRTC {
   }
 
   async initLocalStream() {
-    const localStream = await navigator.mediaDevices.getUserMedia({ video: true, audio: true });
+    const localStream = await navigator.mediaDevices.getUserMedia({ video: true, audio: false });
 
     this.localStream = localStream;
     this.localVideo.srcObject = this.localStream;
   }
 
-  async init(roomId:string) {
+  async init(roomId: string) {
     try {
       this.setIsOpened(true);
       await this.initLocalStream();
@@ -84,10 +86,6 @@ export class WebRTC {
       this.peerConnection = await this.createPeerConnection();
 
       this.socket.emit(RTC_SIGNALNAME, "get-media-stream");
-
-      // this.socket.on("ready", async () => {
-      //   await this.setRemoteStream();
-      // });
 
       this.socket.on(RTC_SIGNALNAME, (signalMessage: SignalMessageType) => {
         this.handleSignalMessage(signalMessage);
@@ -113,13 +111,14 @@ export class WebRTC {
     }
 
     if (type === SignalMessageEnum.OFFER && message.offer) {
-      //check if yes or no;
-      // await accept or decline;
-      //this.setIsOpened(true);
-      // return reject event
+      if (!window.confirm(`got offer from ${roomId}!`)) {
+        this.rejectOffer(roomId);
+        return;
+      }
 
       await this.createAndSendAnswer(roomId, message.offer);
-      console.log("createand send answer completed");
+
+      this.navigate?.(`/video-chat?roomId=${roomId}&type=${SignalMessageEnum.OFFER}`);
     }
 
     if (type === SignalMessageEnum.ANSWER && message.answer) {
