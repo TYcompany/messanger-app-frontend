@@ -73,9 +73,9 @@ export class WebRTC {
 
   isLocalMediaTrackEnabled = (mediaType: string) => {
     const mediaTrack = this.localStream.getTracks().find((track) => track.kind === mediaType);
-    return mediaTrack?.enabled;
+    return mediaTrack?.enabled ?? false;
   };
-  
+
   toggleLocalMediaTrack = (mediaType: string) => {
     //"video", "audio";
     const mediaTrack = this.localStream.getTracks().find((track) => track.kind === mediaType);
@@ -91,7 +91,7 @@ export class WebRTC {
   };
 
   async initLocalStream() {
-    const localStream = await navigator.mediaDevices.getUserMedia({ video: true, audio: false });
+    const localStream = await navigator.mediaDevices.getUserMedia({ video: true, audio: true });
 
     this.localStream = localStream;
     this.localVideo.srcObject = this.localStream;

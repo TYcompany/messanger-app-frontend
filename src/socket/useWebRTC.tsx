@@ -50,11 +50,11 @@ function useWebRTC({ roomId }: { roomId: string }) {
     return () => webRtc.onLeaveRoomButtonClick(webRtc.roomId);
   }, [webRtc, navigate]);
 
-  const onChangeLocalVideoRef = (localVideoRef: React.MutableRefObject<null>) => {
+  const onChangeLocalVideoRef = (localVideoRef:React.MutableRefObject<null>) => {
     if (localVideoRef.current) webRtc.setLocalVideoElement(localVideoRef.current);
   };
 
-  const onChangeRemoteVideoRef = (remoteVideoRef: React.MutableRefObject<null>) => {
+  const onChangeRemoteVideoRef = (remoteVideoRef:React.MutableRefObject<null>) => {
     if (remoteVideoRef.current) webRtc.setRemoteVideoElement(remoteVideoRef.current);
   };
 
