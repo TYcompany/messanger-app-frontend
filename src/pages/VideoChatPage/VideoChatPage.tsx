@@ -1,5 +1,5 @@
-import { useEffect, useState } from "react";
-import { useRecoilValue } from "recoil";
+import { useEffect, useRef, useState } from "react";
+import { useRecoilState, useRecoilValue } from "recoil";
 import useWebRTC from "../../socket/useWebRTC";
 import { currentlyChattingRoomState, currentlyChattingUserState } from "../../store/store";
 
@@ -15,38 +15,39 @@ import VideocamIcon from "@mui/icons-material/Videocam";
 import VideocamOffIcon from "@mui/icons-material/VideocamOff";
 
 const VideoComponent = ({
-  ref,
   onToggleMediaInput,
   title,
+  isMediaTrackEnabled,
+  onChangeVideoRef,
 }: {
-  ref: React.MutableRefObject<null>;
   onToggleMediaInput: Function;
   title: string;
+  isMediaTrackEnabled: { [key: string]: boolean };
+  onChangeVideoRef: Function;
 }) => {
-  const [isMediaOn, setIsMediaOn] = useState<{ [key: string]: boolean }>({
-    video: true,
-    audio: true,
-  });
+  const videoRef = useRef(null);
+
+  useEffect(() => {
+    if (videoRef.current) {
+      onChangeVideoRef(videoRef);
+    }
+  }, [videoRef, onChangeVideoRef]);
 
   const onToggleMediaInputIcon = (name: string) => {
-    onToggleMediaInput();
-    setIsMediaOn((prev) => ({
-      ...prev,
-      [name]: !prev[name],
-    }));
+    onToggleMediaInput(name);
   };
 
   return (
     <VideoComponentContainer>
       <div>{title}</div>
-      <video className="video-screen" ref={ref}></video>
+      <video className="video-screen" ref={videoRef}></video>
       <div className="media-inputs">
-        {isMediaOn.video ? (
+        {isMediaTrackEnabled.video ? (
           <VideocamIcon fontSize="large" onClick={() => onToggleMediaInputIcon("video")} />
         ) : (
           <VideocamOffIcon fontSize="large" onClick={() => onToggleMediaInputIcon("video")} />
         )}
-        {isMediaOn.audio ? (
+        {isMediaTrackEnabled.audio ? (
           <MicIcon fontSize="large" onClick={() => onToggleMediaInputIcon("audio")} />
         ) : (
           <MicOffIcon fontSize="large" onClick={() => onToggleMediaInputIcon("audio")} />
@@ -65,12 +66,15 @@ const VideoChatPage = () => {
   const roomId = searchParams.get("roomId") || "";
 
   const {
-    localVideoRef,
-    remoteVideoRef,
+    onChangeLocalVideoRef,
+    onChangeRemoteVideoRef,
     onClickOffer,
     onClickConfirm,
     onClickReject,
     isWaitingResponse,
+    isLocalMediaTrackEnabled,
+    isRemoteMediaTrackEnabled,
+    onToggleLocalMediaTrackEnabled,
   } = useWebRTC({ roomId });
 
   return (
@@ -79,13 +83,15 @@ const VideoChatPage = () => {
       <div className="video-container">
         <VideoComponent
           title="my-screen"
-          ref={localVideoRef}
-          onToggleMediaInput={() => {}}
+          isMediaTrackEnabled={isLocalMediaTrackEnabled}
+          onToggleMediaInput={onToggleLocalMediaTrackEnabled}
+          onChangeVideoRef={onChangeLocalVideoRef}
         ></VideoComponent>
         <VideoComponent
           title="remote-screen"
-          ref={remoteVideoRef}
+          isMediaTrackEnabled={isRemoteMediaTrackEnabled}
           onToggleMediaInput={() => {}}
+          onChangeVideoRef={onChangeRemoteVideoRef}
         ></VideoComponent>
       </div>
       <div className="button-area">

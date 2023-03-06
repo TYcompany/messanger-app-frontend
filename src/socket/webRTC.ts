@@ -71,6 +71,25 @@ export class WebRTC {
     };
   }
 
+  isLocalMediaTrackEnabled = (mediaType: string) => {
+    const mediaTrack = this.localStream.getTracks().find((track) => track.kind === mediaType);
+    return mediaTrack?.enabled;
+  };
+  
+  toggleLocalMediaTrack = (mediaType: string) => {
+    //"video", "audio";
+    const mediaTrack = this.localStream.getTracks().find((track) => track.kind === mediaType);
+    if (!mediaTrack) {
+      return;
+    }
+    mediaTrack.enabled = !mediaTrack?.enabled;
+  };
+
+  isRemoteMediaTrackEnabled = (mediaType: string) => {
+    const mediaTrack = this.remoteStream.getTracks().find((track) => track.kind === mediaType);
+    return mediaTrack?.enabled;
+  };
+
   async initLocalStream() {
     const localStream = await navigator.mediaDevices.getUserMedia({ video: true, audio: false });
 
