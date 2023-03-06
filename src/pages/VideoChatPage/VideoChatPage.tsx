@@ -1,12 +1,16 @@
 import { useEffect, useRef, useState } from "react";
 import { useRecoilState, useRecoilValue } from "recoil";
 import useWebRTC from "../../socket/useWebRTC";
-import { currentlyChattingRoomState, currentlyChattingUserState } from "../../store/store";
+import {
+  currentlyChattingRoomState,
+  currentlyChattingUserState,
+  currentUserState,
+} from "../../store/store";
 
 import { useSearchParams } from "react-router-dom";
 import { SignalMessageEnum } from "../../socket/webRTC";
 import styled from "styled-components";
-import { Button } from "@mui/material";
+import { Button, Typography } from "@mui/material";
 
 import MicIcon from "@mui/icons-material/Mic";
 import MicOffIcon from "@mui/icons-material/MicOff";
@@ -15,13 +19,15 @@ import VideocamIcon from "@mui/icons-material/Videocam";
 import VideocamOffIcon from "@mui/icons-material/VideocamOff";
 
 const VideoComponent = ({
+  userName,
   onToggleMediaInput,
-  title,
+
   isMediaTrackEnabled,
   onChangeVideoRef,
 }: {
+  userName: string;
   onToggleMediaInput: Function;
-  title: string;
+
   isMediaTrackEnabled: { [key: string]: boolean };
   onChangeVideoRef: Function;
 }) => {
@@ -39,7 +45,9 @@ const VideoComponent = ({
 
   return (
     <VideoComponentContainer>
-      <div>{title}</div>
+      <Typography fontSize={20} fontWeight={"medium"}>
+        {userName}
+      </Typography>
       <video className="video-screen" ref={videoRef}></video>
       <div className="media-inputs">
         {isMediaTrackEnabled.video ? (
@@ -59,12 +67,12 @@ const VideoComponent = ({
 
 const VideoChatPage = () => {
   const currentlyChattingRoom = useRecoilValue(currentlyChattingRoomState);
-  const currentlyChattingUser = useRecoilValue(currentlyChattingUserState);
+  const currentUser = useRecoilValue(currentUserState);
 
   const [searchParams] = useSearchParams();
-  const type = searchParams.get("type");
+  const type = searchParams.get("type") || "";
   const roomId = searchParams.get("roomId") || "";
-
+  const userName = searchParams.get("userName") || "";
   const {
     onChangeLocalVideoRef,
     onChangeRemoteVideoRef,
@@ -79,16 +87,18 @@ const VideoChatPage = () => {
 
   return (
     <VideoChatContainer>
-      <div>Video chat with {currentlyChattingUser?.userName}</div>
+      <Typography fontSize={30} fontWeight={"bold"}>
+        Video chat with {userName}
+      </Typography>
       <div className="video-container">
         <VideoComponent
-          title="my-screen"
+          userName={currentUser.userName}
           isMediaTrackEnabled={isLocalMediaTrackEnabled}
           onToggleMediaInput={onToggleLocalMediaTrackEnabled}
           onChangeVideoRef={onChangeLocalVideoRef}
         ></VideoComponent>
         <VideoComponent
-          title="remote-screen"
+          userName={userName}
           isMediaTrackEnabled={isRemoteMediaTrackEnabled}
           onToggleMediaInput={() => {}}
           onChangeVideoRef={onChangeRemoteVideoRef}
@@ -110,9 +120,10 @@ const VideoComponentContainer = styled.div`
   flex-direction: column;
   justify-content: center;
   align-items: center;
+
   .video-screen {
-    width: 500px;
-    height: 500px;
+    width: 640px;
+    height: 480px;
     background: black;
   }
   .media-inputs {

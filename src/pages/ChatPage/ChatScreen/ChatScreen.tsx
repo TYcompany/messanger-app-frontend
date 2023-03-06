@@ -231,7 +231,9 @@ function ChatScreen({
   const onClickVideoCall = async (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
     e.preventDefault();
 
-    navigate(`/video-chat?roomID=${currentlyChattingRoom._id}`);
+    navigate(
+      `/video-chat?roomID=${currentlyChattingRoom._id}&userName=${currentlyChattingUser.userName}`
+    );
   };
 
   return (
