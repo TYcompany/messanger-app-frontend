@@ -231,9 +231,13 @@ function ChatScreen({
   const onClickVideoCall = async (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
     e.preventDefault();
 
-    navigate(
-      `/video-chat?roomID=${currentlyChattingRoom._id}&userName=${currentlyChattingUser.userName}`
-    );
+    socket.emit("message", {
+      senderId: currentUser._id,
+      senderName: currentUser.userName,
+      roomId: currentlyChattingRoom._id,
+      text: `Move To Video Chat Room!\n${new Date().toISOString()}`,
+      isPersonalChat: true,
+    });
   };
 
   return (

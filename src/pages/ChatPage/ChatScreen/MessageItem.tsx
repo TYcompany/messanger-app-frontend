@@ -2,9 +2,15 @@ import { useRecoilValue } from "recoil";
 import styled from "styled-components";
 
 import { MessageType } from "../../../lib/types/MessageType";
-import { contactsMapState, currentUserState } from "../../../store/store";
+import {
+  contactsMapState,
+  currentlyChattingRoomState,
+  currentlyChattingUserState,
+  currentUserState,
+} from "../../../store/store";
 import { Buffer } from "buffer";
 import { defaultProfileImageSVGString } from "../../../lib/images/defaultProfileImageData";
+import { useNavigate } from "react-router-dom";
 
 function MessageItem({
   message,
@@ -15,9 +21,31 @@ function MessageItem({
 }) {
   const currentUser = useRecoilValue(currentUserState);
   const contactsMap = useRecoilValue(contactsMapState);
+  const currentlyChattingRoom = useRecoilValue(currentlyChattingRoomState);
+  const currentlyChattingUser = useRecoilValue(currentlyChattingUserState);
+  const navigate = useNavigate();
 
+  const onClickMessage = (roomId: string) => {
+    const textLines = message.text?.split("\n");
+    const currentTime = Date.now();
+
+    const date = new Date(textLines[1]).getTime();
+    const ExpirationDuration = 30 * 60 * 1000;
+
+    if (textLines[0] === "Move To Video Chat Room!") {
+      if (date + ExpirationDuration > currentTime) {
+        navigate(
+          `/video-chat?roomID=${currentlyChattingRoom._id}&userName=${currentlyChattingUser.userName}`
+        );
+        return;
+      }
+
+      alert("already expired. request again!");
+      return;
+    }
+  };
   return (
-    <Container>
+    <Container onClick={() => onClickMessage(currentlyChattingRoom._id)}>
       <div className={`message ${message.senderId === currentUser?._id ? "sent" : "recieved"}`}>
         <div className="content">
           {message.senderId !== currentUser?._id && isMessageHeaderMap[message._id] && (

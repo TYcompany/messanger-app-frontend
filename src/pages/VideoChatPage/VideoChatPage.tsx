@@ -106,7 +106,10 @@ const VideoChatPage = () => {
       </div>
       <div className="button-area">
         <Button
-          onClick={() => !isWaitingResponse.offer && onClickOffer(currentlyChattingRoom?._id)}
+          onClick={(e) => {
+            e.preventDefault();
+            !isWaitingResponse.offer && onClickOffer(currentlyChattingRoom?._id);
+          }}
         >
           Request video call
         </Button>

@@ -99,21 +99,17 @@ export class WebRTC {
 
   async init(roomId: string) {
     try {
-      this.setIsOpened(true);
-      await this.initLocalStream();
-
-      this.peerConnection = await this.createPeerConnection();
-
-      this.socket.emit(RTC_SIGNALNAME, "get-media-stream");
-
       this.socket.on(RTC_SIGNALNAME, (signalMessage: SignalMessageType) => {
         this.handleSignalMessage(signalMessage);
       });
 
       await this.joinRoom(roomId);
 
-      // const peerConnection = await this.createPeerConnection();
-      // this.peerConnection = peerConnection;
+      await this.initLocalStream();
+
+      this.peerConnection = await this.createPeerConnection();
+
+      this.socket.emit(RTC_SIGNALNAME, "get-media-stream");
     } catch (e) {
       alert(`getUserMedia() error: ${e}`);
     }
