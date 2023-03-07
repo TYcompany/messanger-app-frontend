@@ -41,7 +41,7 @@ function useWebRTC({ roomId }: { roomId: string }) {
     };
     initFunction();
 
-    return () => webRtc.onLeaveRoomButtonClick(webRtc.roomId);
+    //return () => webRtc.onLeaveRoomButtonClick(webRtc.roomId);
   }, [webRtc, navigate]);
 
   const onChangeLocalVideoRef = (localVideoRef: React.MutableRefObject<null>) => {

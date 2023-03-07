@@ -62,6 +62,25 @@ export class WebRTC {
     this.init(roomId);
   }
 
+  async init(roomId: string) {
+    try {
+      this.roomId = roomId;
+      this.socket.on(RTC_SIGNALNAME, (signalMessage: SignalMessageType) => {
+        this.handleSignalMessage(signalMessage);
+      });
+
+      await this.joinRoom(roomId);
+
+      await this.initLocalStream();
+
+      this.peerConnection = await this.createPeerConnection();
+
+      this.socket.emit(RTC_SIGNALNAME, "get-media-stream");
+    } catch (e) {
+      alert(`getUserMedia() error: ${e}`);
+    }
+  }
+
   onTrackFunction(event: RTCTrackEvent) {
     const remoteVideo = this.remoteVideo;
 
@@ -97,31 +116,13 @@ export class WebRTC {
     this.localVideo.srcObject = this.localStream;
   }
 
-  async init(roomId: string) {
-    try {
-      this.socket.on(RTC_SIGNALNAME, (signalMessage: SignalMessageType) => {
-        this.handleSignalMessage(signalMessage);
-      });
-
-      await this.joinRoom(roomId);
-
-      await this.initLocalStream();
-
-      this.peerConnection = await this.createPeerConnection();
-
-      this.socket.emit(RTC_SIGNALNAME, "get-media-stream");
-    } catch (e) {
-      alert(`getUserMedia() error: ${e}`);
-    }
-  }
-
   async joinRoom(roomId: string = "mock-roomId") {
     this.socket.emit(RTC_SIGNALNAME, { type: SignalMessageEnum.JOIN, roomId });
   }
   async handleSignalMessage(signalMessage: SignalMessageType) {
     const { type, message, roomId } = signalMessage;
 
-    if (type === SignalMessageEnum.CANDIDATE && this.peerConnection) {
+    if (type === SignalMessageEnum.CANDIDATE) {
       this.peerConnection.addIceCandidate(message.candidate);
     }
 
@@ -132,16 +133,10 @@ export class WebRTC {
       }
 
       await this.createAndSendAnswer(roomId, message.offer);
-
-      this.navigate?.(`/video-chat?roomId=${roomId}&type=${SignalMessageEnum.OFFER}`);
     }
 
     if (type === SignalMessageEnum.ANSWER && message.answer) {
       this.addAnswer(message.answer);
-      this.socket.emit(RTC_SIGNALNAME, {
-        type: SignalMessageEnum.AFTER_ANSWER,
-        roomId,
-      });
     }
     if (type === SignalMessageEnum.AFTER_ANSWER) {
     }
@@ -258,10 +253,6 @@ export class WebRTC {
       .getTracks()
       .forEach((track) => peerConnection.addTrack(track, this.localStream));
 
-    // {
-    //   event.streams[0].getTracks().forEach((track) => remoteStream.addTrack(track));
-    // };
-
     peerConnection.onicecandidate = (event) => {
       this.socket.emit(RTC_SIGNALNAME, {
         type: SignalMessageEnum.CANDIDATE,
@@ -292,12 +283,8 @@ export class WebRTC {
   }
 
   async createAndSendAnswer(roomId: string, offer: RTCSessionDescriptionInit) {
-    if (!window.confirm("got video chat request!")) {
-      this.rejectOffer(roomId);
-      return;
-    }
-
     const peerConnection = this.peerConnection;
+
     this.offer = offer;
 
     await peerConnection.setRemoteDescription(offer);
