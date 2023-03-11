@@ -21,15 +21,16 @@ import VideocamOffIcon from "@mui/icons-material/VideocamOff";
 const VideoComponent = ({
   userName,
   onToggleMediaInput,
-
   isMediaTrackEnabled,
   onChangeVideoRef,
+  isLocal,
 }: {
   userName: string;
   onToggleMediaInput: Function;
 
   isMediaTrackEnabled: { [key: string]: boolean };
   onChangeVideoRef: Function;
+  isLocal: boolean;
 }) => {
   const videoRef = useRef(null);
 
@@ -48,7 +49,7 @@ const VideoComponent = ({
       <Typography fontSize={20} fontWeight={"medium"}>
         {userName}
       </Typography>
-      <video className="video-screen" ref={videoRef}></video>
+      <video className={`video-screen`} ref={videoRef}></video>
       <div className="media-inputs">
         {isMediaTrackEnabled.video ? (
           <VideocamIcon fontSize="large" onClick={() => onToggleMediaInputIcon("video")} />
@@ -96,12 +97,14 @@ const VideoChatPage = () => {
           isMediaTrackEnabled={isLocalMediaTrackEnabled}
           onToggleMediaInput={onToggleLocalMediaTrackEnabled}
           onChangeVideoRef={onChangeLocalVideoRef}
+          isLocal={true}
         ></VideoComponent>
         <VideoComponent
           userName={userName}
           isMediaTrackEnabled={isRemoteMediaTrackEnabled}
           onToggleMediaInput={() => {}}
           onChangeVideoRef={onChangeRemoteVideoRef}
+          isLocal={false}
         ></VideoComponent>
       </div>
       <div className="button-area">
@@ -128,12 +131,21 @@ const VideoComponentContainer = styled.div`
     width: 640px;
     height: 480px;
     background: black;
+    transition: 0.5s;
   }
+
   .media-inputs {
     display: flex;
     flex-direction: row;
     margin-top: 10px;
     gap: 30px;
+  }
+
+  @media screen and (max-width: 750px) {
+    .video-screen {
+      width: 90%;
+      height:100%;
+    }
   }
 `;
 
@@ -149,6 +161,10 @@ const VideoChatContainer = styled.div`
     justify-content: center;
     align-items: center;
     gap: 20px;
+
+    @media screen and (max-width: 750px) {
+      flex-direction: column;
+    }
   }
   .button-area {
     display: flex;
