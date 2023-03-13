@@ -87,8 +87,9 @@ const VideoChatPage = () => {
           className="button leave"
           onClick={(e) => {
             e.preventDefault();
+            onLeaveButtonClick();
 
-            navigate("/chat");
+            setTimeout(()=>navigate("/chat"),1000);
           }}
         ></PhoneIcon>
       </div>
