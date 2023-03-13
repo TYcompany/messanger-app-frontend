@@ -41,7 +41,7 @@ export class WebRTC {
   remoteVideo: HTMLVideoElement = document.createElement("video");
 
   socket = new Socket().getSocketInstance();
-  peerConnection = new RTCPeerConnection();
+  peerConnection: RTCPeerConnection | null = new RTCPeerConnection();
 
   setIsOpened: Function = () => {};
   roomId: string = "";
@@ -53,6 +53,8 @@ export class WebRTC {
 
   offer: any;
   answer: any;
+  tempIceCandidates: RTCIceCandidate[] = [];
+
   constructor(roomId: string) {
     if (WebRTC.instance) {
       return WebRTC.instance;
@@ -123,7 +125,10 @@ export class WebRTC {
     const { type, message, roomId } = signalMessage;
 
     if (type === SignalMessageEnum.CANDIDATE) {
-      this.peerConnection.addIceCandidate(message.candidate);
+      if (message?.candidate) {
+        this.tempIceCandidates.push(message.candidate);
+        this.peerConnection?.addIceCandidate(message.candidate);
+      }
     }
 
     if (type === SignalMessageEnum.OFFER && message.offer) {
@@ -145,14 +150,22 @@ export class WebRTC {
     }
 
     if (type === SignalMessageEnum.LEAVE) {
-      this.onLeaveRoomButtonClick(roomId);
+      this.setOnCall?.(false);
     }
     if (type === SignalMessageEnum.JOIN) {
     }
   }
+  async addIceCandidatesAfterRemoteDescription() {
+    const peerConnection = this.peerConnection || (await this.createPeerConnection());
+    console.log(this.tempIceCandidates);
+
+    for (const candidate of this.tempIceCandidates) {
+      peerConnection.addIceCandidate(candidate);
+    }
+  }
 
   onLeaveRoomButtonClick = (roomId: string) => {
-    this.socket.emit("leave", this.roomId);
+    this.socket.emit(RTC_SIGNALNAME, { type: SignalMessageEnum.LEAVE, roomId: this.roomId });
     (this.localVideo.srcObject as MediaStream)?.getTracks().map((track) => track.stop());
     (this.remoteVideo.srcObject as MediaStream)?.getTracks().map((track) => track.stop());
 
@@ -161,7 +174,7 @@ export class WebRTC {
       peerConnection.ontrack = null;
       peerConnection.onicecandidate = null;
       peerConnection.close();
-      this.peerConnection = new RTCPeerConnection();
+      this.peerConnection = null;
     }
   };
 
@@ -254,6 +267,7 @@ export class WebRTC {
       .forEach((track) => peerConnection.addTrack(track, this.localStream));
 
     peerConnection.onicecandidate = (event) => {
+      console.log(event);
       this.socket.emit(RTC_SIGNALNAME, {
         type: SignalMessageEnum.CANDIDATE,
         roomId: this.roomId,
@@ -265,7 +279,7 @@ export class WebRTC {
   }
 
   async createAndSendOffer(roomId: string) {
-    const peerConnection = this.peerConnection;
+    const peerConnection = this.peerConnection || (await this.createPeerConnection());
 
     const offer = await peerConnection.createOffer();
 
@@ -283,7 +297,7 @@ export class WebRTC {
   }
 
   async createAndSendAnswer(roomId: string, offer: RTCSessionDescriptionInit) {
-    const peerConnection = this.peerConnection;
+    const peerConnection = this.peerConnection || (await this.createPeerConnection());
 
     this.offer = offer;
 
@@ -292,7 +306,9 @@ export class WebRTC {
     const answer = await peerConnection.createAnswer();
     this.answer = answer;
     await peerConnection.setLocalDescription(answer);
-    this.setOnCall?.(true)
+    this.setOnCall?.(true);
+    await this.addIceCandidatesAfterRemoteDescription();
+
     this.socket.emit(RTC_SIGNALNAME, {
       roomId,
       type: SignalMessageEnum.ANSWER,
@@ -302,8 +318,10 @@ export class WebRTC {
 
   async addAnswer(answer: RTCSessionDescriptionInit) {
     try {
-      await this.peerConnection.setRemoteDescription(answer);
-      this.setOnCall?.(true)
+      const peerConnection = this.peerConnection || (await this.createPeerConnection());
+      await peerConnection.setRemoteDescription(answer);
+      await this.addIceCandidatesAfterRemoteDescription();
+      this.setOnCall?.(true);
     } catch (e) {
       console.log(e);
     }

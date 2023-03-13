@@ -30,32 +30,22 @@ const VideoChatPage = () => {
     onClickReject,
     isWaitingResponse,
     isLocalMediaTrackEnabled,
-    isRemoteMediaTrackEnabled,
     onToggleLocalMediaTrackEnabled,
     onLeaveButtonClick,
     onCall,
   } = useWebRTC({ roomId });
-
-  const [isConnected, setIsConnected] = useState(false);
   const navigate = useNavigate();
 
   const localVideoRef = useRef(null);
   const remoteVideoRef = useRef(null);
 
   useEffect(() => {
-    if (remoteVideoRef.current) {
-      onChangeRemoteVideoRef(remoteVideoRef);
-    }
-  }, [remoteVideoRef, onChangeRemoteVideoRef]);
+    onChangeRemoteVideoRef(remoteVideoRef);
+    onChangeLocalVideoRef(localVideoRef);
+  }, [remoteVideoRef, onChangeRemoteVideoRef,localVideoRef, onChangeLocalVideoRef]);
 
   useEffect(() => {
-    if (localVideoRef.current) {
-      onChangeLocalVideoRef(localVideoRef);
-    }
-  }, [localVideoRef, onChangeLocalVideoRef]);
-
-  useEffect(() => {
-    setTimeout(() => setIsConnected(true), 5000);
+    
   }, []);
 
   return (
@@ -174,10 +164,10 @@ const VideoChatContainer = styled.div`
     }
 
     @media screen and (max-width: 750px) {
-      .button{
-        width:35px;
-        height:35px;
-        padding:7px;
+      .button {
+        width: 35px;
+        height: 35px;
+        padding: 7px;
       }
     }
   }

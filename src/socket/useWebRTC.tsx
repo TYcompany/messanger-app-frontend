@@ -66,7 +66,7 @@ function useWebRTC({ roomId }: { roomId: string }) {
       return;
     }
     setIsWaitingResponse({ ...isWaitingResponse, answer: true });
-    if (webRtc.peerConnection.localDescription) {
+    if (webRtc.peerConnection?.localDescription) {
       await webRtc.createAndSendAnswer(roomId, webRtc.peerConnection.localDescription);
     } else {
       throw new Error("no local description");
