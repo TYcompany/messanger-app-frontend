@@ -33,7 +33,7 @@ const VideoChatPage = () => {
     isRemoteMediaTrackEnabled,
     onToggleLocalMediaTrackEnabled,
     onLeaveButtonClick,
-    onCall
+    onCall,
   } = useWebRTC({ roomId });
 
   const [isConnected, setIsConnected] = useState(false);
@@ -61,11 +61,11 @@ const VideoChatPage = () => {
   return (
     <VideoChatContainer>
       <div className="video-container">
-        {onCall && <video className={`remote-video-screen`} ref={remoteVideoRef}></video>}
         <video
-          className={`local-video-screen ${onCall && "on-call"}`}
-          ref={localVideoRef}
+          className={`remote-video-screen ${onCall && "on-call"}`}
+          ref={remoteVideoRef}
         ></video>
+        <video className={`local-video-screen ${onCall && "on-call"}`} ref={localVideoRef}></video>
       </div>
       <div className="button-area">
         {isLocalMediaTrackEnabled.video ? (
@@ -145,6 +145,10 @@ const VideoChatContainer = styled.div`
       width: 100%;
       height: 100%;
       background: black;
+      display: none;
+      &.on-call {
+        display: block;
+      }
     }
   }
   .button-area {
@@ -167,6 +171,14 @@ const VideoChatContainer = styled.div`
     .leave {
       background-color: red;
       color: white;
+    }
+
+    @media screen and (max-width: 750px) {
+      .button{
+        width:35px;
+        height:35px;
+        padding:7px;
+      }
     }
   }
 `;
