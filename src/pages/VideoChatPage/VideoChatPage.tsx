@@ -42,7 +42,7 @@ const VideoChatPage = () => {
   useEffect(() => {
     onChangeRemoteVideoRef(remoteVideoRef);
     onChangeLocalVideoRef(localVideoRef);
-  }, [remoteVideoRef, onChangeRemoteVideoRef,localVideoRef, onChangeLocalVideoRef]);
+  }, [remoteVideoRef, onChangeRemoteVideoRef, localVideoRef, onChangeLocalVideoRef]);
 
   useEffect(() => {
     return onLeaveButtonClick();
@@ -87,7 +87,7 @@ const VideoChatPage = () => {
           className="button leave"
           onClick={(e) => {
             e.preventDefault();
-            onLeaveButtonClick();
+
             navigate("/chat");
           }}
         ></PhoneIcon>
@@ -132,12 +132,13 @@ const VideoChatContainer = styled.div`
       }
     }
     .remote-video-screen {
-      width: 100%;
-      height: 100%;
+      width: 0;
+      height: 0;
       background: black;
-      display: none;
+
       &.on-call {
-        display: block;
+        width: 100%;
+        height: 100%;
       }
     }
   }
