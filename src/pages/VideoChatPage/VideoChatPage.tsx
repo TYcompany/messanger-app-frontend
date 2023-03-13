@@ -45,7 +45,7 @@ const VideoChatPage = () => {
   }, [remoteVideoRef, onChangeRemoteVideoRef,localVideoRef, onChangeLocalVideoRef]);
 
   useEffect(() => {
-    
+    return onLeaveButtonClick();
   }, []);
 
   return (

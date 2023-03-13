@@ -176,6 +176,7 @@ export class WebRTC {
       peerConnection.close();
       this.peerConnection = null;
     }
+    WebRTC.instance = undefined;
   };
 
   setLocalVideoElement = (localVideo: HTMLVideoElement) => {
@@ -267,7 +268,6 @@ export class WebRTC {
       .forEach((track) => peerConnection.addTrack(track, this.localStream));
 
     peerConnection.onicecandidate = (event) => {
-      console.log(event);
       this.socket.emit(RTC_SIGNALNAME, {
         type: SignalMessageEnum.CANDIDATE,
         roomId: this.roomId,
