@@ -292,7 +292,7 @@ export class WebRTC {
     const answer = await peerConnection.createAnswer();
     this.answer = answer;
     await peerConnection.setLocalDescription(answer);
-
+    this.setOnCall?.(true)
     this.socket.emit(RTC_SIGNALNAME, {
       roomId,
       type: SignalMessageEnum.ANSWER,
@@ -303,6 +303,7 @@ export class WebRTC {
   async addAnswer(answer: RTCSessionDescriptionInit) {
     try {
       await this.peerConnection.setRemoteDescription(answer);
+      this.setOnCall?.(true)
     } catch (e) {
       console.log(e);
     }

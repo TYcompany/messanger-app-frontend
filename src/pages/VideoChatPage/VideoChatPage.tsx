@@ -3,16 +3,16 @@ import { useRecoilState, useRecoilValue } from "recoil";
 import useWebRTC from "../../socket/useWebRTC";
 import { currentlyChattingRoomState, currentUserState } from "../../store/store";
 
-import { useSearchParams } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 
 import styled from "styled-components";
-import { Button, Typography } from "@mui/material";
 
 import MicIcon from "@mui/icons-material/Mic";
 import MicOffIcon from "@mui/icons-material/MicOff";
 
 import VideocamIcon from "@mui/icons-material/Videocam";
 import VideocamOffIcon from "@mui/icons-material/VideocamOff";
+import PhoneIcon from "@mui/icons-material/Phone";
 
 const VideoChatPage = () => {
   const currentlyChattingRoom = useRecoilValue(currentlyChattingRoomState);
@@ -32,9 +32,12 @@ const VideoChatPage = () => {
     isLocalMediaTrackEnabled,
     isRemoteMediaTrackEnabled,
     onToggleLocalMediaTrackEnabled,
+    onLeaveButtonClick,
+    onCall
   } = useWebRTC({ roomId });
 
   const [isConnected, setIsConnected] = useState(false);
+  const navigate = useNavigate();
 
   const localVideoRef = useRef(null);
   const remoteVideoRef = useRef(null);
@@ -58,46 +61,46 @@ const VideoChatPage = () => {
   return (
     <VideoChatContainer>
       <div className="video-container">
-        {isConnected && <video className={`remote-video-screen`} ref={remoteVideoRef}></video>}
+        {onCall && <video className={`remote-video-screen`} ref={remoteVideoRef}></video>}
         <video
-          className={`local-video-screen ${isConnected && "connected"}`}
+          className={`local-video-screen ${onCall && "on-call"}`}
           ref={localVideoRef}
         ></video>
       </div>
       <div className="button-area">
-        <div className="media-inputs">
-          {isLocalMediaTrackEnabled.video ? (
-            <VideocamIcon
-              fontSize="large"
-              onClick={() => onToggleLocalMediaTrackEnabled("video")}
-            />
-          ) : (
-            <VideocamOffIcon
-              fontSize="large"
-              onClick={() => onToggleLocalMediaTrackEnabled("video")}
-            />
-          )}
-          {isLocalMediaTrackEnabled.audio ? (
-            <MicIcon fontSize="large" onClick={() => onToggleLocalMediaTrackEnabled("audio")} />
-          ) : (
-            <MicOffIcon fontSize="large" onClick={() => onToggleLocalMediaTrackEnabled("audio")} />
-          )}
-        </div>
-        <Button
+        {isLocalMediaTrackEnabled.video ? (
+          <VideocamIcon
+            className="button"
+            onClick={() => onToggleLocalMediaTrackEnabled("video")}
+          />
+        ) : (
+          <VideocamOffIcon
+            className="button"
+            fontSize="large"
+            onClick={() => onToggleLocalMediaTrackEnabled("video")}
+          />
+        )}
+        {isLocalMediaTrackEnabled.audio ? (
+          <MicIcon className="button" onClick={() => onToggleLocalMediaTrackEnabled("audio")} />
+        ) : (
+          <MicOffIcon className="button" onClick={() => onToggleLocalMediaTrackEnabled("audio")} />
+        )}
+        <PhoneIcon
+          className="button call"
           onClick={(e) => {
             e.preventDefault();
             !isWaitingResponse.offer && onClickOffer(currentlyChattingRoom?._id);
           }}
-        >
-          Request video call
-        </Button>
-        <Button
+        ></PhoneIcon>
+
+        <PhoneIcon
+          className="button leave"
           onClick={(e) => {
             e.preventDefault();
+            onLeaveButtonClick();
+            navigate("/chat");
           }}
-        >
-          Leave
-        </Button>
+        ></PhoneIcon>
       </div>
     </VideoChatContainer>
   );
@@ -115,9 +118,9 @@ const VideoChatContainer = styled.div`
     justify-content: center;
     align-items: center;
     gap: 20px;
-    width: 90vw;
+    width: 100vw;
     height: 90vh;
-    position:relative;
+    position: relative;
     @media screen and (max-width: 750px) {
       flex-direction: column;
     }
@@ -130,7 +133,7 @@ const VideoChatContainer = styled.div`
       background: black;
       transition: 0.5s;
 
-      &.connected {
+      &.on-call {
         position: absolute;
         left: 0;
         top: 0;
@@ -147,6 +150,24 @@ const VideoChatContainer = styled.div`
   .button-area {
     display: flex;
     flex-direction: row;
+    gap: 30px;
+    padding: 10px;
+    .button {
+      background-color: lightgray;
+      border-radius: 50%;
+      width: 70px;
+      height: 70px;
+      padding: 10px;
+      cursor: pointer;
+    }
+    .call {
+      background-color: green;
+      color: white;
+    }
+    .leave {
+      background-color: red;
+      color: white;
+    }
   }
 `;
 
